@@ -8,7 +8,9 @@ import Img7 from "../../assets/girl7.png";
 import Img8 from "../../assets/boy3.png";
 import Img9 from "../../assets/girl9.png";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Phone, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight} from "lucide-react";
+import CallPopup from "../CallPopup"; // Import the CallPopup component
+import EmailPopup from "../EmailUs"; 
 
 const ServicesData = [
   {
@@ -94,10 +96,12 @@ const ServicesData = [
   },
 ];
 
+
 const Arrival = () => {
   const [currentImages, setCurrentImages] = useState({});
   const [hoveredCard, setHoveredCard] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCallPopupOpen, setIsCallPopupOpen] = useState(false); // State for Call Popup
+  const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false); // State for Email Popup
 
   const handleImageChange = (serviceId, direction) => {
     setCurrentImages((prev) => {
@@ -113,12 +117,20 @@ const Arrival = () => {
     });
   };
 
-  const handleChatClick = () => {
-    setIsModalOpen(true);
+  const handleCallClick = () => {
+    setIsCallPopupOpen(true); // Open Call Popup
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleEmailClick = () => {
+    setIsEmailPopupOpen(true); // Open Email Popup
+  };
+
+  const closeCallPopup = () => {
+    setIsCallPopupOpen(false); // Close Call Popup
+  };
+
+  const closeEmailPopup = () => {
+    setIsEmailPopupOpen(false); // Close Email Popup
   };
 
   return (
@@ -209,21 +221,17 @@ const Arrival = () => {
                   <div className="mb-4 text-gray-600 text-sm">{member.description}</div>
                   <div className="flex gap-2">
                     <button
-                      onClick={handleChatClick}
+                      onClick={handleCallClick}
                       className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-lg font-medium transform transition-all duration-300 hover:scale-105 hover:shadow-md active:scale-95"
                     >
                       Express Interest
                     </button>
-                    <a
-                      href="https://www.instagram.com/miamour.me"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1"
+                    <button
+                      onClick={handleEmailClick}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 text-sm transition-all duration-300 hover:border-pink-500 hover:text-pink-600"
                     >
-                      <button className="w-full px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 text-sm transition-all duration-300 hover:border-pink-500 hover:text-pink-600">
-                        Learn More
-                      </button>
-                    </a>
+                      Email Us
+                    </button>
                   </div>
                 </div>
               </div>
@@ -232,41 +240,11 @@ const Arrival = () => {
         </div>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full">
-            <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
-            <p className="mb-6 text-gray-600">Please contact us via the following options:</p>
-            <div className="flex flex-col gap-4">
-              <a href="tel:+35796471717" className="w-full">
-                <button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95">
-                  <Phone className="w-5 h-5" />
-                  Call +35796471717
-                </button>
-              </a>
-              <a href="tel:+35796005009" className="w-full">
-                <button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95">
-                  <Phone className="w-5 h-5" />
-                  Call +35796005009
-                </button>
-              </a>
-              <a href="mailto:client@example.com" className="w-full">
-                <button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95">
-                  <Mail className="w-5 h-5" />
-                  Email Us
-                </button>
-              </a>
-            </div>
-            <button
-              onClick={closeModal}
-              className="mt-6 w-full bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-medium transform transition-all duration-300 hover:scale-105 hover:shadow-md active:scale-95"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Call Popup */}
+      {isCallPopupOpen && <CallPopup onClose={closeCallPopup} />}
+
+      {/* Email Popup */}
+      {isEmailPopupOpen && <EmailPopup onClose={closeEmailPopup} />}
     </div>
   );
 };

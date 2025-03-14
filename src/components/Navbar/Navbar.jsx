@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import Logo from "../../assets/miLogo.png";
-import { FaBars, FaTimes, FaHeart } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
+import AuthPopup from "../AuthPopup"; // Import the Popup Component
 
 const Menu = [
   { id: 1, name: "Home", link: "hero" },
   { id: 2, name: "About", link: "about" },
   { id: 3, name: "Services", link: "services" },
-  { id: 4, name: "Contact", link: "contact" },
+  { id: 4, name: "Counseling", link: "counseling" },
+  { id: 5, name: "Contact", link: "contact" },
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
 
   // Handle scroll to detect when navbar should change appearance
   useEffect(() => {
@@ -48,6 +51,15 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
+  // Prevent body scroll when popup is open
+  useEffect(() => {
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showPopup]);
+
   return (
     <div
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -56,30 +68,21 @@ const Navbar = () => {
           : "bg-transparent text-white"
       }`}
     >
-      <div className="container py-4 px-6 mx-auto flex justify-between items-center">
+      <div className="container py-3 px-6 mx-auto flex justify-between items-center">
         {/* Logo Section */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleScroll("hero")}
-            className={`text-3xl font-bold font-serif transition-all duration-300 ${
-              isScrolled ? "text-pink-600" : "text-white"
+            className={`text-xl font-bold font-serif transition-all duration-300 ${
+              isScrolled ? "text-gray-800" : "text-black"
             }`}
           >
             MiAmour
-            <span className="ml-1 inline-block transition-transform">
-              <FaHeart
-                className={`text-pink-500 ${
-                  isScrolled ? "animate-none" : "animate-pulse"
-                }`}
-              />
-            </span>
           </button>
           <img
             src={Logo}
             alt="Logo"
-            className={`w-10 h-10 object-contain transition-all duration-300 hover:scale-110 ${
-              isScrolled ? "filter brightness-0" : ""
-            }`}
+            className={`w-8 h-8 object-contain transition-all duration-300 hover:scale-110`}
             onClick={() => handleScroll("hero")}
           />
         </div>
@@ -94,10 +97,10 @@ const Navbar = () => {
                   activeSection === menu.link
                     ? isScrolled
                       ? "text-pink-600 font-semibold"
-                      : "text-white font-semibold"
+                      : "text-black font-semibold"
                     : isScrolled
                     ? "text-gray-700 hover:text-pink-600"
-                    : "text-white/90 hover:text-white"
+                    : "text-black hover:text-white"
                 }`}
               >
                 {menu.name}
@@ -116,7 +119,7 @@ const Navbar = () => {
                   ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:shadow-lg hover:shadow-pink-200"
                   : "bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border border-white/30"
               }`}
-              onClick={() => handleScroll("contact")}
+              onClick={() => setShowPopup(true)} // Open Popup on Click
             >
               Get Started
             </button>
@@ -125,17 +128,22 @@ const Navbar = () => {
 
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`p-2 rounded-lg transition-all duration-300 ${
+              isScrolled ? "bg-gray-100 hover:bg-gray-200" : "bg-black hover:black"
+            }`}
+          >
             {isMenuOpen ? (
               <FaTimes
-                className={`text-2xl transition-colors duration-300 ${
-                  isScrolled ? "text-pink-600" : "text-white"
+                className={`text-xl transition-colors duration-300 ${
+                  isScrolled ? "text-gray-800" : "text-white"
                 }`}
               />
             ) : (
               <FaBars
-                className={`text-2xl transition-colors duration-300 ${
-                  isScrolled ? "text-pink-600" : "text-white"
+                className={`text-xl transition-colors duration-300 ${
+                  isScrolled ? "text-gray-800" : "text-white"
                 }`}
               />
             )}
@@ -145,7 +153,7 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       <div
-        className={`absolute w-full left-0 top-full transition-all duration-500 ${
+        className={`fixed lg:hidden w-full left-0 top-16 transition-all duration-500 ${
           isMenuOpen
             ? "opacity-100 visible translate-y-0"
             : "opacity-0 invisible -translate-y-4"
@@ -160,14 +168,14 @@ const Navbar = () => {
             <li key={menu.id} className="w-full">
               <button
                 onClick={() => handleScroll(menu.link)}
-                className={`block w-full text-center py-3 text-lg font-medium transition-all duration-300 ${
+                className={`block w-full text-center py-3 text-lg font-semibold transition-all duration-300 ${
                   activeSection === menu.link
                     ? isScrolled
-                      ? "text-pink-600 font-semibold"
-                      : "text-white font-semibold"
+                      ? "text-pink-600"
+                      : "text-white"
                     : isScrolled
                     ? "text-gray-700 hover:text-pink-600"
-                    : "text-white/90 hover:text-white"
+                    : "text-white hover:text-white"
                 }`}
               >
                 {menu.name}
@@ -185,18 +193,25 @@ const Navbar = () => {
           ))}
           <li className="w-full px-8 mt-4">
             <button
-              className={`w-full py-3 rounded-lg transition-all duration-300 ${
+              className={`w-full py-3 rounded-lg transition-all duration-300 font-semibold ${
                 isScrolled
                   ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white"
                   : "bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
               }`}
-              onClick={() => handleScroll("contact")}
+              onClick={() => setShowPopup(true)} // Open Popup on Click
             >
               Get Started
             </button>
           </li>
         </ul>
       </div>
+
+      {/* Render Popup Conditionally */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+          <AuthPopup onClose={() => setShowPopup(false)} />
+        </div>
+      )}
     </div>
   );
 };

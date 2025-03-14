@@ -18,26 +18,22 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row items-center gap-8">
           {/* Text Content */}
           <div className="flex flex-col justify-center gap-6 text-center sm:text-left order-2 sm:order-1 flex-1">
-            <h1
-              data-aos="fade-up"
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold font-[Playfair Display] leading-tight"
-            >
-              Love That Lasts,{" "}
-              <span
-                data-aos="zoom-in"
-                data-aos-delay="200"
-                className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-red-500"
-              >
-                Forever
-              </span>
-            </h1>
-            <p
+          <h1
+            data-aos="fade-up"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold font-[Playfair Display] leading-tight"
+          >
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500">
+              MI AMOUR
+            </span>{" "}
+            — Where Love Lasts Forever
+          </h1>
+                      <p
               data-aos="fade-up"
               data-aos-delay="400"
               className="text-xl sm:text-2xl text-gray-700 max-w-lg mx-auto sm:mx-0"
             >
-              Your journey to find a lasting connection begins here. Discover
-              love with MiAmour.
+              Find the perfect partner for a lifetime of love. Your journey to a
+              happy marriage starts here.
             </p>
             <div
               data-aos="fade-up"

@@ -11,6 +11,7 @@ import Loader from "./components/Loader.jsx";
 import Contact from "./components/Contact/Contact.jsx";
 import Arrival from "./components/Arrival/Arrival.jsx";
 import Consuel from "./components/Consuel.jsx";
+import Deals from "./components/Deals.jsx";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -48,6 +49,9 @@ const App = () => {
       </div>
       <div className="section-border-shadow">
         <Consuel />
+      </div>
+      <div className="section-border-shadow">
+        <Deals />
       </div>
       <div className="section-border-shadow">
         <Testimonials />

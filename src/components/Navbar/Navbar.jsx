@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"; // Import PropTypes
 import { useState, useEffect } from "react";
 import Logo from "../../assets/miLogo.png";
 import { FaBars, FaTimes } from "react-icons/fa";
@@ -11,7 +12,7 @@ const Menu = [
   { id: 5, name: "Contact", link: "contact" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ loading }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
@@ -62,7 +63,9 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      className={`navbar-transition ${
+        loading ? "navbar-hidden" : "navbar-visible"
+      } fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-lg text-gray-800"
           : "bg-transparent text-white"
@@ -214,6 +217,11 @@ const Navbar = () => {
       )}
     </div>
   );
+};
+
+// Add PropTypes validation
+Navbar.propTypes = {
+  loading: PropTypes.bool.isRequired, // Validate 'loading' prop
 };
 
 export default Navbar;

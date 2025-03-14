@@ -1,4 +1,6 @@
 import { FaFacebookF, FaInstagram, FaTwitter, FaPinterest } from "react-icons/fa";
+import EmailPopup from "../EmailUs";
+import { useState } from "react";
 
 const FooterLinks = [
   {
@@ -43,6 +45,7 @@ const QuickLinks = [
 ];
 
 const Footer = () => {
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
   return (
     <footer className="bg-gradient-to-br from-pink-50 via-pink-100 to-pink-200 text-gray-700 py-16">
       <div className="container mx-auto px-6 lg:grid lg:grid-cols-4 gap-12">
@@ -131,6 +134,7 @@ const Footer = () => {
           <p className="mb-2">📞 09044130171</p>
           <p className="mb-4">📧 contact@miamour.com</p>
           <button
+            onClick={() => setIsPopupOpen(true)}
             className="mt-4 bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-full shadow-lg hover:opacity-90 transition duration-300"
           >
             Contact Us
@@ -141,6 +145,7 @@ const Footer = () => {
         <p className="text-sm">
           &copy; {new Date().getFullYear()} miAmour. All rights reserved. | Designed with 💕 by Arigo Tech        
           </p>
+            {isPopupOpen && <EmailPopup onClose={() => setIsPopupOpen(false)} />}
       </div>
     </footer>
   );

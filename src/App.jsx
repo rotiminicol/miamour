@@ -33,7 +33,7 @@ const App = () => {
   return (
     <div className="bg-white dark:bg-gray-900 dark:text-white duration-200 overflow-x-hidden">
       {loading && <Loader />}
-      <Navbar />
+      <Navbar loading={loading} /> {/* Pass loading state to Navbar */}
       <div className="section-border-shadow">
         <Hero />
       </div>

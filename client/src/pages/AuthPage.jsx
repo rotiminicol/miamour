@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
+import BannerImg from "../assets/myguy.png";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,23 +9,18 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-white to-pink-50 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden rounded-3xl shadow-xl">
-        {/* Left Side - Brand / Image */}
-        <div className="hidden lg:block relative bg-pink-900 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-purple-800 opacity-90"></div>
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute w-full h-full bg-[radial-gradient(circle_at_50%_120%,white,transparent_60%)]"></div>
-          </div>
-          <div className="relative h-full flex flex-col justify-center items-center p-12 text-white">
-            <h1 className="text-5xl font-bold mb-8">MI AMOUR</h1>
-            <p className="text-lg font-light mb-8 text-center">
-              Discover authentic connections in a modern world.
-            </p>
-            <div className="w-24 h-1 bg-white/30 rounded-full mb-8"></div>
-            <p className="text-sm italic opacity-80 text-center">
-              Finding someone special shouldnt be complicated. MI AMOUR makes it feel natural.
-            </p>
-          </div>
-        </div>
+      {/* Left Side - Brand / Image */}
+      <div className="hidden lg:block relative bg-pink-900 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-purple-800 opacity-90"></div>
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <img
+          src={BannerImg}
+          alt="Mi Amour Brand"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+
 
         {/* Right Side - Form */}
         <div className="bg-white p-8 md:p-12 lg:p-16">
@@ -34,9 +30,6 @@ const AuthPage = () => {
             <div className="w-12 h-1 bg-purple-200 mx-auto my-4"></div>
           </div>
 
-          <h2 className="text-2xl font-bold text-slate-800 mb-8">
-            {isLogin ? "Welcome back" : "Create account"}
-          </h2>
           
           {/* Form */}
           <div className="mb-8 w-full">

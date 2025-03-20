@@ -128,25 +128,22 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {/* Remember Me and Forgot Password */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+       {/* Remember Me and Forgot Password */}
+        <div className="flex items-center justify-between text-xs sm:text-sm">
+          <label className="flex items-center space-x-2">
             <input
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
             />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
-              Remember me
-            </label>
-          </div>
-          <div className="text-sm">
-            <a href="#" className="font-medium text-pink-600 hover:text-pink-500">
-              Forgot your password?
-            </a>
-          </div>
+            <span className="text-gray-600">Remember me</span>
+          </label>
+          <a href="#" className="text-pink-600 hover:underline font-medium">
+            Forgot password?
+          </a>
         </div>
+
 
         {/* Submit Button */}
         <button

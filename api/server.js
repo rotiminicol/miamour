@@ -9,6 +9,7 @@ import { createServer } from "http";
 import authRoutes from "./routes/authRoutes.js";
 import userMatchRoutes from "./routes/userMatchRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import combinedRoutes from "./routes/combinedRoutes.js";
 
 import { connectDB } from "./config/db.js";
 import { initializeSocket } from "./socket/socket.server.js";
@@ -33,7 +34,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
-app.use("/api", userMatchRoutes); // Combined routes
+app.use("/api", combinedRoutes);
 app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {

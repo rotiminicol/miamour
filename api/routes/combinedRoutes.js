@@ -6,7 +6,7 @@ import messageRoutes from "./messageRoutes.js";
 const router = express.Router();
 
 router.use("/auth", authRoutes);
-router.use("/", userMatchRoutes); // Combined routes
+router.use("/user-match", userMatchRoutes); // Renamed to avoid conflict
 router.use("/messages", messageRoutes);
 
 export default router;

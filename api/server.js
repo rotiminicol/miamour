@@ -8,7 +8,7 @@ import { createServer } from "http";
 // routes
 import authRoutes from "./routes/authRoutes.js";
 import userMatchRoutes from "./routes/userMatchRoutes.js";
-import messageRoutes from "./routes/messagesRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 
 import { connectDB } from "./config/db.js";
 import { initializeSocket } from "./socket/socket.server.js";

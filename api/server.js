@@ -6,9 +6,6 @@ import path from "path";
 import { createServer } from "http";
 
 // routes
-import authRoutes from "./routes/authRoutes.js";
-import userMatchRoutes from "./routes/userMatchRoutes.js";
-import messageRoutes from "./routes/messageRoutes.js";
 import combinedRoutes from "./routes/combinedRoutes.js";
 
 import { connectDB } from "./config/db.js";
@@ -33,9 +30,7 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
 app.use("/api", combinedRoutes);
-app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/client/dist")));

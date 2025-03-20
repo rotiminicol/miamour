@@ -1,5 +1,4 @@
 import { useMatchStore } from "../store/useMatchStore";
-import { motion, AnimatePresence } from "framer-motion";
 
 const getFeedbackStyle = (swipeFeedback) => {
 	if (swipeFeedback === "liked") return "text-green-500";
@@ -19,21 +18,13 @@ const SwipeFeedback = () => {
 	const { swipeFeedback } = useMatchStore();
 
 	return (
-		<AnimatePresence>
-			{swipeFeedback && (
-				<motion.div
-					className={`absolute top-10 left-0 right-0 text-center text-3xl font-bold ${getFeedbackStyle(
-						swipeFeedback
-					)}`}
-					initial={{ opacity: 0, y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: -20 }}
-					transition={{ duration: 0.3 }}
-				>
-					{getFeedbackText(swipeFeedback)}
-				</motion.div>
-			)}
-		</AnimatePresence>
+		<div
+			className={`
+		absolute top-10 left-0 right-0 text-center text-2xl font-bold ${getFeedbackStyle(swipeFeedback)}
+		`}
+		>
+			{getFeedbackText(swipeFeedback)}
+		</div>
 	);
 };
 export default SwipeFeedback;

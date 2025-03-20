@@ -2,28 +2,30 @@ import cloudinary from "../config/cloudinary.js";
 import User from "../models/User.js";
 
 export const updateProfile = async (req, res) => {
-	// image => cloudinary -> image.cloudinary.your => mongodb
-
 	try {
 		const { image, ...otherData } = req.body;
 
 		let updatedData = otherData;
 
 		if (image) {
-			// base64 format
-			if (image.startsWith("data:image")) {
+			// Validate Base64 image
+			const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
+			if (base64Regex.test(image)) {
 				try {
 					const uploadResponse = await cloudinary.uploader.upload(image);
 					updatedData.image = uploadResponse.secure_url;
 				} catch (error) {
-               // to do
-					// console.error("Error uploading image:", uploadError);
-
+					console.error("Error uploading image:", error);
 					return res.status(400).json({
 						success: false,
 						message: "Error uploading image",
 					});
 				}
+			} else {
+				return res.status(400).json({
+					success: false,
+					message: "Invalid image format",
+				});
 			}
 		}
 

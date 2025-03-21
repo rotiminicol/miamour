@@ -4,6 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaHeart, FaEye, FaEyeSlash } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
+import { auth, googleProvider, signInWithPopup } from '../firebase'; // Import Firebase auth functions
 
 const LoginForm = ({ toggleForm }) => {
   const [email, setEmail] = useState('');
@@ -30,6 +31,18 @@ const LoginForm = ({ toggleForm }) => {
       await login({ email: trimmedEmail, password: trimmedPassword });
     } catch (error) {
       console.error('Login error:', error.message);
+      setErrors({ general: error.message });
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log('Google Sign-In Successful:', user);
+      // You can now handle the user object, e.g., store it in your state or send it to your backend
+    } catch (error) {
+      console.error('Google Sign-In Error:', error.message);
       setErrors({ general: error.message });
     }
   };
@@ -135,7 +148,10 @@ const LoginForm = ({ toggleForm }) => {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <button className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center">
+          <button 
+            onClick={handleGoogleSignIn}
+            className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center"
+          >
             <FcGoogle className="h-5 w-5 mr-2" /> Google
           </button>
           <button className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center">

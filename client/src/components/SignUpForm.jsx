@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
+import { auth, googleProvider, signInWithPopup } from '../firebase';
 import { FaEye, FaEyeSlash, FaHeart } from 'react-icons/fa';
 
 
@@ -32,6 +33,17 @@ const SignupForm = ({ toggleForm }) => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log('Google Sign-Up Successful:', user);
+      // You can now handle the user object, e.g., store it in your state or send it to your backend
+    } catch (error) {
+      console.error('Google Sign-Up Error:', error.message);
+      setErrors({ general: error.message });
+    }
+  };
 
   const countries = [
     'United States', 'Canada', 'United Kingdom', 'Australia', 
@@ -117,11 +129,6 @@ const SignupForm = ({ toggleForm }) => {
     
     // Submit the form data
     signup(formData);
-  };
-
-  const handleGoogleSignup = () => {
-    console.log('Continue with Google');
-    // Implement Google OAuth logic here
   };
 
   const handleIjeuwaSignup = () => {
@@ -366,12 +373,12 @@ const SignupForm = ({ toggleForm }) => {
         </div>
         
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <button
-            onClick={handleGoogleSignup}
-            className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center"
-          >
-            <FcGoogle className="h-5 w-5 mr-2" />
-            Google
+        <button
+          onClick={handleGoogleSignup}
+          className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center"
+        >
+          <FcGoogle className="h-5 w-5 mr-2" />
+          Google
           </button>
           
           <button

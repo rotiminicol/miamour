@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
-import { FaHeart } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
+import { FaEye, FaEyeSlash, FaHeart } from 'react-icons/fa';
+
 
 const SignupForm = ({ toggleForm }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,17 @@ const SignupForm = ({ toggleForm }) => {
   
   const [errors, setErrors] = useState({});
   const { signup, loading } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
 
   const countries = [
     'United States', 'Canada', 'United Kingdom', 'Australia', 
@@ -198,31 +210,66 @@ const SignupForm = ({ toggleForm }) => {
           />
           {errors.age && <p className="mt-1 text-xs text-red-500">{errors.age}</p>}
         </div>
-        
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-pink-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
-          />
-          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+        <div className="relative">
+  <label
+    htmlFor="password"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Password
+  </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border ${
+                errors.password ? "border-red-500" : "border-pink-200"
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+          )}
         </div>
-        
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 border ${errors.confirmPassword ? 'border-red-500' : 'border-pink-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
-          />
-          {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
+
+        <div className="relative">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border ${
+                errors.confirmPassword ? "border-red-500" : "border-pink-200"
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
+            />
+            <button
+              type="button"
+              onClick={toggleConfirmPasswordVisibility}
+              className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {errors.confirmPassword && (
+            <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
+          )}
         </div>
 
         <div>

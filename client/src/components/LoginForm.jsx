@@ -1,53 +1,37 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaEye, FaEyeSlash } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
 
 const LoginForm = ({ toggleForm }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const { login, loading } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Trim inputs
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
-
-    // Simple validation
+    
     const newErrors = {};
-    if (!trimmedEmail) {
-      newErrors.email = 'Email is required';
-    }
-    if (!trimmedPassword) {
-      newErrors.password = 'Password is required';
-    }
+    if (!trimmedEmail) newErrors.email = 'Email is required';
+    if (!trimmedPassword) newErrors.password = 'Password is required';
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     try {
       await login({ email: trimmedEmail, password: trimmedPassword });
     } catch (error) {
       console.error('Login error:', error.message);
       setErrors({ general: error.message });
     }
-  };
-
-  const handleGoogleLogin = () => {
-    console.log('Continue with Google');
-    // Implement Google OAuth logic here
-  };
-
-  const handleIjeuwaLogin = () => {
-    console.log('Continue with Ijeuwa');
-    // Implement Ijeuwa OAuth logic here
   };
 
   return (
@@ -58,72 +42,88 @@ const LoginForm = ({ toggleForm }) => {
       exit={{ opacity: 0, x: 50 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold text-center text-pink-600 mb-2 font-serif">Welcome Back to MiAmour</h2>
-      <p className="text-center text-gray-500 mb-8">Continue your journey to find love</p>
+      <h2 className="text-2xl font-bold text-center text-pink-600 mb-2 font-serif">
+        Welcome Back to MiAmour
+      </h2>
+      <p className="text-center text-gray-500 mb-8">
+        Continue your journey to find love
+      </p>
       
       {errors.general && (
         <p className="text-center text-red-500 mb-4">{errors.general}</p>
       )}
-      
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
           <input
             type="email"
             id="login-email"
             value={email}
-            onChange={(e) => {
+            onChange={(e) => { 
               setEmail(e.target.value);
-              if (errors.email) setErrors({...errors, email: null});
+              if (errors.email) setErrors({ ...errors, email: null });
             }}
             className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-pink-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
             placeholder="Your email address"
           />
           {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
         </div>
-        
+
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">Password</label>
-            <a href="#" className="text-xs text-pink-600 hover:text-pink-500">Forgot password?</a>
+            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            </div>
+
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="login-password"
+              value={password}
+              onChange={(e) => { 
+                setPassword(e.target.value);
+                if (errors.password) setErrors({ ...errors, password: null });
+              }}
+              className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-pink-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
+              placeholder="Your password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
-          <input
-            type="password"
-            id="login-password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (errors.password) setErrors({...errors, password: null});
-            }}
-            className={`w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-pink-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500`}
-            placeholder="Your password"
-          />
+
           {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
         </div>
-        
+        <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <input 
-            id="remember-me" 
-            name="remember-me" 
-            type="checkbox" 
-            className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-          />
-          <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+          <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded" />
+          <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700">
             Remember me
           </label>
         </div>
-        
+        <a href="#" className="text-sm text-pink-600 hover:text-pink-500">
+          Forgot password?
+        </a>
+        </div>
+
         <button 
           type="submit" 
-          className={`w-full py-3 px-4 ${
-            loading ? 'bg-pink-400 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'
-          } text-white font-medium rounded-md transition-colors duration-300 flex items-center justify-center`}
+          className={`w-full py-3 px-4 ${loading ? 'bg-pink-400 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'} text-white font-medium rounded-md transition-colors duration-300 flex items-center justify-center`}
           disabled={loading}
         >
-          <FaHeart className="mr-2" /> {loading ? 'Signing in...' : 'Login to MiAmour'}
+          <FaHeart className="mr-2" />
+          {loading ? 'Signing in...' : 'Login to MiAmour'}
         </button>
       </form>
-      
+
       <div className="mt-8">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -133,32 +133,21 @@ const LoginForm = ({ toggleForm }) => {
             <span className="px-2 bg-white text-gray-500">Or continue with</span>
           </div>
         </div>
-        
+
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center"
-          >
-            <FcGoogle className="h-5 w-5 mr-2" />
-            Google
+          <button className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center">
+            <FcGoogle className="h-5 w-5 mr-2" /> Google
           </button>
-          
-          <button
-            onClick={handleIjeuwaLogin}
-            className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center"
-          >
+          <button className="w-full py-2 px-4 border border-pink-200 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-pink-50 flex items-center justify-center">
             Ijeuwa
           </button>
         </div>
       </div>
-      
+
       <div className="text-center mt-8">
         <p className="text-sm text-gray-600">
-          Dont have an account yet?{' '}
-          <button 
-            onClick={toggleForm} 
-            className="font-medium text-pink-600 hover:text-pink-500"
-          >
+          Don’t have an account yet?{' '}
+          <button onClick={toggleForm} className="font-medium text-pink-600 hover:text-pink-500">
             Sign up for love
           </button>
         </p>
@@ -168,7 +157,7 @@ const LoginForm = ({ toggleForm }) => {
 };
 
 LoginForm.propTypes = {
-  toggleForm: PropTypes.func.isRequired
+  toggleForm: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

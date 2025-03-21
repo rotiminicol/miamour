@@ -125,8 +125,8 @@ const SignupForm = ({ toggleForm }) => {
       exit={{ opacity: 0, x: -50 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold text-center text-pink-600 mb-2 font-serif">Create Your Love Profile</h2>
-      <p className="text-center text-gray-500 mb-6">Join thousands finding their perfect match</p>
+      <h2 className="text-2xl font-bold text-center text-pink-600 mb-10 font-serif"></h2>
+      <p className="text-2xl font-bold text-center text-pink-600 mb-10 font-serif">Create Your Love Profile</p>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

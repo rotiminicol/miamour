@@ -17,7 +17,7 @@ const AuthPage = () => {
     <div className="flex justify-center items-center min-h-screen bg-pink-50">
       <div className="w-full max-w-6xl h-auto md:h-[600px] bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Logo */}
-              <div className="absolute top-4 left-4 md:top-8 md:left-8 z-10 flex items-center gap-3">
+            <div className="absolute top-4 left-4 md:top-8 md:left-8 z-10 flex items-center gap-3">
             <motion.div 
               className="relative"
               whileHover={{ scale: 1.1 }}

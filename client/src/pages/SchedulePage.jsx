@@ -1,0 +1,286 @@
+import { useState, useEffect } from 'react';
+import { Header } from "../components/Header";
+import { AnimatePresence, motion } from 'framer-motion';
+
+const SchedulePage = () => {
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [screenSize, setScreenSize] = useState('desktop');
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth < 768 ? 'mobile' : 'desktop');
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const timeSlots = [
+    { id: 1, time: '9:00 AM', counselor: 'Dr. Sarah Johnson', available: true },
+    { id: 2, time: '10:00 AM', counselor: 'Dr. Michael Chen', available: true },
+    { id: 3, time: '11:00 AM', counselor: 'Lisa Rodriguez, LMFT', available: false },
+    { id: 4, time: '12:00 PM', counselor: 'Mark Wilson, LCSW', available: true },
+    { id: 5, time: '1:00 PM', counselor: 'Dr. Priya Patel', available: true },
+    { id: 6, time: '2:00 PM', counselor: 'James Washington, LMFT', available: false },
+  ];
+
+  const closeModal = () => {
+    setSelectedSlot(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
+        <motion.div 
+          className="absolute inset-0 opacity-20"
+          animate={{ 
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{ 
+            duration: 20, 
+            ease: "linear", 
+            repeat: Infinity, 
+            repeatType: "reverse" 
+          }}
+          style={{
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%23ffffff\' fill-opacity=\'0.3\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")'
+          }}
+        />
+        <div className="container mx-auto px-4 py-16 md:py-28 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-2xl mx-auto text-center"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">Schedule Your Session</h1>
+            <p className="text-xl md:text-2xl mb-8 text-indigo-100">Choose a time that works best for you and start your journey today.</p>
+          </motion.div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"></div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12">
+        {/* Time Slots Section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mb-20"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Available Time Slots</h2>
+          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Select a time slot to book your session.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {timeSlots.map((slot, index) => (
+              <motion.div
+                key={slot.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${
+                  !slot.available ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                onClick={() => slot.available && setSelectedSlot(slot)}
+              >
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-gray-800">{slot.time}</h3>
+                    <span className={`text-sm font-semibold ${
+                      slot.available ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {slot.available ? 'Available' : 'Booked'}
+                    </span>
+                  </div>
+                  <p className="text-gray-600">{slot.counselor}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Call to Action */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto mb-20"
+        >
+          <h2 className="text-3xl font-bold mb-4 text-white">Need Assistance?</h2>
+          <p className="text-indigo-100 mb-8 text-lg">Contact us to find the best time for your session.</p>
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-indigo-50 transition duration-300"
+          >
+            Contact Us
+          </motion.button>
+        </motion.div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Relationship Renewal</h3>
+              <p className="mb-4">Professional counseling services to help couples build stronger, healthier relationships.</p>
+              <div className="flex space-x-4">
+                {['facebook', 'twitter', 'instagram'].map(social => (
+                  <a key={social} href="#" className="text-gray-400 hover:text-white transition duration-300">
+                    <span className="sr-only">{social}</span>
+                    <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
+              <ul className="space-y-2">
+                {['Communication Coaching', 'Conflict Resolution', 'Intimacy Building', 'Premarital Counseling', 'Relationship Rebuilding'].map(service => (
+                  <li key={service}>
+                    <a href="#" className="hover:text-white transition duration-300">{service}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-white">Resources</h3>
+              <ul className="space-y-2">
+                {['Relationship Articles', 'Communication Tools', 'Self-Assessment Quizzes', 'Recommended Books', 'FAQ'].map(resource => (
+                  <li key={resource}>
+                    <a href="#" className="hover:text-white transition duration-300">{resource}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-white">Contact</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span>123 Healing Street, Suite 456<br />New York, NY 10001</span>
+                </li>
+                <li className="flex items-center">
+                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  <span>(555) 123-4567</span>
+                </li>
+                <li className="flex items-center">
+                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  <span>help@relationshiprenewal.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+            <p>© 2025 Relationship Renewal. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Slot Detail Modal */}
+      <AnimatePresence>
+        {selectedSlot && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={closeModal}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">{selectedSlot.time}</h2>
+                <button 
+                  onClick={closeModal} 
+                  className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none p-2 rounded-full hover:bg-gray-100"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="bg-indigo-50 p-4 rounded-xl mb-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+                  <div className="mb-3 md:mb-0">
+                    <div className="flex items-center">
+                      <div className="flex items-center text-yellow-400 mr-2">
+                        {'★'.repeat(5)}
+                      </div>
+                      <span className="text-gray-600">(127 reviews)</span>
+                    </div>
+                    <p className="text-gray-600">15+ years experience</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-indigo-700">$150</div>
+                    <div className="text-gray-600">per session</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="font-semibold text-gray-800 mb-2">Counselor</h3>
+                <p className="text-gray-600">{selectedSlot.counselor}</p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 text-center">
+                  Confirm Booking
+                </button>
+                <button className="flex-1 bg-white border border-indigo-600 text-indigo-600 py-3 px-6 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300 text-center">
+                  Reschedule
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Mobile Floating Action Button */}
+      {screenSize === 'mobile' && (
+        <motion.div
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="fixed bottom-6 right-6 z-40"
+        >
+          <button 
+            className="bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-colors"
+            aria-label="Book Consultation"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+          </button>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default SchedulePage;

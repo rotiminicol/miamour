@@ -11,6 +11,17 @@ import MarriageCounselingPage from "./pages/MarriageCounseling"; // Add this imp
 import BillingProcessPage from "./pages/BillingProcess "; // Add this import
 import DatingAppPage from "./pages/DatingApp"; // Add this import
 import HelpSupportPage from "../src/pages/HelpSupport "; // Add this import
+import PreferencePage from "./pages/PreferencePage";
+import NotificationPage from "./pages/NotificationPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import SchedulePage from "./pages/SchedulePage";
+import CeremonyPlanningPage from "./pages/CeremonyPlanningPage";
+import Resources from "./pages/Resources";
+import FAQs from "./pages/FAQs";
+import ContactUs from "./pages/ContactUs";
+import InvoicesPage from "./pages/InvoicesPage ";
+import SubscriptionsPage from "./pages/SubscriptionsPage";
+import DiscountsPage from "./pages/DiscountsPage";
 
 
 function App() {
@@ -41,6 +52,17 @@ function App() {
             <Route path="/billing-process" element={<BillingProcessPage />} />
             <Route path="/dating-app" element={<DatingAppPage />} />
             <Route path="/help-support" element={<HelpSupportPage />} />
+            <Route path="/preference" element={<PreferencePage />} />
+            <Route path="/notifications" element={<NotificationPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/ceremony-planning" element={<CeremonyPlanningPage />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/faqs" element={<FAQs />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
+            <Route path="/invoices" element={<InvoicesPage />} />
+            <Route path="/discounts" element={<DiscountsPage />} />
           </>
         )}
 

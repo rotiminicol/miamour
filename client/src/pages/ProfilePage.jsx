@@ -19,6 +19,18 @@ const ProfilePage = () => {
 	const [successMessage, setSuccessMessage] = useState("");
 	const [previousImages, setPreviousImages] = useState(authUser.previousImages || []);
 
+	// New fields for marriage match-up profile
+	const [nationality, setNationality] = useState(authUser.nationality || "");
+	const [relationshipStatus, setRelationshipStatus] = useState(authUser.relationshipStatus || "");
+	const [maritalHistory, setMaritalHistory] = useState(authUser.maritalHistory || "");
+	const [numberOfChildren, setNumberOfChildren] = useState(authUser.numberOfChildren || 0);
+	const [educationLevel, setEducationLevel] = useState(authUser.educationLevel || "");
+	const [occupation, setOccupation] = useState(authUser.occupation || "");
+	const [height, setHeight] = useState(authUser.height || "");
+	const [religion, setReligion] = useState(authUser.religion || "");
+	const [hobbies, setHobbies] = useState(authUser.hobbies || []);
+	const [languages, setLanguages] = useState(authUser.languages || []);
+
 	const fileInputRef = useRef(null);
 
 	const { loading, updateProfile } = useUserStore();
@@ -42,14 +54,32 @@ const ProfilePage = () => {
 		setSuccessMessage("");
 
 		// Ensure all required fields are filled
-		if (!name || !age || !gender || !bio) {
+		if (!name || !age || !gender || !bio || !nationality || !relationshipStatus || !educationLevel || !occupation || !religion) {
 			setErrorMessage("Please fill all required fields.");
 			return;
 		}
 
 		// Update profile with the new data
 		try {
-			await updateProfile({ name, bio, age, gender, genderPreference, image, previousImages });
+			await updateProfile({
+				name,
+				bio,
+				age,
+				gender,
+				genderPreference,
+				image,
+				previousImages,
+				nationality,
+				relationshipStatus,
+				maritalHistory,
+				numberOfChildren,
+				educationLevel,
+				occupation,
+				height,
+				religion,
+				hobbies,
+				languages,
+			});
 			setSuccessMessage("Profile updated successfully!");
 		} catch (error) {
 			setErrorMessage("Failed to update profile. Please try again.");
@@ -89,10 +119,10 @@ const ProfilePage = () => {
 			setErrorMessage("No file selected for upload.");
 			return;
 		}
-
+	
 		setUploading(true);
 		setUploadProgress(0);
-
+	
 		// Create a simulated progress interval
 		const progressInterval = setInterval(() => {
 			setUploadProgress((prev) => {
@@ -100,34 +130,39 @@ const ProfilePage = () => {
 				return Math.min(prev + 10, 90);
 			});
 		}, 300);
-
+	
 		// Upload image to Cloudinary
 		const formData = new FormData();
 		formData.append("file", selectedFile);
-		formData.append("upload_preset", "your_upload_preset"); // Replace with your Cloudinary upload preset
-		formData.append("cloud_name", "your_cloud_name"); // Replace with your Cloudinary cloud name
-
+		formData.append("upload_preset", "unsigned_preset"); // Replace with your unsigned upload preset name
+		formData.append("cloud_name", "djvhlf3pe"); // Replace with your cloud name
+	
 		try {
-			const response = await fetch("https://api.cloudinary.com/v1_1/your_cloud_name/image/upload", {
+			console.log("Uploading image to Cloudinary...");
+			const response = await fetch("https://api.cloudinary.com/v1_1/djvhlf3pe/image/upload", {
 				method: "POST",
 				body: formData,
 			});
-
+	
+			console.log("Response status:", response.status);
 			if (!response.ok) {
+				const errorData = await response.json();
+				console.error("Error response from Cloudinary:", errorData);
 				throw new Error("Failed to upload image.");
 			}
-
+	
 			const data = await response.json();
-
+			console.log("Upload successful! Response data:", data);
+	
 			// Add current image to previous images if it exists
 			if (image && !previousImages.includes(image)) {
 				setPreviousImages([...previousImages, image]);
 			}
-
+	
 			// Set the new image and close the popup
 			setImage(data.secure_url); // Save the Cloudinary URL
 			setSuccessMessage("Image uploaded successfully!");
-
+	
 			// Clear preview and selected file
 			setPreviewImage(null);
 			setSelectedFile(null);
@@ -188,6 +223,16 @@ const ProfilePage = () => {
 						<li>Gender Preference: Select the gender(s) you are interested in.</li>
 						<li>Bio: Write a short description about yourself (minimum 50 characters).</li>
 						<li>Profile Picture: Upload a clear and recent photo of yourself (max 5MB).</li>
+						<li>Nationality: Select your nationality.</li>
+						<li>Relationship Status: Select your current relationship status.</li>
+						<li>Marital History: Indicate if you have been married before.</li>
+						<li>Number of Children: Enter the number of children you have.</li>
+						<li>Education Level: Select your highest level of education.</li>
+						<li>Occupation: Enter your current occupation.</li>
+						<li>Height: Enter your height in centimeters.</li>
+						<li>Religion: Select your religion.</li>
+						<li>Hobbies: Add your hobbies and interests.</li>
+						<li>Languages: Add the languages you speak.</li>
 					</ul>
 				</div>
 
@@ -397,6 +442,207 @@ const ProfilePage = () => {
 											<span className='ml-2 text-sm sm:text-base'>{option}</span>
 										</label>
 									))}
+								</div>
+							</div>
+
+							{/* NATIONALITY */}
+							<div>
+								<label htmlFor='nationality' className='block text-sm font-medium text-gray-700'>
+									Nationality <span className='text-red-500'>*</span>
+								</label>
+								<div className='mt-1'>
+									<input
+										id='nationality'
+										name='nationality'
+										type='text'
+										required
+										value={nationality}
+										onChange={(e) => setNationality(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									/>
+								</div>
+							</div>
+
+							{/* RELATIONSHIP STATUS */}
+							<div>
+								<span className='block text-sm font-medium text-gray-700 mb-2'>
+									Relationship Status <span className='text-red-500'>*</span>
+								</span>
+								<div className='flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0'>
+									{["Single", "Divorced", "Widowed", "Separated"].map((option) => (
+										<label key={option} className='inline-flex items-center'>
+											<input
+												type='radio'
+												className='form-radio text-pink-600'
+												name='relationshipStatus'
+												value={option.toLowerCase()}
+												checked={relationshipStatus === option.toLowerCase()}
+												onChange={() => setRelationshipStatus(option.toLowerCase())}
+											/>
+											<span className='ml-2 text-sm sm:text-base'>{option}</span>
+										</label>
+									))}
+								</div>
+							</div>
+
+							{/* MARITAL HISTORY */}
+							<div>
+								<span className='block text-sm font-medium text-gray-700 mb-2'>
+									Have you been married before? <span className='text-red-500'>*</span>
+								</span>
+								<div className='flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0'>
+									{["Yes", "No"].map((option) => (
+										<label key={option} className='inline-flex items-center'>
+											<input
+												type='radio'
+												className='form-radio text-pink-600'
+												name='maritalHistory'
+												value={option.toLowerCase()}
+												checked={maritalHistory === option.toLowerCase()}
+												onChange={() => setMaritalHistory(option.toLowerCase())}
+											/>
+											<span className='ml-2 text-sm sm:text-base'>{option}</span>
+										</label>
+									))}
+								</div>
+							</div>
+
+							{/* NUMBER OF CHILDREN */}
+							<div>
+								<label htmlFor='numberOfChildren' className='block text-sm font-medium text-gray-700'>
+									Number of Children
+								</label>
+								<div className='mt-1'>
+									<input
+										id='numberOfChildren'
+										name='numberOfChildren'
+										type='number'
+										min='0'
+										value={numberOfChildren}
+										onChange={(e) => setNumberOfChildren(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									/>
+								</div>
+							</div>
+
+							{/* EDUCATION LEVEL */}
+							<div>
+								<label htmlFor='educationLevel' className='block text-sm font-medium text-gray-700'>
+									Education Level <span className='text-red-500'>*</span>
+								</label>
+								<div className='mt-1'>
+									<select
+										id='educationLevel'
+										name='educationLevel'
+										required
+										value={educationLevel}
+										onChange={(e) => setEducationLevel(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									>
+										<option value=''>Select</option>
+										<option value='highSchool'>High School</option>
+										<option value='bachelors'>Bachelors Degree</option>
+										<option value='masters'>Masters Degree</option>
+										<option value='phd'>PhD</option>
+										<option value='other'>Other</option>
+									</select>
+								</div>
+							</div>
+
+							{/* OCCUPATION */}
+							<div>
+								<label htmlFor='occupation' className='block text-sm font-medium text-gray-700'>
+									Occupation <span className='text-red-500'>*</span>
+								</label>
+								<div className='mt-1'>
+									<input
+										id='occupation'
+										name='occupation'
+										type='text'
+										required
+										value={occupation}
+										onChange={(e) => setOccupation(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									/>
+								</div>
+							</div>
+
+							{/* HEIGHT */}
+							<div>
+								<label htmlFor='height' className='block text-sm font-medium text-gray-700'>
+									Height (in cm)
+								</label>
+								<div className='mt-1'>
+									<input
+										id='height'
+										name='height'
+										type='number'
+										min='100'
+										max='250'
+										value={height}
+										onChange={(e) => setHeight(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									/>
+								</div>
+							</div>
+
+							{/* RELIGION */}
+							<div>
+								<label htmlFor='religion' className='block text-sm font-medium text-gray-700'>
+									Religion <span className='text-red-500'>*</span>
+								</label>
+								<div className='mt-1'>
+									<select
+										id='religion'
+										name='religion'
+										required
+										value={religion}
+										onChange={(e) => setReligion(e.target.value)}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+									>
+										<option value=''>Select</option>
+										<option value='christianity'>Christianity</option>
+										<option value='islam'>Islam</option>
+										<option value='hinduism'>Hinduism</option>
+										<option value='buddhism'>Buddhism</option>
+										<option value='other'>Other</option>
+									</select>
+								</div>
+							</div>
+
+							{/* HOBBIES */}
+							<div>
+								<label htmlFor='hobbies' className='block text-sm font-medium text-gray-700'>
+									Hobbies
+								</label>
+								<div className='mt-1'>
+									<input
+										id='hobbies'
+										name='hobbies'
+										type='text'
+										value={hobbies.join(", ")}
+										onChange={(e) => setHobbies(e.target.value.split(", "))}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+										placeholder='e.g., Reading, Traveling, Cooking'
+									/>
+								</div>
+							</div>
+
+							{/* LANGUAGES */}
+							<div>
+								<label htmlFor='languages' className='block text-sm font-medium text-gray-700'>
+									Languages
+								</label>
+								<div className='mt-1'>
+									<input
+										id='languages'
+										name='languages'
+										type='text'
+										value={languages.join(", ")}
+										onChange={(e) => setLanguages(e.target.value.split(", "))}
+										className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-sm sm:text-base'
+										placeholder='e.g., English, French, Spanish'
+									/>
 								</div>
 							</div>
 

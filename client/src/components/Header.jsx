@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { 
   Flame, User, LogOut, Menu, Heart, CreditCard, 
   MessageCircle, HelpCircle, ChevronDown, Bell, Settings, 
-  Calendar, ChevronRight, X, Home, Shield
+  Calendar, ChevronRight, X, Home, Shield, FileText, Gift
 } from "lucide-react";
 
 export const Header = () => {
@@ -17,27 +17,27 @@ export const Header = () => {
   const categories = {
     personal: [
       { icon: <User size={18} />, text: 'My Account', to: '/profile' },
-      { icon: <Settings size={18} />, text: 'Preferences', to: '/profile' },
-      { icon: <Bell size={18} />, text: 'Notifications', to: '/profile' },
-      { icon: <Shield size={18} />, text: 'Privacy', to: '/profile' },
+      { icon: <Settings size={18} />, text: 'Preferences', to: '/preference' },
+      { icon: <Bell size={18} />, text: 'Notifications', to: '/notifications' },
+      { icon: <Shield size={18} />, text: 'Privacy', to: '/privacy' },
     ],
     services: [
       { icon: <Heart size={18} />, text: 'Counseling', to: '/marriage-counseling' },
-      { icon: <MessageCircle size={18} />, text: 'Dating', to: '/dating-app' },
-      { icon: <Calendar size={18} />, text: 'Schedule', to: '/marriage-counseling' },
-      { icon: <Home size={18} />, text: 'Relationship', to: '/marriage-counseling' },
+      { icon: <MessageCircle size={18} />, text: 'MiAmour App', to: '/dating-app' },
+      { icon: <Calendar size={18} />, text: 'Schedule', to: '/schedule' },
+      { icon: <Home size={18} />, text: 'Marriage Planning', to: '/ceremony-planning' }
     ],
     billing: [
       { icon: <CreditCard size={18} />, text: 'Payment Methods', to: '/billing-process' },
-      { icon: <CreditCard size={18} />, text: 'Subscriptions', to: '/billing-process' },
-      { icon: <CreditCard size={18} />, text: 'Invoices', to: '/billing-process' },
-      { icon: <CreditCard size={18} />, text: 'Discounts', to: '/billing-process' },
-    ],
+      { icon: <CreditCard size={18} />, text: 'Subscriptions', to: '/subscriptions' },
+      { icon: <FileText size={18} />, text: 'Invoices', to: '/invoices' },
+      { icon: <Gift size={18} />, text: 'Discounts', to: '/discounts' },
+        ],
     support: [
       { icon: <HelpCircle size={18} />, text: 'Get Help', to: '/help-support' },
-      { icon: <MessageCircle size={18} />, text: 'Contact Us', to: '/help-support' },
-      { icon: <HelpCircle size={18} />, text: 'FAQs', to: '/help-support' },
-      { icon: <HelpCircle size={18} />, text: 'Resources', to: '/help-support' },
+      { icon: <MessageCircle size={18} />, text: 'Contact Us', to: '/contact-us' },
+      { icon: <HelpCircle size={18} />, text: 'FAQs', to: '/faqs' },
+      { icon: <HelpCircle size={18} />, text: 'Resources', to: '/resources' },
     ]
   };
 

@@ -1,4 +1,3 @@
-
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
@@ -10,7 +9,7 @@ const signToken = (id) => {
 };
 
 export const signup = async (req, res) => {
-	const { name, email, password, age, gender, genderPreference } = req.body;
+	const { name, email, password, phoneNumber, country, age, gender, genderPreference } = req.body;
 	try {
 		if (!name || !email || !password || !age || !gender || !genderPreference) {
 			return res.status(400).json({
@@ -26,10 +25,10 @@ export const signup = async (req, res) => {
 			});
 		}
 
-		if (password.length < 6) {
+		if (password.length < 8) {
 			return res.status(400).json({
 				success: false,
-				message: "Password must be at least 6 characters",
+				message: "Password must be at least 8 characters",
 			});
 		}
 
@@ -37,6 +36,8 @@ export const signup = async (req, res) => {
 			name,
 			email,
 			password,
+			phoneNumber,
+			country,
 			age,
 			gender,
 			genderPreference,

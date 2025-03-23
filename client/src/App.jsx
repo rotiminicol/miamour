@@ -22,6 +22,9 @@ import ContactUs from "./pages/ContactUs";
 import InvoicesPage from "./pages/InvoicesPage ";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
 import DiscountsPage from "./pages/DiscountsPage";
+import ProfileSuccessComponent from "./components/ProfileSuccessComponent";
+import PaymentConfirmationComponent from "./components/PaymentConfirmationComponent";
+import PrivacySelectionComponent from "./components/PrivacySelectionComponent";
 
 
 function App() {
@@ -40,6 +43,11 @@ function App() {
       <Routes>
         {/* Default route */}
         <Route path="/" element={authUser ? <HomePage /> : <LandingPage />} />
+
+        <Route path="/" element={<HomePage />} />
+        <Route path="/profile-submitted" element={<ProfileSuccessComponent />} />
+        <Route path="/privacy-selection" element={<PrivacySelectionComponent />} />
+        <Route path="/payment-confirmation" element={<PaymentConfirmationComponent />} />
 
         {/* Auth route */}
         <Route path="/auth" element={!authUser ? <AuthPage /> : <Navigate to="/" />} />

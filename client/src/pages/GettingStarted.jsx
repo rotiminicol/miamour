@@ -43,7 +43,7 @@ const GettingStarted = () => {
   const handlePaymentConfirm = () => {
     setAnimationDirection("forward");
     setCurrentView("success");
-    setTimeout(() => navigate("/dashboard"), 3000);
+    setTimeout(() => navigate("/dashboard"), 300000);
   };
 
   const handlePaymentCancel = () => {

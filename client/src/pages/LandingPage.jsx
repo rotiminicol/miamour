@@ -56,7 +56,7 @@ const LandingPage = () => {
     { 
       icon: <Users size={24} />, 
       title: "Personalized Matching", 
-      description: "Our AI-powered algorithm finds your perfect match based on compatibility and wedding preferences." 
+      description: "Our algorithm find your perfect match based on compactibilty and wedding prefernces" 
     },
     { 
       icon: <Heart size={24} />, 

@@ -95,9 +95,9 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
 
       {/* Main Content */}
       <div className="flex-grow flex">
-        {/* Form Container with responsive padding */}
         <div className={`flex-grow transition-all duration-300 ease-in-out ${isSidebarOpen ? 'px-4 md:px-8 lg:px-12' : 'px-6 md:px-16 lg:px-32'}`}>
-          <div className="max-w-5xl mx-auto pb-16 pt-8">
+          {/* Updated max width for a wider container */}
+          <div className="max-w-7xl mx-auto pb-16 pt-8">
             {/* Progress Steps */}
             <div className="flex items-center justify-between mb-8">
               {[1, 2, 3].map((step) => (
@@ -129,7 +129,14 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
               />
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 transition-all duration-300">
+            {/* Animated Form Container */}
+            <motion.form 
+              onSubmit={handleSubmit} 
+              className="bg-white rounded-2xl shadow-lg p-8 transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
               <AnimatePresence mode="wait">
                 {currentStep === 1 && (
                   <motion.div 
@@ -248,8 +255,8 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="profession"
                           value={formData.profession}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
                           placeholder="Your occupation"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         />
                       </div>
@@ -260,7 +267,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="education"
                           value={formData.education}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         >
                           <option value="">Select education level</option>
@@ -279,8 +286,8 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="religion"
                           value={formData.religion}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
                           placeholder="Your religious background"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         />
                       </div>
@@ -291,7 +298,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="relationshipStatus"
                           value={formData.relationshipStatus}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         >
                           <option value="">Select status</option>
@@ -308,7 +315,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="previousMarriages"
                           value={formData.previousMarriages}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         >
                           <option value="">Select option</option>
@@ -326,7 +333,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                             name="divorceDetails"
                             value={formData.divorceDetails}
                             onChange={handleInputChange}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                             placeholder="How long ago? Any specific circumstances?"
                             rows="2"
                           />
@@ -339,7 +346,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="hasChildren"
                           value={formData.hasChildren}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         >
                           <option value="">Select option</option>
@@ -356,7 +363,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                               name="numberOfChildren"
                               value={formData.numberOfChildren}
                               onChange={handleInputChange}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                             >
                               <option value="">Select number</option>
                               <option value="1">1</option>
@@ -374,7 +381,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                               name="childrenAges"
                               value={formData.childrenAges}
                               onChange={handleInputChange}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                               placeholder="e.g., 5, 8, 12"
                             />
                           </div>
@@ -385,7 +392,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                               name="livingArrangement"
                               value={formData.livingArrangement}
                               onChange={handleInputChange}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                             >
                               <option value="">Select arrangement</option>
                               <option value="fullTime">Live with me full-time</option>
@@ -400,25 +407,27 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                       
                       <div>
                         <label className="block text-gray-700 mb-2 font-medium">Family Background</label>
-                        <textarea
+                        <motion.textarea
                           name="familyBackground"
                           value={formData.familyBackground}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 transition min-h-[120px]"
                           placeholder="Brief description of your family"
                           rows="3"
+                          whileHover={{ scale: 1.02 }}
                         />
                       </div>
                       
                       <div className="md:col-span-2">
                         <label className="block text-gray-700 mb-2 font-medium">Hobbies & Interests</label>
-                        <textarea
+                        <motion.textarea
                           name="hobbies"
                           value={formData.hobbies}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 transition min-h-[120px]"
                           placeholder="What do you enjoy doing in your free time?"
                           rows="3"
+                          whileHover={{ scale: 1.02 }}
                         />
                       </div>
                     </div>
@@ -448,8 +457,8 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="partnerAgeRange"
                           value={formData.partnerAgeRange}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
                           placeholder="e.g., 25-35"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         />
                       </div>
@@ -461,8 +470,8 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="partnerLocationPreference"
                           value={formData.partnerLocationPreference}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
                           placeholder="Preferred location for partner"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                         />
                       </div>
                       
@@ -473,8 +482,8 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="partnerReligionPreference"
                           value={formData.partnerReligionPreference}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
                           placeholder="Preferred religious background"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         />
                       </div>
@@ -485,7 +494,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="partnerEducationPreference"
                           value={formData.partnerEducationPreference}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                         >
                           <option value="">Select preference</option>
                           <option value="highSchool">High School or higher</option>
@@ -502,7 +511,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="acceptPartnerWithChildren"
                           value={formData.acceptPartnerWithChildren}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                         >
                           <option value="">Select preference</option>
                           <option value="yes">Yes, I accept partners with children</option>
@@ -513,13 +522,14 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                       
                       <div>
                         <label className="block text-gray-700 mb-2 font-medium">Deal Breakers</label>
-                        <textarea
+                        <motion.textarea
                           name="dealBreakers"
                           value={formData.dealBreakers}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 transition min-h-[120px]"
                           placeholder="Any absolute requirements or deal breakers"
                           rows="3"
+                          whileHover={{ scale: 1.02 }}
                         />
                       </div>
                       
@@ -529,7 +539,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                           name="marriageTimeframe"
                           value={formData.marriageTimeframe}
                           onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
                           required
                         >
                           <option value="">Select timeframe</option>
@@ -597,7 +607,7 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                   <br />Fields marked with * are required.
                 </p>
               </div>
-            </form>
+            </motion.form>
           </div>
         </div>
       </div>

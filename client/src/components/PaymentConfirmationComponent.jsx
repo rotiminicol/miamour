@@ -75,9 +75,9 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
 };
 
 PaymentConfirmationComponent.propTypes = {
-	option: PropTypes.string.isRequired, // ✅ Should be a string
-	onConfirm: PropTypes.func.isRequired, // ✅ Should be a function
-	onCancel: PropTypes.func.isRequired, // ✅ Should be a function
- };
+  option: PropTypes.string.isRequired, // ✅ Should be a string
+  onConfirm: PropTypes.func.isRequired, // ✅ Should be a function
+  onCancel: PropTypes.func.isRequired, // ✅ Should be a function
+};
 
 export default PaymentConfirmationComponent;

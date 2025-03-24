@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Check, Clock, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +18,16 @@ const ProfileSuccessComponent = () => {
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+    // Redirect to dashboard after 3 seconds
+    const redirectTimer = setTimeout(() => {
+      navigate("/dashboard");
+    }, 3000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(redirectTimer);
+    };
+  }, [navigate]);
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);

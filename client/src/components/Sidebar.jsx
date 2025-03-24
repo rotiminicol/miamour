@@ -1,90 +1,346 @@
 import { useEffect, useState } from "react";
-import { Heart, Loader, MessageCircle, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 import { useMatchStore } from "../store/useMatchStore";
+import { 
+  Heart, Loader, MessageCircle, Home, CreditCard, 
+  Settings, Shield, Calendar, HelpCircle, FileText, Gift,
+  ChevronRight, User, Menu, ArrowLeftCircle, Users, Sparkles
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = () => {
-	const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const location = useLocation();
+  const { authUser } = useAuthStore();
+  const { getMyMatches, matches, isLoadingMyMatches } = useMatchStore();
 
-	const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  
+  const toggleCategory = (category) => {
+    setExpandedCategory(expandedCategory === category ? null : category);
+  };
 
-	const { getMyMatches, matches, isLoadingMyMatches } = useMatchStore();
+  useEffect(() => {
+    getMyMatches();
+  }, [getMyMatches]);
 
-	useEffect(() => {
-		getMyMatches();
-	}, [getMyMatches]);
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      // Default state based on screen size, but don't force it to open if user closed it
+      if (window.innerWidth < 1024) {
+        setIsOpen(false);
+      }
+    };
 
-	return (
-		<>
-			<div
-				className={`
-		fixed inset-y-0 left-0 z-10 w-64 bg-white shadow-md overflow-hidden transition-transform duration-300
-		 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 lg:static lg:w-1/4
-		`}
-			>
-				<div className='flex flex-col h-full'>
-					{/* Header */}
-					<div className='p-4 pb-[27px] border-b border-pink-200 flex justify-between items-center'>
-						<h2 className='text-xl font-bold text-pink-600'>Matches</h2>
-						<button
-							className='lg:hidden p-1 text-gray-500 hover:text-gray-700 focus:outline-none'
-							onClick={toggleSidebar}
-						>
-							<X size={24} />
-						</button>
-					</div>
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-					<div className='flex-grow overflow-y-auto p-4 z-10 relative'>
-						{isLoadingMyMatches ? (
-							<LoadingState />
-						) : matches.length === 0 ? (
-							<NoMatchesFound />
-						) : (
-							matches.map((match) => (
-								<Link key={match._id} to={`/chat/${match._id}`}>
-									<div className='flex items-center mb-4 cursor-pointer hover:bg-pink-50 p-2 rounded-lg transition-colors duration-300'>
-										<img
-											src={match.image || "/avatar.png"}
-											alt='User avatar'
-											className='size-12 object-cover rounded-full mr-3 border-2 border-pink-300'
-										/>
+  // Close sidebar on route change on mobile
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsOpen(false);
+    }
+  }, [location.pathname]);
 
-										<h3 className='font-semibold text-gray-800'>{match.name}</h3>
-									</div>
-								</Link>
-							))
-						)}
-					</div>
-				</div>
-			</div>
+  // Define icon colors for each category
+  const iconColors = {
+    services: "text-purple-500",
+    billing: "text-green-500",
+    settings: "text-blue-500",
+    support: "text-orange-500",
+    dashboard: "text-indigo-500"
+  };
 
-			<button
-				className='lg:hidden fixed top-4 left-4 p-2 bg-pink-500 text-white rounded-md z-0'
-				onClick={toggleSidebar}
-			>
-				<MessageCircle size={24} />
-			</button>
-		</>
-	);
+  const categories = {
+    services: [
+      { icon: <Heart size={18} className="text-red-500" />, text: 'Counseling', to: '/marriage-counseling' },
+      { icon: <MessageCircle size={18} className="text-blue-400" />, text: 'MiAmour App', to: '/dating-app' },
+      { icon: <Calendar size={18} className="text-teal-500" />, text: 'Schedule', to: '/schedule' },
+      { icon: <Home size={18} className="text-amber-500" />, text: 'Marriage Planning', to: '/ceremony-planning' },
+      { icon: <Users size={18} className="text-pink-500" />, text: 'Relationship Therapy', to: '/relationship-therapy' },
+      { icon: <Sparkles size={18} className="text-purple-500" />, text: 'Personalized Matchmaking', to: '/personalized-matchmaking' }
+    ],
+    billing: [
+      { icon: <CreditCard size={18} className="text-green-500" />, text: 'Payment Methods', to: '/billing-process' },
+      { icon: <CreditCard size={18} className="text-green-600" />, text: 'Subscriptions', to: '/subscriptions' },
+      { icon: <FileText size={18} className="text-green-400" />, text: 'Invoices', to: '/invoices' },
+      { icon: <Gift size={18} className="text-green-700" />, text: 'Discounts', to: '/discounts' },
+    ],
+    settings: [
+      { icon: <User size={18} className="text-blue-500" />, text: 'My Account', to: '/profile' },
+      { icon: <Settings size={18} className="text-blue-600" />, text: 'Preferences', to: '/preference' },
+      { icon: <Shield size={18} className="text-blue-400" />, text: 'Privacy', to: '/privacy' },
+    ],
+    support: [
+      { icon: <HelpCircle size={18} className="text-orange-500" />, text: 'Get Help', to: '/help-support' },
+      { icon: <MessageCircle size={18} className="text-orange-400" />, text: 'Contact Us', to: '/contact-us' },
+      { icon: <HelpCircle size={18} className="text-orange-600" />, text: 'FAQs', to: '/faqs' },
+      { icon: <HelpCircle size={18} className="text-orange-300" />, text: 'Resources', to: '/resources' },
+    ]
+  };
+
+  // Check if current path matches any route
+  const isActiveRoute = (path) => location.pathname === path;
+
+  return (
+    <>
+      {/* Overlay for mobile */}
+      <AnimatePresence>
+        {isOpen && window.innerWidth < 1024 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar Container */}
+      <motion.div
+        className={`
+          fixed inset-y-0 left-0 z-30 bg-white shadow-lg overflow-hidden
+          ${window.innerWidth >= 1024 ? 'relative' : 'fixed'}
+        `}
+        initial={{ width: window.innerWidth >= 1024 ? "18rem" : "0" }}
+        animate={{ 
+          width: isOpen ? "18rem" : (window.innerWidth >= 1024 ? "4.5rem" : "0"),
+          x: (!isOpen && window.innerWidth < 1024) ? "-100%" : 0
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+      >
+        <div className='flex flex-col h-full'>
+          {/* Sidebar Header */}
+          <div className='py-4 px-4 border-b border-pink-200 flex justify-between items-center bg-gradient-to-r from-pink-50 to-pink-100'>
+            {isOpen ? (
+              <Link to="/" className="flex items-center space-x-2">
+                <motion.div
+                  whileHover={{ rotate: 360, scale: 1.1 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <Heart className='text-pink-600' size={28} />
+                </motion.div>
+                <motion.h2 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className='text-xl font-bold text-pink-600'
+                >
+                  MiAmour
+                </motion.h2>
+              </Link>
+            ) : (
+              <div className="flex justify-center w-full">
+                {/* Heart icon removed here */}
+              </div>
+            )}
+            
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className='p-2 text-pink-600 hover:text-pink-800 focus:outline-none w-10 h-10 flex items-center justify-center'
+              onClick={toggleSidebar}
+            >
+              {isOpen ? (
+                <ArrowLeftCircle size={24} />
+              ) : (
+                <Menu size={24} />
+              )}
+            </motion.button>
+          </div>
+
+          {/* Matches Section - only show when expanded */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className='p-4 border-b border-pink-200 overflow-hidden'
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className='text-lg font-semibold text-gray-700'>Your Matches</h3>
+                  <Link to="/matches" className="text-pink-500 text-sm hover:text-pink-700">
+                    View All
+                  </Link>
+                </div>
+                
+                <div className='max-h-40 overflow-y-auto'>
+                  {isLoadingMyMatches ? (
+                    <div className="py-3 flex justify-center">
+                      <Loader className='text-pink-500 animate-spin' size={24} />
+                    </div>
+                  ) : matches.length === 0 ? (
+                    <div className='py-3 text-center text-gray-500 text-sm'>
+                      No matches found yet
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {matches.slice(0, 6).map((match) => (
+                        <Link key={match._id} to={`/chat/${match._id}`}>
+                          <motion.div 
+                            whileHover={{ y: -5, scale: 1.05 }}
+                            className="flex flex-col items-center"
+                          >
+                            <div className="relative">
+                              <img
+                                src={match.image || "/avatar.png"}
+                                alt={match.name}
+                                className="w-12 h-12 rounded-full object-cover border-2 border-pink-300"
+                              />
+                              <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                            </div>
+                            <span className="text-xs text-center mt-1 truncate w-full">{match.name.split(' ')[0]}</span>
+                          </motion.div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Navigation Items */}
+          <div className='flex-grow overflow-y-auto py-2'>
+            {/* Dashboard - Always visible */}
+            <Link 
+                to="/dashboard" 
+                className={`flex items-center px-6 py-3 transition-colors duration-200 ${
+                  isActiveRoute('/dashboard') 
+                    ? 'bg-pink-100 text-pink-700' 
+                    : 'text-gray-700 hover:bg-pink-50'
+                }`}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="mr-3"
+                >
+                  <Home size={20} className={isOpen ? iconColors.dashboard : "text-indigo-500"} />
+                </motion.div>
+                {isOpen && <span className="font-medium">Dashboard</span>}
+              </Link>
+
+            {/* Categories */}
+            {Object.entries(categories).map(([category, items]) => (
+              <div key={category} className="mb-1">
+                {isOpen ? (
+                  <motion.button 
+                    onClick={() => toggleCategory(category)}
+                    className="w-full flex items-center justify-between px-6 py-3 text-gray-700 hover:bg-pink-50 transition-colors duration-200"
+                  >
+                    <span className="font-medium capitalize">{category}</span>
+                    <motion.div
+                      animate={{ rotate: expandedCategory === category ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronRight size={18} />
+                    </motion.div>
+                  </motion.button>
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.1, x: 5 }}
+                    className="py-3 flex justify-center"
+                  >
+                    {category === 'services' && <Heart size={20} className="text-purple-500" />}
+                    {category === 'billing' && <CreditCard size={20} className="text-green-500" />}
+                    {category === 'settings' && <Settings size={20} className="text-blue-500" />}
+                    {category === 'support' && <HelpCircle size={20} className="text-orange-500" />}
+                  </motion.div>
+                )}
+
+                <AnimatePresence>
+                  {isOpen && expandedCategory === category && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      {items.map((item, idx) => (
+                        <Link
+                          key={idx}
+                          to={item.to}
+                          className={`flex items-center pl-10 pr-6 py-2 transition-colors duration-200 ${
+                            isActiveRoute(item.to) 
+                              ? 'bg-pink-100 text-pink-700' 
+                              : 'text-gray-600 hover:bg-pink-50 hover:text-pink-600'
+                          }`}
+                        >
+                          <motion.div
+                            whileHover={{ scale: 1.2, rotate: 10 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            {item.icon}
+                          </motion.div>
+                          <span className="ml-3">{item.text}</span>
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+
+          {/* User Quick Info (Only show when expanded) */}
+          <AnimatePresence>
+            {isOpen && authUser && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="p-4 border-t border-pink-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="rounded-full overflow-hidden"
+                  >
+                    <img 
+                      src={authUser.image || "/avatar.png"}
+                      alt="User"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-pink-300"
+                    />
+                  </motion.div>
+                  <div>
+                    <p className="font-medium text-gray-800">{authUser.name}</p>
+                    <p className="text-xs text-gray-500">{authUser.email}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      {/* Toggle button for mobile - only show when sidebar is closed */}
+      <AnimatePresence>
+        {!isOpen && window.innerWidth < 1024 && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            className='fixed bottom-6 left-6 p-3 bg-pink-600 text-white rounded-full z-20 shadow-lg'
+            onClick={toggleSidebar}
+          >
+            <Menu size={24} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
+  );
 };
+
 export default Sidebar;
-
-const NoMatchesFound = () => (
-	<div className='flex flex-col items-center justify-center h-full text-center'>
-		<Heart className='text-pink-400 mb-4' size={48} />
-		<h3 className='text-xl font-semibold text-gray-700 mb-2'>No Matches Yet</h3>
-		<p className='text-gray-500 max-w-xs'>
-			Don&apos;t worry! Your perfect match is just around the corner. Keep swiping!
-		</p>
-	</div>
-);
-
-const LoadingState = () => (
-	<div className='flex flex-col items-center justify-center h-full text-center'>
-		<Loader className='text-pink-500 mb-4 animate-spin' size={48} />
-		<h3 className='text-xl font-semibold text-gray-700 mb-2'>Loading Matches</h3>
-		<p className='text-gray-500 max-w-xs'>We&apos;re finding your perfect matches. This might take a moment...</p>
-	</div>
-);

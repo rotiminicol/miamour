@@ -12,46 +12,40 @@ const BillingProcess = () => {
 
   const plans = [
     {
-      id: 'basic',
-      name: 'Basic Match',
-      price: '$29.99',
+      id: 'blossom',
+      name: 'Blossom Package',
+      price: '₦30,000 / $20 / £18',
       period: 'monthly',
       features: [
-        'Up to 10 matches per month',
-        'Basic profile visibility',
-        'Message with matches',
-        'Access to basic events'
+        'Exclusive matchmaking within your country',
+        'Access to live sessions'
       ]
     },
     {
-      id: 'premium',
-      name: 'Premium Match',
-      price: '$49.99',
+      id: 'harmony',
+      name: 'Harmony Package',
+      price: '₦50,000 / $33 / €30',
       period: 'monthly',
       features: [
-        'Unlimited matches',
-        'Enhanced profile visibility',
-        'Priority messaging',
-        'Access to premium events',
-        'Advanced match filters',
-        'Profile highlighting'
+        'Exclusive matchmaking within and outside your country',
+        'Access to live sessions'
       ]
     },
     {
-      id: 'lifetime',
-      name: 'Lifetime Love',
-      price: '$299.99',
-      period: 'one-time',
+      id: 'forever',
+      name: 'My Forever Package',
+      price: '₦100,000 / $66 / €60 per month',
+      period: 'monthly',
       features: [
-        'All Premium features',
-        'Lifetime membership',
-        'Personal matchmaking assistant',
-        'Background verification badge',
-        'Exclusive elite events',
-        'Video date feature'
+        'Personal matches',
+        'Private sessions',
+        'Access to high-profile members',
+        'Matches within and outside Nigeria'
       ]
     }
   ];
+  
+  
 
   const handleContinue = () => {
     if (step < 3) {

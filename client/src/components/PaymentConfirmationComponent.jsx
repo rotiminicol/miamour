@@ -1,21 +1,48 @@
-import { CreditCard, Shield, Globe } from "lucide-react";
+import { CreditCard, Shield, Globe, Heart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types"; 
 
 const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
   const getOptionDetails = () => {
-    if (option === "private") {
-      return {
-        title: "Private Profile",
-        price: "$9.99/month",
-        icon: <Shield className="w-6 h-6" />,
-      };
-    } else {
-      return {
-        title: "Public Profile",
-        price: "$4.99/month",
-        icon: <Globe className="w-6 h-6" />,
-      };
+    switch(option) {
+      case "blossom":
+        return {
+          title: "Blossom Package",
+          price: "₦30,000 / $20 / £18",
+          icon: <Sparkles className="w-6 h-6" />,
+          features: [
+            "Exclusive matchmaking within your country",
+            "Access to live sessions"
+          ]
+        };
+      case "harmony":
+        return {
+          title: "Harmony Package",
+          price: "₦50,000 / $33 / €30",
+          icon: <Heart className="w-6 h-6" />,
+          features: [
+            "Exclusive matchmaking within and outside your country",
+            "Access to live sessions"
+          ]
+        };
+      case "forever":
+        return {
+          title: "My Forever Package",
+          price: "₦100,000 / $66 / €60",
+          icon: <Shield className="w-6 h-6" />,
+          features: [
+            "Personal matches & private sessions",
+            "Access to high profile members",
+            "Matches within and outside Nigeria"
+          ]
+        };
+      default:
+        return {
+          title: "Basic Package",
+          price: "Free",
+          icon: <Globe className="w-6 h-6" />,
+          features: ["Basic matchmaking features"]
+        };
     }
   };
 
@@ -39,7 +66,19 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
             <p className="text-pink-600 font-bold">{details.price}</p>
           </div>
         </div>
-        <p className="text-gray-600 text-sm">
+        
+        <div className="space-y-2 mb-4">
+          {details.features.map((feature, index) => (
+            <div key={index} className="flex items-start">
+              <svg className="w-4 h-4 text-pink-500 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <p className="text-gray-600 text-sm">{feature}</p>
+            </div>
+          ))}
+        </div>
+        
+        <p className="text-gray-600 text-sm pt-2 border-t border-gray-200">
           Your subscription will renew automatically. You can cancel anytime from your account settings.
         </p>
       </div>
@@ -75,9 +114,9 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
 };
 
 PaymentConfirmationComponent.propTypes = {
-  option: PropTypes.string.isRequired, // ✅ Should be a string
-  onConfirm: PropTypes.func.isRequired, // ✅ Should be a function
-  onCancel: PropTypes.func.isRequired, // ✅ Should be a function
+  option: PropTypes.oneOf(["blossom", "harmony", "forever"]).isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export default PaymentConfirmationComponent;

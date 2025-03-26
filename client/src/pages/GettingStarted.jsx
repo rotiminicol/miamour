@@ -131,7 +131,7 @@ const GettingStarted = () => {
           </AnimatePresence>
 
           {/* Enhanced progress bar with animated steps */}
-          <div className="w-full max-w-3xl mx-auto mb-8 relative">
+          <div className="w-full max-w-7xl mx-auto mb-8 relative ">
             <div className="h-3 bg-white bg-opacity-30 rounded-full overflow-hidden shadow-inner">
               <motion.div 
                 className={`h-full ${progressColors[currentView]} rounded-full`}
@@ -176,7 +176,7 @@ const GettingStarted = () => {
           </div>
 
           {/* Main content container with enhanced animations */}
-          <div className="relative flex-grow flex justify-center items-center">
+          <div className="relative flex-grow flex justify-center items-center ">
             <AnimatePresence custom={animationDirection} mode="wait">
               <motion.div
                 key={currentView}
@@ -185,7 +185,7 @@ const GettingStarted = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-3xl p-8 relative overflow-hidden border border-white border-opacity-30"
+                className="bg-white bg-opacity-90 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-7xl p-8 relative overflow-hidden border border-white border-opacity-30"
                 transition={{
                   type: "spring",
                   stiffness: 300,

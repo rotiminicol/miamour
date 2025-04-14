@@ -235,7 +235,7 @@ const LandingPage = () => {
         
         {/* Hero Content */}
         <div className="container mx-auto px-4 sm:px-6 pt-20 pb-12 sm:pt-32 sm:pb-20 relative z-20">
-        <div className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'}`}>
+          <div className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'}`}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent">
               Find Your Soulmates
             </h1>

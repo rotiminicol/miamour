@@ -237,7 +237,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 sm:px-6 pt-20 pb-12 sm:pt-32 sm:pb-20 relative z-20">
         <div className={`max-w-3xl mx-auto text-center transition-all duration-1000 ${isVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'}`}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent">
-              Find Your Soulmate
+              Find Your Life Partner With MiAmour
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 text-gray-600">
               Where true love meets wedding dreams. Start your forever journey today.
@@ -414,7 +414,7 @@ const LandingPage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    chevy view estate
+                    
                   </li>
                 </ul>
               </div>

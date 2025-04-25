@@ -319,7 +319,7 @@ const LandingPage = () => {
       {/* Features Section */}
       <div id="features-section" className="container mx-auto px-4 sm:px-6 py-12 sm:py-20">
         <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-16 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-          Why Choose <span className="text-pink-500">MiAmour</span>
+          Why Choose <span className="text-pink-500">Miamour</span>
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">

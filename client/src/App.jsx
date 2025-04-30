@@ -29,7 +29,15 @@ import PrivacySelectionComponent from "./components/PrivacySelectionComponent";
 import RelationshipTherapy from "./pages/RelationshipTheraphy";
 import PersonalizedMatchmaking from "./pages/PersonalizedMatchmaking";
 import Homepage from "./pages/HomePage";
-
+import Features from "./pages/FeaturesPage";
+import SuccessStories from "./pages/SuccessStoriesPage";
+import Pricing from "./pages/PricingPage";
+import AboutUs from "./pages/AboutUsPage";
+import Blog from "./pages/BlogPage";
+import DatingTips from "./pages/DatingTips";
+import SafetyGuide from "./pages/SafetyGuide";
+import FAQ from "./pages/FAQ";
+import HelpCenter from "./pages/HelpCenter";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -53,6 +61,17 @@ function App() {
         <Route path="/profile-submitted" element={<ProfileSuccessComponent />} />
         <Route path="/privacy-selection" element={<PrivacySelectionComponent />} />
         <Route path="/payment-confirmation" element={<PaymentConfirmationComponent />} />
+
+        {/* Public routes */}
+        <Route path="/features" element={<Features />} />
+        <Route path="/success-stories" element={<SuccessStories />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/dating-tips" element={<DatingTips />} />
+        <Route path="/safety-guide" element={<SafetyGuide />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/help-center" element={<HelpCenter />} />
 
         {/* Auth route */}
         <Route path="/auth" element={!authUser ? <AuthPage /> : <Navigate to="/" />} />
@@ -78,7 +97,6 @@ function App() {
             <Route path="/discounts" element={<DiscountsPage />} />
             <Route path="/relationship-therapy" element={<RelationshipTherapy />} />
             <Route path="/personalized-matchmaking" element={<PersonalizedMatchmaking />} />
-            
           </>
         )}
 
@@ -92,14 +110,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-

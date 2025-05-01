@@ -1,4 +1,4 @@
-import Logo from "./assets/miLogo.png"; // Your logo path
+import Logo from "../public/assets/miLogo2.png"; // Your logo path
 import { useEffect, useState } from "react";
 
 const WeddingLoader = () => {

@@ -60,7 +60,7 @@ const Hero = () => {
           >
             <div className="w-full h-full rounded-lg overflow-hidden">
               <img 
-                src="/assets/hero3.png" 
+                src="/assets/myyyy.png" 
                 alt="Happy interracial couple in love"
                 className="w-full h-full object-cover object-center"
                 loading="lazy"

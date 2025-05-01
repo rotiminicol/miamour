@@ -23,13 +23,13 @@ const Footer = () => {
               Where true love meets wedding dreams. Start your forever journey today.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
@@ -63,7 +63,7 @@ const Footer = () => {
                 <Link to="/blog" className="text-gray-300 hover:text-primary-400 transition-colors">Blog</Link>
               </li>
               <li>
-                <Link to="/dating-tips" className="text-gray-300 hover:text-primary-400 transition-colors">Dating Tips</Link>
+                <Link to="/dating-tips" className="text-gray-300 hover:text-primary-400 transition-colors">Relationship Tips</Link>
               </li>
               <li>
                 <Link to="/safety-guide" className="text-gray-300 hover:text-primary-400 transition-colors">Safety Guide</Link>

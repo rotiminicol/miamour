@@ -33,7 +33,7 @@ const DatingTips = () => {
           </Link>
           <nav>
             <Link to="/" className="text-white hover:text-pink-100 mx-4">Home</Link>
-            <Link to="/dating-tips" className="text-white hover:text-pink-100 mx-4">Dating Tips</Link>
+            <Link to="/dating-tips" className="text-white hover:text-pink-100 mx-4">Marriage tips</Link>
           </nav>
         </div>
       </header>
@@ -46,7 +46,7 @@ const DatingTips = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-pink-500 mb-4">Dating Tips</h1>
+          <h1 className="text-4xl font-bold text-pink-500 mb-4">Relationship Tips</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Discover expert advice to make your dating journey enjoyable and successful.
           </p>

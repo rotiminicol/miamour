@@ -38,6 +38,7 @@ import DatingTips from "./pages/DatingTips";
 import SafetyGuide from "./pages/SafetyGuide";
 import FAQ from "./pages/FAQ";
 import HelpCenter from "./pages/HelpCenter";
+import ForgotPassword from "./components/ForgotPassword";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -72,6 +73,7 @@ function App() {
         <Route path="/safety-guide" element={<SafetyGuide />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/help-center" element={<HelpCenter />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Auth route */}
         <Route path="/auth" element={!authUser ? <AuthPage /> : <Navigate to="/" />} />

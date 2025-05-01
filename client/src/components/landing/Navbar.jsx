@@ -90,7 +90,7 @@ const Navbar = () => {
         >
           {/* Replace Heart icon with your logo image */}
           <img 
-            src="/assets/miLogo.png" 
+            src="/assets/miLogo2.png" 
             alt="MiAmour Logo" 
             className="h-10 w-auto mr-2"
           />

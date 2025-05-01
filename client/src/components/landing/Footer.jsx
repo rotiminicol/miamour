@@ -1,4 +1,4 @@
-import { Heart, Instagram, Facebook, Twitter } from 'lucide-react';
+import {  Instagram, Facebook, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -10,7 +10,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="flex items-center mb-6">
-              <Heart className="h-6 w-6 text-primary-400 mr-2" fill="#FF85A2" stroke="#FF85A2" />
+                <img 
+                src="/assets/miLogo2.png" 
+                alt="MiAmour Logo" 
+                className="h-10 w-auto mr-2"
+              />
               <span className="font-serif text-xl font-bold">
                 Mi<span className="text-primary-400">amour</span>
               </span>
@@ -77,16 +81,16 @@ const Footer = () => {
             <h4 className="font-serif text-lg font-semibold mb-6">Contact</h4>
             <ul className="space-y-3">
               <li className="text-gray-300">
-                123 Love Street, Suite 101
+                
               </li>
               <li className="text-gray-300">
-                New York, NY 10001
+                
               </li>
               <li>
-                <a href="mailto:hello@miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">hello@miamour.me</a>
+                <a href="mailto:hello@miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">info@miamour.me</a>
               </li>
               <li>
-                <a href="tel:+1234567890" className="text-gray-300 hover:text-primary-400 transition-colors">+1 (234) 567-890</a>
+                <a href="tel:+1234567890" className="text-gray-300 hover:text-primary-400 transition-colors"></a>
               </li>
             </ul>
           </div>
@@ -94,6 +98,7 @@ const Footer = () => {
         
         <div className="pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
           <p>© {currentYear} MiAmour. All rights reserved. <Link to="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
+          <p className="mt-2">Developed by <a href="https://arigotechnologies.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">Arigo Technologies</a></p>
         </div>
       </div>
     </footer>

@@ -12,7 +12,7 @@ const Footer = () => {
             <div className="flex items-center mb-6">
                 <img 
                 src="/assets/miLogo2.png" 
-                alt="MiAmour Logo" 
+                alt="Miamour Logo" 
                 className="h-10 w-auto mr-2"
               />
               <span className="font-serif text-xl font-bold">
@@ -97,7 +97,7 @@ const Footer = () => {
         </div>
         
         <div className="pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
-          <p>© {currentYear} MiAmour. All rights reserved. <Link to="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
+          <p>© {currentYear} Miamour. All rights reserved. <Link to="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
           <p className="mt-2">Developed by <a href="https://arigotechnologies.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">Arigo Technologies</a></p>
         </div>
       </div>

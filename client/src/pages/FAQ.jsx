@@ -8,7 +8,7 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "How does MiAmour match users?",
+      question: "How does Miamour match users?",
       answer: "MiAmour uses a combination of user preferences, personality assessments, and advanced algorithms to suggest compatible matches.",
     },
     {
@@ -16,8 +16,8 @@ const FAQ = () => {
       answer: "Yes, we prioritize your privacy with industry-standard encryption and strict data protection policies.",
     },
     {
-      question: "Can I use MiAmour for free?",
-      answer: "MiAmour offers a free basic plan with limited features, and premium plans for enhanced functionality.",
+      question: "Can I use Miamour for free?",
+      answer: "Miamour offers a free basic plan with limited features, and premium plans for enhanced functionality.",
     },
     {
       question: "How do I report an issue?",
@@ -36,7 +36,7 @@ const FAQ = () => {
         <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
           <Link to="/" className="flex items-center">
             <Heart className="text-white w-8 h-8 mr-2" />
-            <span className="text-2xl font-bold">MiAmour</span>
+            <span className="text-2xl font-bold">Miamour</span>
           </Link>
           <nav>
             <Link to="/" className="text-white hover:text-pink-100 mx-4">Home</Link>
@@ -55,7 +55,7 @@ const FAQ = () => {
         >
           <h1 className="text-4xl font-bold text-pink-500 mb-4">Frequently Asked Questions</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Find answers to common questions about using MiAmour.
+            Find answers to common questions about using Miamour.
           </p>
         </motion.div>
 

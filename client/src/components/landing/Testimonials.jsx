@@ -10,8 +10,8 @@ const Testimonials = () => {
       name: 'Sarah & Michael',
       location: 'New York, NY',
       image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-      quote: "MiAmour changed our lives forever. We connected instantly and knew we were meant to be together.",
-      story: "After countless disappointing experiences on other dating apps, MiAmour's approach to matching based on values and life goals brought us together. We got married last summer and couldn't be happier!",
+      quote: "Miamour changed our lives forever. We connected instantly and knew we were meant to be together.",
+      story: "After countless disappointing experiences on other dating apps, Miamour's approach to matching based on values and life goals brought us together. We got married last summer and couldn't be happier!",
     },
     {
       id: 2,
@@ -19,14 +19,14 @@ const Testimonials = () => {
       location: 'San Francisco, CA',
       image: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
       quote: "We were matched within a week of joining and immediately felt a deep connection.",
-      story: "MiAmour understood our preferences and values better than any other platform we tried. Their inclusive approach helped us find exactly what we were looking for in a partner.",
+      story: "Miamour understood our preferences and values better than any other platform we tried. Their inclusive approach helped us find exactly what we were looking for in a partner.",
     },
     {
       id: 3,
       name: 'Aisha & Omar',
       location: 'Chicago, IL',
       image: 'https://images.unsplash.com/photo-1526666923127-b2970f64b422?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-      quote: "From our first conversation to our wedding day, MiAmour was there every step of the way.",
+      quote: "From our first conversation to our wedding day, Miamour was there every step of the way.",
       story: "The detailed profiles and compatibility metrics helped us find each other despite living in different cities. Their event planning resources made our wedding day absolutely perfect.",
     },
     {
@@ -34,7 +34,7 @@ const Testimonials = () => {
       name: 'Emily & Carlos',
       location: 'Miami, FL',
       image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-      quote: "We never believed in online dating until we tried MiAmour.",
+      quote: "We never believed in online dating until we tried Miamour.",
       story: "The compatibility matching was scarily accurate. We're now celebrating our 2nd anniversary and expecting our first child!",
     },
     {
@@ -42,8 +42,8 @@ const Testimonials = () => {
       name: 'Priya & Raj',
       location: 'Austin, TX',
       image: 'https://images.unsplash.com/photo-1526666923127-b2970f64b422?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-      quote: "Cultural compatibility was important to us, and MiAmour delivered.",
-      story: "We found each other through MiAmour's cultural matching system. Our families connected instantly and we had the most beautiful traditional wedding last year.",
+      quote: "Cultural compatibility was important to us, and Miamour delivered.",
+      story: "We found each other through Miamour's cultural matching system. Our families connected instantly and we had the most beautiful traditional wedding last year.",
     }
   ];
 

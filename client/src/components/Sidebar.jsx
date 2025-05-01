@@ -131,7 +131,7 @@ const Sidebar = () => {
                   transition={{ duration: 0.2 }}
                   className='text-xl font-bold text-pink-600'
                 >
-                  MiAmour
+                  Miamour
                 </motion.h2>
               </Link>
             ) : (

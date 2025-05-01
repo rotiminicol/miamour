@@ -59,7 +59,7 @@ const AuthPage = () => {
         <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex items-center gap-3">
           <motion.img
             src={logo}
-            alt="MiAmour Logo"
+            alt="Miamour Logo"
             className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full"
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
@@ -70,7 +70,7 @@ const AuthPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
           >
-            MiAmour
+            Miamour
           </motion.h1>
         </div>
 
@@ -124,7 +124,7 @@ const AuthPage = () => {
               Find Your Perfect Match
             </h2>
             <p className="text-base md:text-lg">
-              Join MiAmour and begin your journey to lasting love
+              Join Miamour and begin your journey to lasting love
             </p>
           </motion.div>
         </div>

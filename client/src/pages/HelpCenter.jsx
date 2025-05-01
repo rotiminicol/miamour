@@ -40,7 +40,7 @@ const HelpCenter = () => {
         <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
           <Link to="/" className="flex items-center">
             <Heart className="text-white w-8 h-8 mr-2" />
-            <span className="text-2xl font-bold">MiAmour</span>
+            <span className="text-2xl font-bold">Miamour</span>
           </Link>
           <nav>
             <Link to="/" className="text-white hover:text-pink-100 mx-4">Home</Link>
@@ -87,7 +87,7 @@ const HelpCenter = () => {
             <div className="md:col-span-1">
               <div className="flex items-center mb-4">
                 <Heart className="text-pink-500 w-8 h-8 mr-2" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent">MiAmour</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent">Miamour</span>
               </div>
               <p className="text-gray-600 mb-4">
                 Where true love meets wedding dreams. Start your forever journey today.
@@ -116,7 +116,7 @@ const HelpCenter = () => {
 
             {/* Additional footer sections can be added here if needed */}
           </div>
-          <p className="text-center text-sm text-gray-500">&copy; {new Date().getFullYear()} MiAmour. All rights reserved.</p>
+          <p className="text-center text-sm text-gray-500">&copy; {new Date().getFullYear()} Miqmour. All rights reserved.</p>
         </div>
       </footer>
     </div>

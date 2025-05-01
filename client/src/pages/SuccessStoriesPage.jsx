@@ -4,21 +4,21 @@ import { Heart, Quote } from "lucide-react";
 const stories = [
   {
     id: 1,
-    quote: "MiAmour helped me find my soulmate when I had almost given up hope. We're getting married next spring!",
+    quote: "Miamour helped me find my soulmate when I had almost given up hope. We're getting married next spring!",
     author: "Sarah & Michael",
     date: "Married 2023",
     image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   },
   {
     id: 2,
-    quote: "After just two months on MiAmour, I met the love of my life. The compatibility matching is incredible!",
+    quote: "After just two months on Miamour, I met the love of my life. The compatibility matching is incredible!",
     author: "James & Emily",
     date: "Engaged 2023",
     image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
   },
   {
     id: 3,
-    quote: "We connected over our shared love of hiking and travel. Thanks to MiAmour, we're now exploring the world together.",
+    quote: "We connected over our shared love of hiking and travel. Thanks to Miamour, we're now exploring the world together.",
     author: "David & Jessica",
     date: "Together since 2022",
     image: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
@@ -49,7 +49,7 @@ export default function SuccessStoriesPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
-            Real couples who found love through MiAmour. Your success story could be next!
+            Real couples who found love through Miamour. Your success story could be next!
           </motion.p>
         </div>
 
@@ -93,7 +93,7 @@ export default function SuccessStoriesPage() {
         >
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Share Your Story</h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Found love through MiAmour? Wed love to hear your story and possibly feature it here!
+            Found love through Miamour? Wed love to hear your story and possibly feature it here!
           </p>
           <button className="bg-gradient-to-r from-pink-500 to-pink-400 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all hover:scale-105">
             Share Your Success Story

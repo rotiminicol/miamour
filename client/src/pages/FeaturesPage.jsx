@@ -58,7 +58,7 @@ export default function FeaturesPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
-            Discover how MiAmour makes finding your perfect match easier, safer, and more enjoyable than ever before.
+            Discover how Miamour makes finding your perfect match easier, safer, and more enjoyable than ever before.
           </motion.p>
         </div>
 

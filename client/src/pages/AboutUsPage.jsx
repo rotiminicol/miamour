@@ -54,7 +54,7 @@ export default function AboutUsPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
-            MiAmour was born from a simple idea: everyone deserves to find meaningful connections in a safe, authentic space.
+            Miamour was born from a simple idea: everyone deserves to find meaningful connections in a safe, authentic space.
           </motion.p>
         </div>
 

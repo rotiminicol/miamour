@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 const CeremonyPlanningPage = () => {
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [screenSize, setScreenSize] = useState('desktop');
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,7 +25,7 @@ const CeremonyPlanningPage = () => {
       location: "New York, NY",
       capacity: 300,
       price: 5000,
-      image: "https://via.placeholder.com/400x300",
+      image: "/assets/",
       description: "A luxurious ballroom with stunning chandeliers and a spacious dance floor.",
       features: ["Indoor", "Outdoor Garden", "Catering Included", "Parking Available"]
     },
@@ -34,7 +35,7 @@ const CeremonyPlanningPage = () => {
       location: "Miami, FL",
       capacity: 200,
       price: 7000,
-      image: "https://via.placeholder.com/400x300",
+      image: "/assets/",
       description: "A beautiful beachfront venue with ocean views and a tropical vibe.",
       features: ["Beach Access", "Outdoor Ceremony", "Catering Options", "Accommodations"]
     },
@@ -44,7 +45,7 @@ const CeremonyPlanningPage = () => {
       location: "Austin, TX",
       capacity: 150,
       price: 4000,
-      image: "https://via.placeholder.com/400x300",
+      image: "/assets/",
       description: "A charming barn venue with a rustic feel, perfect for a country-style wedding.",
       features: ["Indoor/Outdoor", "Catering Options", "Parking Available", "Photography Spots"]
     },
@@ -52,6 +53,14 @@ const CeremonyPlanningPage = () => {
 
   const closeModal = () => {
     setSelectedVenue(null);
+  };
+
+  const openContactModal = () => {
+    setShowContactModal(true);
+  };
+
+  const closeContactModal = () => {
+    setShowContactModal(false);
   };
 
   return (
@@ -152,80 +161,12 @@ const CeremonyPlanningPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-indigo-50 transition duration-300"
+            onClick={openContactModal}
           >
             Contact Us
           </motion.button>
         </motion.div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-4 text-white">Relationship Renewal</h3>
-              <p className="mb-4">Professional counseling services to help couples build stronger, healthier relationships.</p>
-              <div className="flex space-x-4">
-                {['facebook', 'twitter', 'instagram'].map(social => (
-                  <a key={social} href="#" className="text-gray-400 hover:text-white transition duration-300">
-                    <span className="sr-only">{social}</span>
-                    <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
-              <ul className="space-y-2">
-                {['Communication Coaching', 'Conflict Resolution', 'Intimacy Building', 'Premarital Counseling', 'Relationship Rebuilding'].map(service => (
-                  <li key={service}>
-                    <a href="#" className="hover:text-white transition duration-300">{service}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Resources</h3>
-              <ul className="space-y-2">
-                {['Relationship Articles', 'Communication Tools', 'Self-Assessment Quizzes', 'Recommended Books', 'FAQ'].map(resource => (
-                  <li key={resource}>
-                    <a href="#" className="hover:text-white transition duration-300">{resource}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Contact</h3>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  <span>123 Healing Street, Suite 456<br />New York, NY 10001</span>
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                  </svg>
-                  <span>(555) 123-4567</span>
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-6 w-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                  </svg>
-                  <span>help@relationshiprenewal.com</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
-            <p>© 2025 Relationship Renewal. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
 
       {/* Venue Detail Modal */}
       <AnimatePresence>
@@ -315,6 +256,96 @@ const CeremonyPlanningPage = () => {
         )}
       </AnimatePresence>
       
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {showContactModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={closeContactModal}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Contact Us</h2>
+                <button 
+                  onClick={closeContactModal} 
+                  className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none p-2 rounded-full hover:bg-gray-100"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <svg className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
+                    <p className="text-gray-600">123 Healing Street, Suite 456<br />New York, NY 10001</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <svg className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
+                    <p className="text-gray-600">(555) 123-4567</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <svg className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
+                    <p className="text-gray-600">help@relationshiprenewal.com</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <svg className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Office Hours</h3>
+                    <p className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM<br />Saturday: 10:00 AM - 4:00 PM<br />Sunday: Closed</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="font-semibold text-gray-800 mb-3">Connect With Us</h3>
+                <div className="flex space-x-4">
+                  {['facebook', 'twitter', 'instagram'].map(social => (
+                    <a key={social} href="#" className="text-gray-400 hover:text-indigo-600 transition duration-300">
+                      <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       {/* Mobile Floating Action Button */}
       {screenSize === 'mobile' && (
         <motion.div
@@ -325,6 +356,7 @@ const CeremonyPlanningPage = () => {
           <button 
             className="bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-colors"
             aria-label="Book Consultation"
+            onClick={openContactModal}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>

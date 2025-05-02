@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Users, Globe, Shield, Sparkles } from "lucide-react";
+import { Heart, Users, Globe, Shield, Sparkles, Star, Home, MessageCircle } from "lucide-react";
 
 const stats = [
   { id: 1, name: 'Successful Matches', value: '10,000+', icon: <Heart className="w-8 h-8 text-pink-500" /> },
@@ -8,24 +8,42 @@ const stats = [
   { id: 4, name: 'Verified Profiles', value: '98%', icon: <Shield className="w-8 h-8 text-pink-500" /> },
 ];
 
+const values = [
+  { 
+    title: "Commitment-Focused",
+    icon: <Star className="w-10 h-10 text-pink-500" />,
+    description: "We exclusively serve individuals who are serious about finding marriage and lasting partnerships."
+  },
+  { 
+    title: "Shared Values",
+    icon: <Home className="w-10 h-10 text-pink-500" />,
+    description: "We believe lasting relationships start with mutual respect and aligned life goals."
+  },
+  { 
+    title: "Meaningful Connections",
+    icon: <MessageCircle className="w-10 h-10 text-pink-500" />,
+    description: "Our platform encourages sincere conversations that develop into lifelong bonds."
+  },
+];
+
 const team = [
   {
     name: "Sarah Johnson",
     role: "Founder & CEO",
     bio: "Passionate about connecting hearts after her own journey to find love online.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+    image: "/api/placeholder/500/500"
   },
   {
     name: "Michael Chen",
     role: "CTO",
     bio: "Tech visionary who built our matching algorithm with psychology principles.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+    image: "/api/placeholder/500/500"
   },
   {
     name: "Emily Rodriguez",
     role: "Head of Matchmaking",
     bio: "Relationship expert with 10 years of experience in couples counseling.",
-    image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+    image: "/api/placeholder/500/500"
   }
 ];
 
@@ -38,7 +56,7 @@ export default function AboutUsPage() {
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto"
       >
-        {/* Hero Section */}
+        {/* Hero Section - Updated with new tagline */}
         <div className="text-center mb-16">
           <motion.h2 
             initial={{ opacity: 0 }}
@@ -46,7 +64,7 @@ export default function AboutUsPage() {
             transition={{ delay: 0.2 }}
             className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent mb-4"
           >
-            Our Story of Love and Connection
+            Where True Commitment Begins
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -54,15 +72,60 @@ export default function AboutUsPage() {
             transition={{ delay: 0.3 }}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
-            Miamour was born from a simple idea: everyone deserves to find meaningful connections in a safe, authentic space.
+            miamour.me is a purpose-driven platform designed to connect adults who are ready to find love, commitment, and marriage.
           </motion.p>
         </div>
+
+        {/* About Us Statement - New Section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-xl shadow-lg p-8 mb-16 border border-pink-100"
+        >
+          <div className="flex flex-col items-center">
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">About Us</h3>
+              <p className="text-gray-600 mb-4">
+                We understand that building a lasting relationship starts with shared values, mutual respect, and a true desire for a committed future. That why miamour.me focuses exclusively on helping individuals who are serious about marriage find their perfect match.
+              </p>
+              <p className="text-gray-600">
+                Our platform offers a safe, welcoming, and sincere environment where meaningful conversations turn into lifelong connections. We empower our members with tools, guidance, and community support to help them navigate their journey toward a fulfilling and lasting partnership.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Our Values - New Section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mb-16"
+        >
+          <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Values</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-xl shadow-md p-6 text-center border border-pink-100 flex flex-col items-center"
+              >
+                <div className="mb-4">
+                  {value.icon}
+                </div>
+                <h4 className="text-xl font-bold text-gray-800 mb-3">{value.title}</h4>
+                <p className="text-gray-600">{value.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Mission Section */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.6 }}
           className="bg-white rounded-xl shadow-lg p-8 mb-16 border border-pink-100"
         >
           <div className="flex flex-col md:flex-row items-center">
@@ -87,7 +150,7 @@ export default function AboutUsPage() {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.7 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
         >
           {stats.map((stat) => (

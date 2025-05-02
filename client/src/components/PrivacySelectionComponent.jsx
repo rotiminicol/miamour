@@ -11,7 +11,7 @@ const PrivacySelectionComponent = ({ onSelect, selectedOption }) => {
         "Exclusive matchmaking within your country",
         "Access to live sessions"
       ],
-      price: "₦30,000 / $20 / £18 per month",
+      price: "₦75,000 / $50 / £45 per month",
       icon: <Heart className="w-6 h-6" />,
     },
     {
@@ -21,7 +21,7 @@ const PrivacySelectionComponent = ({ onSelect, selectedOption }) => {
         "Exclusive matchmaking within and outside your country",
         "Access to live sessions"
       ],
-      price: "₦50,000 / $33 / €30 per month",
+      price: "₦125,000 / $83 / €75 per month",
       icon: <Sparkles className="w-6 h-6" />,
     },
     {
@@ -32,10 +32,11 @@ const PrivacySelectionComponent = ({ onSelect, selectedOption }) => {
         "Access to high profile members",
         "Matches within and outside Nigeria"
       ],
-      price: "₦100,000 / $66 / €60 per month",
+      price: "₦225,000 / $150 / €135 per month",
       icon: <Crown className="w-6 h-6" />,
     },
   ];
+  
 
   return (
     <div className="w-full max-w-4xl mx-auto">

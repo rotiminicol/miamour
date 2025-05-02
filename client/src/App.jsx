@@ -18,6 +18,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import SchedulePage from "./pages/SchedulePage";
 import CeremonyPlanningPage from "./pages/CeremonyPlanningPage";
 import MarriagePlanningPage from "./pages/MarriagePlanning";
+import Homepage from "./pages/Homepage";
 
 import Resources from "./pages/Resources";
 import FAQs from "./pages/FAQs";
@@ -30,7 +31,6 @@ import PaymentConfirmationComponent from "./components/PaymentConfirmationCompon
 import PrivacySelectionComponent from "./components/PrivacySelectionComponent";
 import RelationshipTherapy from "./pages/RelationshipTheraphy";
 import PersonalizedMatchmaking from "./pages/PersonalizedMatchmaking";
-import Homepage from "./pages/Homepage";
 import Features from "./pages/FeaturesPage";
 import SuccessStories from "./pages/SuccessStoriesPage";
 import Pricing from "./pages/PricingPage";

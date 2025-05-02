@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Users, Award, Sparkles } from 'lucide-react';
+import { Heart, MessageCircle, Users, Award, Sparkles, X } from 'lucide-react';
 import { Header } from "../components/Header";
 
 const RelationshipTherapy = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   // Animation trigger for hearts
   useEffect(() => {
@@ -14,6 +15,12 @@ const RelationshipTherapy = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Function to handle all button clicks
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    setShowPopup(true);
+  };
 
   // Testimonials data
   const testimonials = [
@@ -80,6 +87,39 @@ const RelationshipTherapy = () => {
         ))}
       </div>
 
+      {/* Popup Modal */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl relative">
+            <button 
+              onClick={() => setShowPopup(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="text-center py-4">
+              <div className="mb-6 text-pink-500">
+                <Heart className="h-16 w-16 mx-auto" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                Experience Only Available in App
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Download our app to access all relationship therapy features and services.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button className="bg-black text-white px-5 py-2 rounded-lg flex items-center">
+                  <span className="mr-2">App Store</span>
+                </button>
+                <button className="bg-black text-white px-5 py-2 rounded-lg flex items-center">
+                  <span className="mr-2">Google Play</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16 relative">
@@ -93,10 +133,16 @@ const RelationshipTherapy = () => {
             Strengthen your bond, reignite your passion, and build a lasting partnership with our expert guidance
           </p>
           <div className="mt-8 flex justify-center space-x-4">
-            <button className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none">
+            <button 
+              onClick={handleButtonClick}
+              className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none"
+            >
               Book a Free Consultation
             </button>
-            <button className="bg-white hover:bg-gray-100 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-200 transform transition hover:scale-105 focus:outline-none">
+            <button 
+              onClick={handleButtonClick}
+              className="bg-white hover:bg-gray-100 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-200 transform transition hover:scale-105 focus:outline-none"
+            >
               View Therapy Plans
             </button>
           </div>
@@ -185,7 +231,10 @@ const RelationshipTherapy = () => {
                       <p className="text-gray-700">Begin your sessions with your matched therapist</p>
                     </li>
                   </ol>
-                  <button className="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded-lg transition transform hover:scale-105 focus:outline-none relative z-10">
+                  <button 
+                    onClick={handleButtonClick}
+                    className="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded-lg transition transform hover:scale-105 focus:outline-none relative z-10"
+                  >
                     Start Assessment
                   </button>
                 </div>
@@ -227,7 +276,10 @@ const RelationshipTherapy = () => {
                     <p className="text-sm mb-3">4 sessions</p>
                     <p className="font-bold text-2xl mb-1">$349</p>
                     <p className="text-xs mb-4">Save 15%</p>
-                    <button className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition">
+                    <button 
+                      onClick={handleButtonClick}
+                      className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition"
+                    >
                       Learn More
                     </button>
                   </div>
@@ -239,7 +291,10 @@ const RelationshipTherapy = () => {
                     <p className="text-sm mb-3">8 sessions</p>
                     <p className="font-bold text-2xl mb-1">$649</p>
                     <p className="text-xs mb-4">Save 25%</p>
-                    <button className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition">
+                    <button 
+                      onClick={handleButtonClick}
+                      className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition"
+                    >
                       Select Plan
                     </button>
                   </div>
@@ -248,7 +303,10 @@ const RelationshipTherapy = () => {
                     <p className="text-sm mb-3">12 sessions</p>
                     <p className="font-bold text-2xl mb-1">$899</p>
                     <p className="text-xs mb-4">Save 35%</p>
-                    <button className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition">
+                    <button 
+                      onClick={handleButtonClick}
+                      className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition"
+                    >
                       Learn More
                     </button>
                   </div>
@@ -287,7 +345,10 @@ const RelationshipTherapy = () => {
                 <p className="text-gray-600 max-w-3xl mx-auto mb-8">
                   Join hundreds of couples who have rekindled their love and built stronger connections through our therapy programs.
                 </p>
-                <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none">
+                <button 
+                  onClick={handleButtonClick}
+                  className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none"
+                >
                   Book Your Free Consultation
                 </button>
               </div>
@@ -307,36 +368,39 @@ const RelationshipTherapy = () => {
                   <div className="bg-pink-50 p-6 rounded-lg">
                     <h3 className="font-semibold text-gray-800 mb-4">1. How often do you and your partner have meaningful conversations?</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Daily</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Several times a week</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">About once a week</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Rarely</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Daily</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Several times a week</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">About once a week</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Rarely</button>
                     </div>
                   </div>
                   
                   <div className="bg-pink-50 p-6 rounded-lg">
                     <h3 className="font-semibold text-gray-800 mb-4">2. How do you typically resolve disagreements?</h3>
                     <div className="grid grid-cols-1 gap-3">
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We discuss calmly until we reach a compromise</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">One of us usually gives in to keep the peace</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We argue and then move on without resolution</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We avoid disagreements altogether</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We discuss calmly until we reach a compromise</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">One of us usually gives in to keep the peace</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We argue and then move on without resolution</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">We avoid disagreements altogether</button>
                     </div>
                   </div>
                   
                   <div className="bg-pink-50 p-6 rounded-lg">
                     <h3 className="font-semibold text-gray-800 mb-4">3. When was the last time you tried something new together?</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last month</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last 3 months</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last year</button>
-                      <button className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Cant remember</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last month</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last 3 months</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Within the last year</button>
+                      <button onClick={handleButtonClick} className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition">Cant remember</button>
                     </div>
                   </div>
                 </div>
                 
                 <div className="mt-10 flex justify-center">
-                  <button className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none">
+                  <button 
+                    onClick={handleButtonClick}
+                    className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 focus:outline-none"
+                  >
                     Complete Quiz & Get Results
                   </button>
                 </div>
@@ -352,23 +416,25 @@ const RelationshipTherapy = () => {
             Our relationship experts are ready to help you build the connection you deserve.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="group relative bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-full shadow-lg overflow-hidden">
+            <button 
+              onClick={handleButtonClick}
+              className="group relative bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-full shadow-lg overflow-hidden"
+            >
               <span className="relative z-10">Schedule a Session</span>
               <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-20"></span>
             </button>
-            <button className="group relative bg-transparent hover:bg-pink-50 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-300 overflow-hidden">
+            <button 
+              onClick={handleButtonClick}
+              className="group relative bg-transparent hover:bg-pink-50 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-300 overflow-hidden"
+            >
               <span className="relative z-10">Learn More About Our Approach</span>
               <span className="absolute inset-0 bg-pink-100 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-50"></span>
             </button>
           </div>
         </div>
       </div>
-
-   
     </div>
-
     </>
-    
   );
 };
 

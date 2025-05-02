@@ -60,7 +60,8 @@ const Sidebar = () => {
       { icon: <Heart size={18} className="text-red-500" />, text: 'Counseling', to: '/marriage-counseling' },
       { icon: <MessageCircle size={18} className="text-blue-400" />, text: 'MiAmour App', to: '/dating-app' },
       { icon: <Calendar size={18} className="text-teal-500" />, text: 'Schedule', to: '/schedule' },
-      { icon: <Home size={18} className="text-amber-500" />, text: 'Marriage Planning', to: '/ceremony-planning' },
+      { icon: <Home size={18} className="text-amber-500" />, text: 'Ceremony Planning', to: '/ceremony-planning' },
+      { icon: <Home size={18} className="text-amber-500" />, text: 'Marriage Planning', to: '/marriage-planning' },
       { icon: <Users size={18} className="text-pink-500" />, text: 'Relationship Therapy', to: '/relationship-therapy' },
       { icon: <Sparkles size={18} className="text-purple-500" />, text: 'Personalized Matchmaking', to: '/personalized-matchmaking' }
     ],

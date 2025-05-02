@@ -17,6 +17,8 @@ import NotificationPage from "./pages/NotificationPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import SchedulePage from "./pages/SchedulePage";
 import CeremonyPlanningPage from "./pages/CeremonyPlanningPage";
+import MarriagePlanningPage from "./pages/MarriagePlanning";
+
 import Resources from "./pages/Resources";
 import FAQs from "./pages/FAQs";
 import ContactUs from "./pages/ContactUs";
@@ -91,6 +93,7 @@ function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/ceremony-planning" element={<CeremonyPlanningPage />} />
+            <Route path="/marriage-planning" element={<MarriagePlanningPage />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/faqs" element={<FAQs />} />
             <Route path="/resources" element={<Resources />} />

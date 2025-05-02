@@ -9,21 +9,22 @@ import { Toaster } from "react-hot-toast";
 import Loader from "./loader";
 import ProfilePage from "./pages/ProfilePage";
 import MarriageCounselingPage from "./pages/MarriageCounseling";
-import BillingProcessPage from "./pages/BillingProcess ";
+import BillingProcessPage from "./pages/BillingProcess";
 import DatingAppPage from "./pages/DatingApp";
-import HelpSupportPage from "../src/pages/HelpSupport ";
+import HelpSupportPage from "../src/pages/HelpSupport";
 import PreferencePage from "./pages/PreferencePage";
 import NotificationPage from "./pages/NotificationPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import SchedulePage from "./pages/SchedulePage";
 import CeremonyPlanningPage from "./pages/CeremonyPlanningPage";
 import MarriagePlanningPage from "./pages/MarriagePlanning";
-import Homepage from "./pages/Homepage";
+import Dashboard from "./pages/Dashboard"
+
 
 import Resources from "./pages/Resources";
 import FAQs from "./pages/FAQs";
 import ContactUs from "./pages/ContactUs";
-import InvoicesPage from "./pages/InvoicesPage ";
+import InvoicesPage from "./pages/InvoicesPage";
 import SubscriptionsPage from "./pages/SubscriptionsPage";
 import DiscountsPage from "./pages/DiscountsPage";
 import ProfileSuccessComponent from "./components/ProfileSuccessComponent";
@@ -58,7 +59,7 @@ function App() {
       <AnimatePresence mode="wait">
       <Routes>
         {/* Default route */}
-        <Route path="/" element={authUser ? <Homepage /> : <LandingPage />} />
+        <Route path="/" element={authUser ? <Dashboard /> : <LandingPage />} />
 
         <Route path="/getting-started" element={<GettingStarted />} />
         <Route path="/profile-submitted" element={<ProfileSuccessComponent />} />

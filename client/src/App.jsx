@@ -30,7 +30,7 @@ import PaymentConfirmationComponent from "./components/PaymentConfirmationCompon
 import PrivacySelectionComponent from "./components/PrivacySelectionComponent";
 import RelationshipTherapy from "./pages/RelationshipTheraphy";
 import PersonalizedMatchmaking from "./pages/PersonalizedMatchmaking";
-import Homepage from "./pages/HomePage";
+import Homepage from "./pages/Homepage";
 import Features from "./pages/FeaturesPage";
 import SuccessStories from "./pages/SuccessStoriesPage";
 import Pricing from "./pages/PricingPage";

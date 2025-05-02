@@ -25,7 +25,7 @@ const CeremonyPlanningPage = () => {
       location: "New York, NY",
       capacity: 300,
       price: 5000,
-      image: "/assets/",
+      image: "/assets/ceremony.png",
       description: "A luxurious ballroom with stunning chandeliers and a spacious dance floor.",
       features: ["Indoor", "Outdoor Garden", "Catering Included", "Parking Available"]
     },
@@ -35,7 +35,7 @@ const CeremonyPlanningPage = () => {
       location: "Miami, FL",
       capacity: 200,
       price: 7000,
-      image: "/assets/",
+      image: "/assets/ceremony1.png",
       description: "A beautiful beachfront venue with ocean views and a tropical vibe.",
       features: ["Beach Access", "Outdoor Ceremony", "Catering Options", "Accommodations"]
     },
@@ -45,7 +45,7 @@ const CeremonyPlanningPage = () => {
       location: "Austin, TX",
       capacity: 150,
       price: 4000,
-      image: "/assets/",
+      image: "/assets/ceremony1.png",
       description: "A charming barn venue with a rustic feel, perfect for a country-style wedding.",
       features: ["Indoor/Outdoor", "Catering Options", "Parking Available", "Photography Spots"]
     },

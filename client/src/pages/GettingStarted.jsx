@@ -40,12 +40,14 @@ const GettingStarted = () => {
     setCurrentView("payment");
   };
 
-  const handlePaymentConfirm = () => {
-    setAnimationDirection("forward");
-    setCurrentView("success");
-    setTimeout(() => navigate("/dashboard"), 300000);
-  };
-
+// In GettingStarted.jsx
+const handlePaymentConfirm = () => {
+  setAnimationDirection("forward");
+  setCurrentView("success");
+  // Save form completion status to local storage
+  localStorage.setItem("formCompleted", "true");
+  setTimeout(() => navigate("/dashboard"), 300000);
+};
   const handlePaymentCancel = () => {
     setAnimationDirection("backward");
     setCurrentView("privacy");
@@ -56,6 +58,7 @@ const GettingStarted = () => {
     if (currentView === "privacy") setCurrentView("form");
     else if (currentView === "payment") setCurrentView("privacy");
   };
+  
 
   // Enhanced animation variants
   const pageVariants = {

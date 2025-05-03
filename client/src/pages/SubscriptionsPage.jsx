@@ -11,7 +11,7 @@ const SubscriptionsPage = () => {
     {
       id: 'blossom',
       name: 'Blossom Package',
-      price: '₦30,000 / $20 / £18',
+      price: '₦75,000 / $20 / £18',
       period: 'monthly',
       features: [
         'Exclusive matchmaking within your country',
@@ -21,7 +21,7 @@ const SubscriptionsPage = () => {
     {
       id: 'harmony',
       name: 'Harmony Package',
-      price: '₦50,000 / $33 / €30',
+      price: '₦125,000 / $33 / €30',
       period: 'monthly',
       features: [
         'Exclusive matchmaking within and outside your country',
@@ -31,7 +31,19 @@ const SubscriptionsPage = () => {
     {
       id: 'forever',
       name: 'My Forever Package',
-      price: '₦100,000 / $66 / €60 per month',
+      price: '₦225,000 / $66 / €60 per month',
+      period: 'monthly',
+      features: [
+        'Personal matches',
+        'Private sessions',
+        'Access to high-profile members',
+        'Matches within and outside Nigeria'
+      ]
+    },
+    {
+      id: 'Personalized Matching',
+      name: 'My Forever Package',
+      price: '₦525,000 / $66 / €60 per month',
       period: 'monthly',
       features: [
         'Personal matches',

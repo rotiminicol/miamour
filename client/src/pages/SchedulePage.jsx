@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../components/Header";
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 
 const SchedulePage = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [screenSize, setScreenSize] = useState('desktop');
   const [isContactOpen, setIsContactOpen] = useState(false);
+
+  const { scrollY } = useScroll();
+  const heroParallax = useTransform(scrollY, [0, 300], [0, 100]);
+  const timeSlotsParallax = useTransform(scrollY, [300, 600], [0, 50]);
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth < 768 ? 'mobile' : 'desktop');
@@ -23,30 +27,40 @@ const SchedulePage = () => {
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
-    // Placeholder for form submission logic
     setIsContactOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
-      <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-pink-500 to-pink-700 text-white overflow-hidden">
         <motion.div 
           className="absolute inset-0 opacity-20" 
+          style={{ y: heroParallax }}
           animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }} 
           transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }} 
-          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%23ffffff\' fill-opacity=\'0.3\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }} 
+          css={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.3' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+            backgroundAttachment: 'fixed',
+          }}
         />
         <div className="container mx-auto px-4 py-16 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">Schedule Your Session</h1>
-            <p className="text-xl mb-8 text-indigo-100">Choose a time to start your journey.</p>
+            <p className="text-xl mb-8 text-pink-100">Choose a time to start your journey.</p>
           </motion.div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-12">
+        <motion.div
+          style={{ y: timeSlotsParallax }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mb-12"
+        >
           <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">Available Time Slots</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {timeSlots.map((slot, index) => (
@@ -73,12 +87,18 @@ const SchedulePage = () => {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-pink-500 to-pink-700 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12"
+        >
           <h2 className="text-3xl font-bold mb-4 text-white">Need Assistance?</h2>
           <motion.button 
             whileHover={{ scale: 1.05 }} 
             onClick={() => setIsContactOpen(true)}
-            className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-indigo-50"
+            className="bg-white text-pink-600 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-pink-50"
           >
             Contact Us
           </motion.button>
@@ -108,13 +128,13 @@ const SchedulePage = () => {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              <div className="bg-indigo-50 p-4 rounded-xl mb-6">
+              <div className="bg-pink-50 p-4 rounded-xl mb-6">
                 <div className="flex flex-col md:flex-row justify-between">
                   <div className="mb-3 md:mb-0">
                     <div className="flex items-center text-yellow-400">{Array(5).fill('★').join('')} <span className="text-gray-600 ml-2">(127 reviews)</span></div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-indigo-700">$150</div>
+                    <div className="text-2xl font-bold text-pink-600">$150</div>
                     <div className="text-gray-600">per session</div>
                   </div>
                 </div>
@@ -124,8 +144,8 @@ const SchedulePage = () => {
                 <p className="text-gray-600">{selectedSlot.counselor}</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">Confirm Booking</button>
-                <button className="flex-1 bg-white border border-indigo-600 text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-50">Reschedule</button>
+                <button className="flex-1 bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700">Confirm Booking</button>
+                <button className="flex-1 bg-white border border-pink-600 text-pink-600 py-3 rounded-lg font-semibold hover:bg-pink-50">Reschedule</button>
               </div>
             </motion.div>
           </motion.div>
@@ -150,7 +170,7 @@ const SchedulePage = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Contact Us</h2>
+                <h2 className="text-2xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-pink-700">Contact Us</h2>
                 <button 
                   onClick={() => setIsContactOpen(false)} 
                   className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100/50"
@@ -164,10 +184,10 @@ const SchedulePage = () => {
                 <div className="mb-4">
                   <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">Name</label>
                   <motion.input
-                    whileFocus={{ borderColor: '#6366F1' }}
+                    whileFocus={{ borderColor: '#EC4899' }}
                     type="text"
                     id="name"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/50"
                     placeholder="Your name"
                     required
                   />
@@ -175,10 +195,10 @@ const SchedulePage = () => {
                 <div className="mb-4">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">Email</label>
                   <motion.input
-                    whileFocus={{ borderColor: '#6366F1' }}
+                    whileFocus={{ borderColor: '#EC4899' }}
                     type="email"
                     id="email"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/50"
                     placeholder="Your email"
                     required
                   />
@@ -186,9 +206,9 @@ const SchedulePage = () => {
                 <div className="mb-6">
                   <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-2">Message</label>
                   <motion.textarea
-                    whileFocus={{ borderColor: '#6366F1' }}
+                    whileFocus={{ borderColor: '#EC4899' }}
                     id="message"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50 h-32 resize-none"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/50 h-32 resize-none"
                     placeholder="How can we assist you?"
                     required
                   />
@@ -207,7 +227,7 @@ const SchedulePage = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:bg-indigo-700"
+                    className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-700 text-white rounded-lg font-semibold hover:bg-pink-700"
                   >
                     Send Message
                   </motion.button>
@@ -221,7 +241,7 @@ const SchedulePage = () => {
       {screenSize === 'mobile' && (
         <motion.div initial={{ y: 100 }} animate={{ y: 0 }} className="fixed bottom-6 right-6 z-40">
           <button 
-            className="bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700" 
+            className="bg-pink-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-pink-700" 
             aria-label="Book Consultation"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

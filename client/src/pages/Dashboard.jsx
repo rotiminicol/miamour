@@ -1,407 +1,434 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from '../components/Header';
-import Sidebar from "../components/Sidebar";
-import { useNavigate } from 'react-router-dom';
+  import { useState, useEffect } from 'react';
+  import { motion, AnimatePresence } from 'framer-motion';
+  import { Header } from '../components/Header';
+  import Sidebar from "../components/Sidebar";
+  import { useNavigate } from 'react-router-dom';
+  import { Heart, MessageCircle, Calendar, CreditCard, FileText, User, Settings, HelpCircle, Users,  Sparkles } from 'lucide-react';
 
-const Homepage = () => {
-  const navigate = useNavigate();
-  const [currentHeroImage, setCurrentHeroImage] = useState(0);
-  const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const [formCompleted, setFormCompleted] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+  const Homepage = () => {
+    const navigate = useNavigate();
+    const [currentAdIndex, setCurrentAdIndex] = useState(0);
+    const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+    const [formCompleted, setFormCompleted] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
 
-  // Check form completion status from local storage on mount
-  useEffect(() => {
-    const completed = localStorage.getItem("formCompleted") === "true";
-    setFormCompleted(completed);
-  }, []);
+    // Categories data
+    const categories = {
+      services: [
+        { icon: <Heart size={18} className="text-pink-500" />, text: 'Marriage Counseling', to: '/marriage-counseling' },
+        { icon: <Users size={18} className="text-pink-400" />, text: 'Relationship Therapy', to: '/relationship-therapy' },
+        { icon: <Sparkles size={18} className="text-pink-300" />, text: 'Ceremony Planning', to: '/ceremony-planning' },
+        { icon: <MessageCircle size={18} className="text-pink-400" />, text: 'MiAmour App', to: '/dating-app' },
+        { icon: <Calendar size={18} className="text-pink-300" />, text: 'Schedule', to: '/schedule' },
+      ],
+      billing: [
+        { icon: <CreditCard size={18} className="text-pink-500" />, text: 'Payment Methods', to: '/billing-process' },
+        { icon: <FileText size={18} className="text-pink-400" />, text: 'Invoices', to: '/invoices' },
+      ],
+      settings: [
+        { icon: <User size={18} className="text-pink-500" />, text: 'My Account', to: '/profile' },
+        { icon: <Settings size={18} className="text-pink-400" />, text: 'Preferences', to: '/preference' },
+      ],
+      support: [
+        { icon: <HelpCircle size={18} className="text-pink-500" />, text: 'Get Help', to: '/help-support' },
+        { icon: <HelpCircle size={18} className="text-pink-400" />, text: 'FAQs', to: '/faqs' },
+      ]
+    };
 
-  // Hero content for the main carousel
-  const heroContent = [
-    {
-      title: "Find Your Perfect Match",
-      subtitle: "Our advanced compatibility system connects you with people who truly align with your values and lifestyle",
-      bgColor: "from-purple-600 to-indigo-700"
-    },
-    {
-      title: "Meaningful Connections",
-      subtitle: "Build relationships based on shared interests and genuine compatibility",
-      bgColor: "from-rose-600 to-pink-700"
-    },
-    {
-      title: "Love Starts Here",
-      subtitle: "Join thousands of successful couples who found love through our platform",
-      bgColor: "from-blue-600 to-cyan-600"
-    }
-  ];
+    // Check form completion status from local storage on mount
+    useEffect(() => {
+      const completed = localStorage.getItem("formCompleted") === "true";
+      setFormCompleted(completed);
+    }, []);
 
-  // Video advertisements data
-  const videoAdvertisements = [
-    {
-      id: 1,
-      title: "Romantic Getaways",
-      description: "Exclusive deals for couples planning their perfect honeymoon",
-      videoUrl: "https://example.com/videos/honeymoon.mp4",
-      thumbnail: "🌴"
-    },
-    {
-      id: 2,
-      title: "Diamond Rings",
-      description: "Curated selection from top jewelers when you're ready to propose",
-      videoUrl: "https://example.com/videos/jewelry.mp4",
-      thumbnail: "💍"
-    },
-    {
-      id: 3,
-      title: "Date Night Ideas",
-      description: "100+ romantic restaurant suggestions for every occasion",
-      videoUrl: "https://example.com/videos/dining.mp4",
-      thumbnail: "🍷"
-    }
-  ];
+    // Single hero content
+    const heroContent = {
+      title: "Find Your Soulmate",
+      subtitle: "Connect with someone who completes you.",
+      bgImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e" // Beach with romantic pink tones
+    };
 
-  // Auto-advance hero carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentHeroImage((prev) => (prev + 1) % heroContent.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    // Video advertisements data
+    const videoAdvertisements = [
+      {
+        id: 1,
+        title: "Romantic Getaways",
+        description: "Exclusive deals for couples planning their honeymoon",
+        videoUrl: "https://example.com/videos/honeymoon.mp4",
+        thumbnail: "🌴"
+      },
+      {
+        id: 2,
+        title: "Diamond Rings",
+        description: "Curated selection from top jewelers",
+        videoUrl: "https://example.com/videos/jewelry.mp4",
+        thumbnail: "💍"
+      },
+      {
+        id: 3,
+        title: "Date Night Ideas",
+        description: "Romantic restaurant suggestions",
+        videoUrl: "https://example.com/videos/dining.mp4",
+        thumbnail: "🍷"
+      }
+    ];
 
-  // Auto-advance video advertisements
-  useEffect(() => {
-    let interval;
-    if (isVideoPlaying) {
-      interval = setInterval(() => {
-        setCurrentAdIndex((prev) => (prev + 1) % videoAdvertisements.length);
-      }, 10000);
-    }
-    return () => clearInterval(interval);
-  }, [isVideoPlaying]);
+    // Auto-advance video advertisements
+    useEffect(() => {
+      let interval;
+      if (isVideoPlaying) {
+        interval = setInterval(() => {
+          setCurrentAdIndex((prev) => (prev + 1) % videoAdvertisements.length);
+        }, 8000);
+      }
+      return () => clearInterval(interval);
+    }, [isVideoPlaying]);
 
-  // Handle "Awaiting Match" button click
-  const handleAwaitingMatchClick = () => {
-    setShowPopup(true);
-  };
+    // Handle "Awaiting Match" button click
+    const handleAwaitingMatchClick = () => {
+      setShowPopup(true);
+    };
 
-  // Close popup
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
+    // Close popup
+    const handleClosePopup = () => {
+      setShowPopup(false);
+    };
 
-  // Popup animation variants
-  const popupVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, type: "spring", stiffness: 300, damping: 20 }
-    },
-    exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } }
-  };
+    // Animation variants
+    const popupVariants = {
+      hidden: { opacity: 0, scale: 0.9 },
+      visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+      exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2 } }
+    };
 
-  return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 overflow-hidden">
-      <Sidebar />
-      <div className="flex-grow flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-grow overflow-y-auto">
-          <section className="relative h-[32rem] overflow-hidden">
-            <AnimatePresence mode="wait">
+    const cardVariants = {
+      initial: { opacity: 0, y: 20 },
+      animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+      hover: { scale: 1.03, boxShadow: "0 10px 20px rgba(0,0,0,0.1)", transition: { duration: 0.3 } }
+    };
+
+    return (
+      <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+        <Sidebar />
+        <div className="flex-grow flex flex-col">
+          <Header />
+          <main className="flex-grow overflow-y-auto bg-pink-50/30">
+            <style>
+              {`
+                .parallax-bg {
+                  background-attachment: fixed;
+                  background-size: cover;
+                  background-position: center;
+                }
+                @media (max-width: 768px) {
+                  .parallax-bg {
+                    background-attachment: scroll;
+                  }
+                }
+                .parallax-header {
+                  transform: translateY(0);
+                  transition: transform 0.3s ease;
+                }
+                .parallax-section.scrolled .parallax-header {
+                  transform: translateY(-20px);
+                }
+                .gradient-text {
+                  background: linear-gradient(to right, #FF6B6B, #FF8E53);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                }
+              `}
+            </style>
+
+            {/* Hero Section with Single Image */}
+            <section className="relative h-[48rem] overflow-hidden">
               <motion.div
-                key={currentHeroImage}
-                className={`absolute inset-0 bg-gradient-to-br ${heroContent[currentHeroImage].bgColor}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
+                className="absolute inset-0 parallax-bg"
+                style={{ backgroundImage: `url(${heroContent.bgImage})` }}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7 }}
               >
-                <div className="container mx-auto px-4 h-full flex items-center">
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-white max-w-2xl"
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-pink-500/20" />
+                <div className="container mx-auto px-6 h-full flex items-center">
+                  <motion.div 
+                    className="text-white max-w-3xl z-10"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
                   >
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                      {heroContent[currentHeroImage].title}
+                    <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight gradient-text">
+                      {heroContent.title}
                     </h1>
-                    <p className="text-xl mb-8 opacity-90">
-                      {heroContent[currentHeroImage].subtitle}
+                    <p className="text-xl md:text-2xl mb-8 opacity-90 font-light">
+                      {heroContent.subtitle}
                     </p>
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-6">
                       {formCompleted ? (
                         <motion.button
+                          className="bg-pink-500 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-600 transition-colors"
+                          onClick={handleAwaitingMatchClick}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full text-lg shadow-lg"
-                          onClick={handleAwaitingMatchClick}
                         >
                           Awaiting Match
                         </motion.button>
                       ) : (
                         <motion.button
+                          className="bg-pink-500 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-600 transition-colors"
+                          onClick={() => navigate('/getting-started')}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-white text-rose-600 font-bold py-3 px-8 rounded-full text-lg shadow-lg"
-                          onClick={() => navigate('/getting-started')}
                         >
                           Start Matching
                         </motion.button>
                       )}
+                      <motion.button
+                        className="bg-white text-pink-500 font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-50 transition-colors"
+                        onClick={() => navigate('/learn-more')}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Learn More
+                      </motion.button>
                     </div>
                   </motion.div>
                 </div>
               </motion.div>
-            </AnimatePresence>
-          </section>
+            </section>
 
-          {/* Cosmic Popup */}
+            {/* Popup */}
           <AnimatePresence>
             {showPopup && (
               <motion.div
-                className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+                className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
               >
                 <motion.div
                   variants={popupVariants}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-purple-500 border-opacity-30 overflow-hidden"
+                  className="bg-white rounded-2xl p-10 max-w-md w-full mx-4 shadow-2xl border border-pink-100"
                 >
-                  {/* Cosmic background particles */}
-                  {[...Array(20)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute rounded-full bg-white opacity-20"
-                      style={{
-                        width: `${Math.random() * 4 + 2}px`,
-                        height: `${Math.random() * 4 + 2}px`,
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`
-                      }}
-                      animate={{
-                        y: [0, -20, 0],
-                        opacity: [0.2, 0.5, 0.2],
-                        scale: [1, 1.2, 1]
-                      }}
-                      transition={{
-                        duration: 3 + Math.random() * 2,
-                        repeat: Infinity,
-                        repeatType: "loop",
-                        delay: i * 0.2
-                      }}
-                    />
-                  ))}
-                  {/* Glowing border effect */}
-                  <motion.div
-                    className="absolute inset-0 border-2 border-purple-400 rounded-3xl"
-                    animate={{
-                      boxShadow: [
-                        "0 0 10px rgba(147, 51, 234, 0.5)",
-                        "0 0 20px rgba(147, 51, 234, 0.8)",
-                        "0 0 10px rgba(147, 51, 234, 0.5)"
-                      ]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "loop"
-                    }}
-                  />
-                  <div className="relative z-10 text-center">
-                    <motion.h2
-                      className="text-3xl font-bold text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    >
-                      Awaiting Your Cosmic Match
-                    </motion.h2>
-                    <motion.p
-                      className="text-lg text-gray-200 mb-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      Our stellar algorithms are scanning the universe to find your perfect match. This cosmic journey takes 1-4 weeks. Well send you a signal when your match is ready!
-                    </motion.p>
-                    <motion.button
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all"
-                      onClick={handleClosePopup}
-                      animate={{
-                        boxShadow: [
-                          "0 0 10px rgba(236, 72, 153, 0.5)",
-                          "0 0 20px rgba(236, 72, 153, 0.8)",
-                          "0 0 10px rgba(236, 72, 153, 0.5)"
-                        ]
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    >
-                      Close
-                    </motion.button>
+                  <div className="text-center">
+                    <h2 className="text-3xl font-bold text-pink-600 mb-4">
+                      Ready to Find Your Match?
+                    </h2>
+                    <p className="text-gray-600 mb-8 text-lg">
+                      Our advanced algorithm is working to find your perfect partner. Track your match progress in real-time!
+                    </p>
+                    <div className="flex justify-center space-x-4">
+                      <motion.button
+                        className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors"
+                        onClick={() => {
+                          handleClosePopup();
+                          navigate('/match-track');
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Track My Match
+                      </motion.button>
+                      <motion.button
+                        className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors"
+                        onClick={handleClosePopup}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Maybe Later
+                      </motion.button>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Rest of the Homepage content remains unchanged */}
-          <section className="py-12 bg-white">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-                Featured Partners
-              </h2>
-              <div className="relative bg-gray-900 rounded-2xl overflow-hidden h-96">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={videoAdvertisements[currentAdIndex].id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="h-full flex flex-col items-center justify-center"
-                  >
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <div className="text-8xl">
-                          {videoAdvertisements[currentAdIndex].thumbnail}
+            {/* Services Section */}
+            <section className="py-20 bg-white">
+              <div className="container mx-auto px-6">
+                <motion.h2 
+                  className="text-4xl font-bold text-center mb-16 text-pink-600"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  Discover Our Services
+                </motion.h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                  {Object.entries(categories).flatMap(([category, items]) =>
+                    items.map((item, index) => (
+                      <motion.div
+                        key={`${category}-${index}`}
+                        className="bg-white p-6 rounded-2xl shadow-lg hover:bg-pink-50/50 transition-all cursor-pointer border border-pink-100"
+                        variants={cardVariants}
+                        initial="initial"
+                        animate="animate"
+                        whileHover="hover"
+                        onClick={() => navigate(item.to)}
+                      >
+                        <div className="flex items-center space-x-4">
+                          {item.icon}
+                          <h3 className="text-xl font-semibold text-gray-800">{item.text}</h3>
                         </div>
-                      </div>
-                      <div className="absolute bottom-4 left-0 right-0 text-center text-white">
-                        <h3 className="text-xl font-bold mb-1">
-                          {videoAdvertisements[currentAdIndex].title}
-                        </h3>
-                        <p className="text-gray-300">
-                          {videoAdvertisements[currentAdIndex].description}
-                        </p>
-                      </div>
-                      <div className="absolute bottom-4 right-4 flex items-center space-x-2">
-                        <button
-                          onClick={() => setIsVideoPlaying(!isVideoPlaying)}
-                          className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all"
-                        >
-                          {isVideoPlaying ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          )}
-                        </button>
-                        <div className="flex space-x-1">
-                          {videoAdvertisements.map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setCurrentAdIndex(index)}
-                              className={`w-2 h-2 rounded-full transition-all ${currentAdIndex === index ? 'bg-white w-4' : 'bg-white/30'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <section className="py-16 bg-gray-50">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
-                Our Matching Process
-              </h2>
-              <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="bg-white p-8 rounded-xl shadow-sm border border-gray-200"
+            {/* Featured Partners Section */}
+            <section className="py-20 bg-pink-50">
+              <div className="container mx-auto px-6">
+                <motion.h2 
+                  className="text-4xl font-bold text-center mb-16 text-pink-600"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
                 >
-                  <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 text-2xl font-bold mb-6">
-                    1
-                  </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-800">Detailed Profile</h3>
-                  <p className="text-gray-600">
-                    Create a comprehensive profile that highlights your personality, interests, and relationship goals.
-                  </p>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  viewport={{ once: true }}
-                  className="bg-white p-8 rounded-xl shadow-sm border border-gray-200"
+                  Featured Partners
+                </motion.h2>
+                <motion.div 
+                  className="relative bg-gradient-to-r from-pink-600 to-pink-400 rounded-2xl overflow-hidden h-96"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6 }}
                 >
-                  <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-2xl font-bold mb-6">
-                    2
-                  </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-800">Smart Compatibility</h3>
-                  <p className="text-gray-600">
-                    Our algorithm analyzes 32 dimensions of compatibility to suggest your best matches.
-                  </p>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  viewport={{ once: true }}
-                  className="bg-white p-8 rounded-xl shadow-sm border border-gray-200"
-                >
-                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl font-bold mb-6">
-                    3
-                  </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-800">Quality Connections</h3>
-                  <p className="text-gray-600">
-                    Engage in meaningful conversations with matches that truly align with you.
-                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={videoAdvertisements[currentAdIndex].id}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.5 }}
+                      className="h-full flex flex-col items-center justify-center"
+                    >
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="text-9xl">{videoAdvertisements[currentAdIndex].thumbnail}</div>
+                        </div>
+                        <div className="absolute bottom-8 left-0 right-0 text-center text-white">
+                          <h3 className="text-2xl font-bold mb-2">{videoAdvertisements[currentAdIndex].title}</h3>
+                          <p className="text-pink-100 text-lg">{videoAdvertisements[currentAdIndex].description}</p>
+                        </div>
+                        <div className="absolute bottom-8 right-8 flex items-center space-x-4">
+                          <motion.button
+                            onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+                            className="bg-white/30 hover:bg-white/40 text-white p-3 rounded-full transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            {isVideoPlaying ? (
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            ) : (
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            )}
+                          </motion.button>
+                          <div className="flex space-x-3">
+                            {videoAdvertisements.map((_, index) => (
+                              <motion.button
+                                key={index}
+                                onClick={() => setCurrentAdIndex(index)}
+                                className={`w-3 h-3 rounded-full transition-all ${currentAdIndex === index ? 'bg-white w-6' : 'bg-white/50'}`}
+                                whileHover={{ scale: 1.2 }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
                 </motion.div>
               </div>
-              <div className="mt-16 text-center">
-                {formCompleted ? (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-md"
-                    onClick={handleAwaitingMatchClick}
-                  >
-                    Awaiting Match
-                  </motion.button>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-md"
-                    onClick={() => navigate('/getting/../GettingStarted.jsx')}
-                  >
-                    Begin Your Journey
-                  </motion.button>
-                )}
+            </section>
+
+            {/* Matching Process Section */}
+            <section className="py-20 bg-white">
+              <div className="container mx-auto px-6">
+                <motion.h2 
+                  className="text-4xl font-bold text-center mb-16 text-pink-600"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  Our Matching Process
+                </motion.h2>
+                <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+                  {[
+                    {
+                      number: 1,
+                      title: "Detailed Profile",
+                      description: "Create a profile highlighting your personality and goals."
+                    },
+                    {
+                      number: 2,
+                      title: "Smart Compatibility",
+                      description: "Our algorithm suggests matches based on compatibility."
+                    },
+                    {
+                      number: 3,
+                      title: "Quality Connections",
+                      description: "Engage in meaningful conversations with your matches."
+                    }
+                  ].map((step, index) => (
+                    <motion.div
+                      key={index}
+                      className="bg-white p-8 rounded-2xl shadow-lg hover:bg-pink-50/50 transition-all border border-pink-100"
+                      variants={cardVariants}
+                      initial="initial"
+                      animate="animate"
+                      whileHover="hover"
+                    >
+                      <div className="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-500 text-2xl font-bold mb-6">
+                        {step.number}
+                      </div>
+                      <h3 className="text-xl font-semibold mb-4 text-gray-800">{step.title}</h3>
+                      <p className="text-gray-600 text-lg">{step.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+                <motion.div 
+                  className="mt-16 text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  {formCompleted ? (
+                    <motion.button
+                      className="bg-pink-500 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-600 transition-colors"
+                      onClick={handleAwaitingMatchClick}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Awaiting Match
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      className="bg-pink-500 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-600 transition-colors"
+                      onClick={() => navigate('/getting-started')}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Begin Your Journey
+                    </motion.button>
+                  )}
+                </motion.div>
               </div>
-            </div>
-          </section>
-        </main>
+            </section>
+          </main>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-export default Homepage;
+  export default Homepage;

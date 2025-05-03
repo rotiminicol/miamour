@@ -22,6 +22,12 @@ const Sidebar = () => {
     setExpandedCategory(expandedCategory === category ? null : category);
   };
 
+  // Avatar function to select male or female avatar
+  const getAvatar = () => {
+    const isFemale = authUser?.gender === "female";
+    return isFemale ? "/assets/avatarwoman.png" : "/assets/avatarmale.png";
+  };
+
   useEffect(() => {
     getMyMatches();
   }, [getMyMatches]);
@@ -308,7 +314,7 @@ const Sidebar = () => {
                     className="rounded-full overflow-hidden"
                   >
                     <img 
-                      src={authUser.image || "/avatar.png"}
+                      src={getAvatar()}
                       alt="User"
                       className="w-10 h-10 rounded-full object-cover border-2 border-pink-300"
                     />

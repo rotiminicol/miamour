@@ -3,47 +3,61 @@ import { Check,  Star, Gift } from "lucide-react";
 
 const plans = [
   {
-    name: "Basic",
-    price: "Free",
-    duration: "",
+    id: 'blossom',
+    name: 'Blossom Package',
+    price: '₦75,000 / $50 / €45',
+    period: 'monthly',
     features: [
-      "Limited matches per day",
-      "Basic profile visibility",
-      "Standard search filters",
-      "Send 3 likes per day"
+      'Exclusive matchmaking within your country',
+      'Access to live sessions',
+      'Basic personality matching'
     ],
-    popular: false
+    color: 'from-rose-400 to-pink-500'
   },
   {
-    name: "Premium",
-    price: "$19.99",
-    duration: "/month",
+    id: 'harmony',
+    name: 'Harmony Package',
+    price: '₦125,000 / $83 / €75',
+    period: 'monthly',
     features: [
-      "Unlimited matches",
-      "Priority profile visibility",
-      "Advanced search filters",
-      "Unlimited likes and messages",
-      "See who liked you",
-      "Boost your profile weekly"
+      'Exclusive matchmaking within and outside your country',
+      'Access to live sessions',
+      'Advanced personality assessment'
     ],
-    popular: true
+    color: 'from-purple-400 to-pink-500'
   },
   {
-    name: "VIP",
-    price: "$49.99",
-    duration: "/month",
+    id: 'forever',
+    name: 'My Forever Package',
+    price: '₦250,000 / $166 / €150 per month',
+    period: 'monthly',
     features: [
-      "All Premium features",
-      "Personal matchmaker",
-      "Profile highlight",
-      "Exclusive events access",
-      "Dating coach sessions",
-      "Priority customer support"
+      'Personal matches',
+      'Private sessions',
+      'Access to high-profile members',
+      'Matches within and outside Nigeria',
+      'Priority customer support'
     ],
-    popular: false
+    color: 'from-fuchsia-400 to-pink-500'
+  },
+  {
+    id: 'personalized',
+    name: 'Personalized Matching',
+    price: '₦525,000 / $350 / €315 per month',
+    period: 'monthly',
+    features: [
+      'Dedicated matchmaking specialist',
+      'Customized matching algorithm',
+      'Unlimited private sessions',
+      'Global match access',
+      'VIP event invitations',
+      '24/7 concierge service',
+      'Background verification included'
+    ],
+    isPremium: true,
+    color: 'from-amber-300 to-pink-500'
   }
 ];
-
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 py-12 px-4 sm:px-6 lg:px-8">

@@ -42,6 +42,7 @@ import SafetyGuide from "./pages/SafetyGuide";
 import FAQ from "./pages/FAQ";
 import HelpCenter from "./pages/HelpCenter";
 import ForgotPassword from "./components/ForgotPassword";
+import MatchTrack from "./components/MatchTrack";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -103,6 +104,7 @@ function App() {
             <Route path="/discounts" element={<DiscountsPage />} />
             <Route path="/relationship-therapy" element={<RelationshipTherapy />} />
             <Route path="/personalized-matchmaking" element={<PersonalizedMatchmaking />} />
+            <Route path="/match-track" element={<MatchTrack />} />
           </>
         )}
 

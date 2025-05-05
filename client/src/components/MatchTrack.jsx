@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Sparkles,  Check, Clock } from 'lucide-react';
+import { Heart, Sparkles, Check, Clock, X, MessageCircle, User, Star, Zap } from 'lucide-react';
 
 const MatchTrack = () => {
   const navigate = useNavigate();
@@ -9,6 +9,10 @@ const MatchTrack = () => {
   const [isMatched, setIsMatched] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [currentProfile, setCurrentProfile] = useState(null);
+  const [compatibilityScore, setCompatibilityScore] = useState(0);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const controls = useAnimation();
+  const progressRef = useRef(null);
 
   // Mock profiles data
   const profiles = [
@@ -19,7 +23,8 @@ const MatchTrack = () => {
       location: "New York",
       bio: "Adventure seeker and coffee enthusiast. Looking for someone to share life's moments with.",
       interests: ["Hiking", "Photography", "Reading"],
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      compatibility: 92
     },
     {
       id: 2,
@@ -28,7 +33,8 @@ const MatchTrack = () => {
       location: "Chicago",
       bio: "Creative soul who loves art galleries and weekend getaways. Seeking meaningful connections.",
       interests: ["Painting", "Travel", "Yoga"],
-      image: "https://randomuser.me/api/portraits/women/44.jpg"
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
+      compatibility: 88
     },
     {
       id: 3,
@@ -37,7 +43,8 @@ const MatchTrack = () => {
       location: "Los Angeles",
       bio: "Tech entrepreneur by day, jazz lover by night. Want to find someone who shares my passions.",
       interests: ["Technology", "Music", "Fitness"],
-      image: "https://randomuser.me/api/portraits/men/22.jpg"
+      image: "https://randomuser.me/api/portraits/men/22.jpg",
+      compatibility: 85
     }
   ];
 
@@ -48,6 +55,7 @@ const MatchTrack = () => {
         if (prev >= 100) {
           clearInterval(timer);
           setIsMatched(true);
+          setShowCelebration(true);
           return 100;
         }
         return prev + Math.random() * 10;
@@ -61,7 +69,9 @@ const MatchTrack = () => {
   useEffect(() => {
     if (progress > 0 && progress < 100) {
       const profileTimer = setInterval(() => {
-        setCurrentProfile(profiles[Math.floor(Math.random() * profiles.length)]);
+        const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
+        setCurrentProfile(randomProfile);
+        setCompatibilityScore(Math.floor(Math.random() * 20) + 75);
         setShowProfile(true);
         
         setTimeout(() => {
@@ -73,46 +83,152 @@ const MatchTrack = () => {
     }
   }, [progress]);
 
+  // Celebration animation
+  useEffect(() => {
+    if (showCelebration) {
+      controls.start({
+        scale: [1, 1.1, 1],
+        rotate: [0, 5, -5, 0],
+        transition: { duration: 0.5 }
+      });
+      
+      const timer = setTimeout(() => {
+        setShowCelebration(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showCelebration, controls]);
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.9 },
-    visible: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -20, scale: 0.9 }
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 20 
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20, 
+      scale: 0.9,
+      transition: { 
+        duration: 0.3 
+      } 
+    }
   };
 
   const progressBarVariants = {
     initial: { width: 0 },
-    animate: { width: `${progress}%`, transition: { duration: 1 } }
+    animate: { 
+      width: `${progress}%`, 
+      transition: { 
+        duration: 1,
+        ease: "easeOut"
+      } 
+    }
+  };
+
+  const confettiVariants = {
+    initial: { 
+      y: -10,
+      opacity: 0 
+    },
+    animate: (i) => ({
+      y: [0, -20, 0],
+      opacity: [1, 0],
+      transition: {
+        duration: 1.5,
+        delay: i * 0.1,
+        repeat: Infinity,
+        repeatDelay: 0.5
+      }
+    })
+  };
+
+  const renderConfetti = () => {
+    return Array.from({ length: 15 }).map((_, i) => (
+      <motion.div
+        key={i}
+        custom={i}
+        variants={confettiVariants}
+        initial="initial"
+        animate="animate"
+        className={`absolute w-2 h-2 rounded-full ${
+          i % 3 === 0 ? 'bg-pink-500' : 
+          i % 3 === 1 ? 'bg-purple-500' : 'bg-yellow-400'
+        }`}
+        style={{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+        }}
+      />
+    ));
   };
 
   return (
-    <div className="min-h-screen bg-pink-50/30">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-pink-50/30 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-pink-100/50 blur-xl"></div>
+        <div className="absolute bottom-10 right-20 w-60 h-60 rounded-full bg-purple-100/30 blur-xl"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <motion.div 
-          className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden"
+          className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, type: "spring" }}
         >
+          {/* Celebration overlay */}
+          <AnimatePresence>
+            {showCelebration && (
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-purple-400/10 z-20 pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {renderConfetti()}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Header */}
-          <div className="bg-gradient-to-r from-pink-500 to-pink-400 p-8 text-center">
-            <motion.h1 
-              className="text-3xl md:text-4xl font-bold text-white mb-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+          <div className="bg-gradient-to-r from-pink-500 to-pink-400 p-8 text-center relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-1/4 w-20 h-20 rounded-full bg-white"></div>
+              <div className="absolute bottom-0 right-1/3 w-32 h-32 rounded-full bg-white"></div>
+            </div>
+            
+            <motion.div
+              animate={controls}
+              className="relative z-10"
             >
-              {isMatched ? "Match Found!" : "Finding Your Perfect Match"}
-            </motion.h1>
-            <motion.p 
-              className="text-pink-100 text-lg"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {isMatched ? 
-                "We've found someone special for you!" : 
-                "Our algorithm is searching through thousands of profiles..."}
-            </motion.p>
+              <motion.h1 
+                className="text-3xl md:text-4xl font-bold text-white mb-2"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {isMatched ? "Match Found! 🎉" : "Finding Your Perfect Match"}
+              </motion.h1>
+              <motion.p 
+                className="text-pink-100 text-lg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                {isMatched ? 
+                  "We've found someone special for you!" : 
+                  "Our algorithm is searching through thousands of profiles..."}
+              </motion.p>
+            </motion.div>
           </div>
 
           {/* Progress Section */}
@@ -124,13 +240,27 @@ const MatchTrack = () => {
                 </span>
                 <span className="font-bold text-pink-600">{Math.min(progress, 100)}%</span>
               </div>
-              <div className="h-4 bg-pink-100 rounded-full overflow-hidden">
+              <div className="h-3 bg-pink-100 rounded-full overflow-hidden relative">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-pink-400 to-pink-600 rounded-full"
+                  className="h-full bg-gradient-to-r from-pink-400 to-pink-600 rounded-full relative"
                   variants={progressBarVariants}
                   initial="initial"
                   animate="animate"
-                />
+                  ref={progressRef}
+                >
+                  <motion.div 
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-4 rounded-full bg-pink-600"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      boxShadow: ["0 0 0 0 rgba(236, 72, 153, 0.3)", "0 0 0 8px rgba(236, 72, 153, 0)"],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      repeatType: "loop"
+                    }}
+                  />
+                </motion.div>
               </div>
             </div>
 
@@ -142,26 +272,48 @@ const MatchTrack = () => {
               transition={{ delay: 0.4 }}
             >
               {isMatched ? (
-                <div className="flex items-center space-x-3 bg-green-50 text-green-600 px-6 py-3 rounded-full">
-                  <Check size={24} className="text-green-500" />
+                <motion.div 
+                  className="flex items-center space-x-3 bg-green-50 text-green-600 px-6 py-3 rounded-full shadow-sm"
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500 }}
+                >
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Check size={24} className="text-green-500" />
+                  </motion.div>
                   <span className="font-semibold text-lg">Compatibility Match Found!</span>
-                </div>
+                </motion.div>
               ) : (
-                <div className="flex items-center space-x-3 bg-blue-50 text-blue-600 px-6 py-3 rounded-full">
+                <motion.div 
+                  className="flex items-center space-x-3 bg-blue-50 text-blue-600 px-6 py-3 rounded-full shadow-sm"
+                  animate={{
+                    x: [0, 2, -2, 0],
+                    transition: { 
+                      duration: 2,
+                      repeat: Infinity 
+                    }
+                  }}
+                >
                   <Clock size={24} className="text-blue-500" />
                   <span className="font-semibold text-lg">Searching for matches...</span>
-                </div>
+                </motion.div>
               )}
             </motion.div>
 
             {/* Profile Display Area */}
-            <div className="relative h-96 mb-8 rounded-2xl overflow-hidden bg-pink-50 flex items-center justify-center">
+            <div className="relative h-96 mb-8 rounded-2xl overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center border border-pink-100">
               {isMatched ? (
                 <motion.div
-                  className="text-center p-6"
+                  className="text-center p-6 w-full max-w-md"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.5, type: "spring" }}
                 >
                   <div className="relative mx-auto w-40 h-40 mb-6 rounded-full overflow-hidden border-4 border-pink-400 shadow-lg">
                     <img 
@@ -170,37 +322,69 @@ const MatchTrack = () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-pink-500/10 flex items-center justify-center">
-                      <div className="absolute -top-2 -right-2 bg-pink-500 rounded-full p-2 shadow-md">
-                        <Heart size={20} className="text-white" />
-                      </div>
+                      <motion.div 
+                        className="absolute -top-2 -right-2 bg-pink-500 rounded-full p-2 shadow-md"
+                        animate={{
+                          rotate: [0, 20, -20, 0],
+                          transition: { duration: 1, repeat: Infinity }
+                        }}
+                      >
+                        <Heart 
+                          size={20} 
+                          className="text-white"
+                          fill="currentColor"
+                        />
+                      </motion.div>
                     </div>
                   </div>
                   <h3 className="text-2xl font-bold text-pink-600 mb-1">{profiles[1].name}, {profiles[1].age}</h3>
                   <p className="text-pink-500 mb-4">{profiles[1].location}</p>
+                  
+                  {/* Compatibility meter */}
+                  <div className="w-full bg-pink-100 rounded-full h-2.5 mb-4 mx-auto max-w-xs">
+                    <div 
+                      className="bg-gradient-to-r from-green-400 to-green-500 h-2.5 rounded-full" 
+                      style={{ width: `${profiles[1].compatibility}%` }}
+                    ></div>
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>0%</span>
+                      <span className="font-bold text-green-600">
+                        {profiles[1].compatibility}% Match
+                      </span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+                  
                   <p className="text-gray-600 mb-6 max-w-md mx-auto">{profiles[1].bio}</p>
                   <div className="flex flex-wrap justify-center gap-2 mb-8">
                     {profiles[1].interests.map((interest, i) => (
-                      <span key={i} className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm">
+                      <motion.span 
+                        key={i}
+                        className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm"
+                        whileHover={{ scale: 1.05 }}
+                      >
                         {interest}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
                   <div className="flex justify-center space-x-4">
                     <motion.button
-                      className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors"
+                      className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors flex items-center space-x-2 shadow-lg shadow-pink-200"
                       onClick={() => navigate('/chat')}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(236, 72, 153, 0.4)" }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      Start Chatting
+                      <MessageCircle size={18} />
+                      <span>Start Chatting</span>
                     </motion.button>
                     <motion.button
-                      className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors"
+                      className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors flex items-center space-x-2"
                       onClick={() => navigate('/profile')}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      View Profile
+                      <User size={18} />
+                      <span>View Profile</span>
                     </motion.button>
                   </div>
                 </motion.div>
@@ -215,10 +399,14 @@ const MatchTrack = () => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        transition={{ duration: 0.5 }}
                       >
-                        <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center">
-                          <div className="relative mx-auto w-32 h-32 mb-4 rounded-full overflow-hidden border-2 border-pink-200">
+                        <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center border-2 border-pink-200 relative">
+                          <div className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-md border border-pink-100">
+                            <div className="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center">
+                              {compatibilityScore}%
+                            </div>
+                          </div>
+                          <div className="relative mx-auto w-32 h-32 mb-4 rounded-full overflow-hidden border-2 border-pink-200 shadow-md">
                             <img 
                               src={currentProfile.image} 
                               alt="Potential match" 
@@ -232,10 +420,28 @@ const MatchTrack = () => {
                           <p className="text-gray-600 text-sm mb-4 line-clamp-2">{currentProfile.bio}</p>
                           <div className="flex justify-center space-x-2">
                             {currentProfile.interests.slice(0, 2).map((interest, i) => (
-                              <span key={i} className="bg-pink-50 text-pink-600 px-2 py-1 rounded-full text-xs">
+                              <motion.span 
+                                key={i}
+                                className="bg-pink-50 text-pink-600 px-2 py-1 rounded-full text-xs"
+                                whileHover={{ scale: 1.05 }}
+                              >
                                 {interest}
-                              </span>
+                              </motion.span>
                             ))}
+                          </div>
+                          <div className="mt-4 flex justify-center space-x-3">
+                            <motion.button 
+                              className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500"
+                              whileTap={{ scale: 0.9 }}
+                            >
+                              <X size={18} />
+                            </motion.button>
+                            <motion.button 
+                              className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-500"
+                              whileTap={{ scale: 0.9 }}
+                            >
+                              <Heart size={18} />
+                            </motion.button>
                           </div>
                         </div>
                       </motion.div>
@@ -244,22 +450,59 @@ const MatchTrack = () => {
                   
                   {!showProfile && (
                     <motion.div
-                      className="text-center"
+                      className="text-center p-6 max-w-md"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <div className="flex justify-center mb-6">
-                        <div className="w-24 h-24 rounded-full bg-pink-100 flex items-center justify-center">
+                      <motion.div 
+                        className="flex justify-center mb-6"
+                        animate={{
+                          rotate: [0, 5, -5, 0],
+                          transition: { 
+                            duration: 2,
+                            repeat: Infinity 
+                          }
+                        }}
+                      >
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center shadow-inner">
                           <Sparkles size={40} className="text-pink-400" />
                         </div>
-                      </div>
-                      <h3 className="text-xl font-semibold text-pink-600 mb-2">
+                      </motion.div>
+                      <motion.h3 
+                        className="text-xl font-semibold text-pink-600 mb-2"
+                        animate={{
+                          opacity: [0.8, 1, 0.8],
+                          transition: { duration: 2, repeat: Infinity }
+                        }}
+                      >
                         Scanning Potential Matches
-                      </h3>
+                      </motion.h3>
                       <p className="text-gray-500 max-w-md mx-auto">
-                        Were analyzing compatibility based on your profile, preferences, and behavior patterns.
+                        Analyzing compatibility based on your profile, preferences, and behavior patterns.
                       </p>
+                      
+                      <div className="mt-8 grid grid-cols-3 gap-4 max-w-xs mx-auto">
+                        {["Personality", "Interests", "Values"].map((item, i) => (
+                          <motion.div 
+                            key={i}
+                            className="bg-white p-2 rounded-lg shadow-sm text-xs"
+                            animate={{
+                              y: [0, -5, 0],
+                              transition: {
+                                duration: 2,
+                                delay: i * 0.3,
+                                repeat: Infinity
+                              }
+                            }}
+                          >
+                            <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                              <Star size={14} className="text-pink-500" />
+                            </div>
+                            {item}
+                          </motion.div>
+                        ))}
+                      </div>
                     </motion.div>
                   )}
                 </>
@@ -269,17 +512,32 @@ const MatchTrack = () => {
             {/* Additional Info */}
             {!isMatched && (
               <motion.div
-                className="bg-pink-50 rounded-xl p-6 text-center"
+                className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-6 text-center border border-pink-100 shadow-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                <h4 className="font-medium text-pink-600 mb-2">
-                  Estimated time remaining: {Math.floor((100 - progress) / 10)} minutes
-                </h4>
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Zap size={18} className="text-pink-500" />
+                  <h4 className="font-medium text-pink-600">
+                    Estimated time remaining: {Math.floor((100 - progress) / 10)} minutes
+                  </h4>
+                </div>
                 <p className="text-gray-600 text-sm">
                   The more complete your profile, the faster we can find your perfect match.
                 </p>
+                
+                <motion.div 
+                  className="mt-4 h-1 bg-pink-100 rounded-full overflow-hidden"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1, delay: 0.8 }}
+                >
+                  <div 
+                    className="h-full bg-gradient-to-r from-pink-400 to-purple-400 rounded-full"
+                    style={{ width: `${Math.random() * 30 + 40}%` }}
+                  ></div>
+                </motion.div>
               </motion.div>
             )}
           </div>
@@ -288,45 +546,61 @@ const MatchTrack = () => {
           <div className="bg-gray-50 p-8 text-center border-t border-gray-100">
             {isMatched ? (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-800">Ready to connect?</h3>
+                <motion.h3 
+                  className="text-xl font-semibold text-gray-800"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Ready to connect?
+                </motion.h3>
                 <div className="flex justify-center space-x-4">
                   <motion.button
-                    className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors"
+                    className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors flex items-center space-x-2 shadow-lg shadow-pink-200"
                     onClick={() => navigate('/chat')}
-                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(236, 72, 153, 0.4)" }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Send First Message
+                    <MessageCircle size={18} />
+                    <span>Send First Message</span>
                   </motion.button>
                   <motion.button
-                    className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors"
+                    className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors flex items-center space-x-2"
                     onClick={() => navigate('/dashboard')}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Back to Dashboard
+                    <span>Back to Dashboard</span>
                   </motion.button>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-gray-800">Want to improve your matches?</h3>
-                <div className="flex justify-center space-x-4">
+                <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
                   <motion.button
-                    className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors"
+                    className="bg-pink-500 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-600 transition-colors flex items-center justify-center space-x-2 shadow-lg shadow-pink-200"
                     onClick={() => navigate('/profile')}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(236, 72, 153, 0.4)" }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Complete My Profile
+                    <User size={18} />
+                    <span>Complete My Profile</span>
                   </motion.button>
                   <motion.button
-                    className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors"
+                    className="bg-white text-pink-500 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors flex items-center justify-center space-x-2"
                     onClick={() => navigate('/preferences')}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Adjust Preferences
+                    <Star size={18} />
+                    <span>Adjust Preferences</span>
                   </motion.button>
                 </div>
               </div>

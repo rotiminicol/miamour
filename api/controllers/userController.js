@@ -43,3 +43,24 @@ export const updateProfile = async (req, res) => {
 		});
 	}
 };
+
+export const getDashboardStats = async (req, res) => {
+	try {
+		// For now, return sample data
+		const stats = {
+			matchRequests: 5,
+			messages: 12,
+			upcomingSessions: 3,
+			relationshipScore: 85,
+			completedSessions: 8
+		};
+		
+		res.json(stats);
+	} catch (error) {
+		console.error('Error in getDashboardStats:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Internal server error'
+		});
+	}
+};

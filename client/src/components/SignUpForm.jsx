@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
-import { auth, googleProvider, signInWithPopup } from '../firebase';
 import { FaEye, FaEyeSlash, FaHeart } from 'react-icons/fa';
 
-const SignupForm = ({ toggleForm }) => {
+const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -78,17 +77,6 @@ const SignupForm = ({ toggleForm }) => {
     }
 
     signup(formData);
-  };
-
-  const handleGoogleSignup = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      console.log('Google Sign-Up Successful:', user);
-    } catch (error) {
-      console.error('Google Sign-Up Error:', error.message);
-      setErrors({ general: error.message });
-    }
   };
 
   return (
@@ -362,13 +350,19 @@ const SignupForm = ({ toggleForm }) => {
 
         <div className="grid grid-cols-2 gap-3">
           <button
-            onClick={handleGoogleSignup}
+            onClick={onGoogleClick}
             className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
           >
             <FcGoogle className="mr-2" size={18} />
             Google
           </button>
-          <button className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50">
+          <button 
+            onClick={onIjeuwaClick}
+            className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
+          >
+            <div className="h-4 w-4 rounded-full bg-pink-600 flex items-center justify-center mr-2">
+              <FaHeart className="text-white" size={10} />
+            </div>
             Ijeuwa
           </button>
         </div>
@@ -389,6 +383,8 @@ const SignupForm = ({ toggleForm }) => {
 
 SignupForm.propTypes = {
   toggleForm: PropTypes.func.isRequired,
+  onGoogleClick: PropTypes.func.isRequired,
+  onIjeuwaClick: PropTypes.func.isRequired
 };
 
 export default SignupForm;

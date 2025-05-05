@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../components/Header";
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import { Calendar, Clock, User, CheckCircle2, XCircle } from 'lucide-react';
 
 const SchedulePage = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [screenSize, setScreenSize] = useState('desktop');
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [rescheduleMode, setRescheduleMode] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState(null);
+  const [showBookingSuccess, setShowBookingSuccess] = useState(false);
+  const [bookingAnimation, setBookingAnimation] = useState(false);
 
   const { scrollY } = useScroll();
   const heroParallax = useTransform(scrollY, [0, 300], [0, 100]);
@@ -23,11 +29,57 @@ const SchedulePage = () => {
     { id: 2, time: '10:00 AM', counselor: 'Dr. Michael Chen', available: true },
     { id: 3, time: '11:00 AM', counselor: 'Lisa Rodriguez, LMFT', available: false },
     { id: 4, time: '12:00 PM', counselor: 'Mark Wilson, LCSW', available: true },
+    { id: 5, time: '1:00 PM', counselor: 'Dr. Sarah Johnson', available: true },
+    { id: 6, time: '2:00 PM', counselor: 'Dr. Michael Chen', available: true },
   ];
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
     setIsContactOpen(false);
+  };
+
+  const handleConfirmBooking = () => {
+    setBookingAnimation(true);
+    // Simulate API call
+    setTimeout(() => {
+      const confirmationNumber = `CONF-${Math.floor(100000 + Math.random() * 900000)}`;
+      const details = {
+        ...selectedSlot,
+        confirmationNumber,
+        date: new Date().toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })
+      };
+      
+      setBookingDetails(details);
+      setBookingConfirmed(true);
+      setRescheduleMode(false);
+      setShowBookingSuccess(true);
+      setBookingAnimation(false);
+    }, 1500);
+  };
+
+  const handleReschedule = () => {
+    setRescheduleMode(true);
+    setBookingConfirmed(false);
+  };
+
+  const handleSelectNewSlot = (newSlot) => {
+    const updatedDetails = {
+      ...bookingDetails,
+      time: newSlot.time,
+      counselor: newSlot.counselor,
+      previousTime: bookingDetails.time,
+      previousCounselor: bookingDetails.counselor
+    };
+    
+    setBookingDetails(updatedDetails);
+    setRescheduleMode(false);
+    setBookingConfirmed(true);
+    setSelectedSlot(null);
   };
 
   return (
@@ -61,7 +113,9 @@ const SchedulePage = () => {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">Available Time Slots</h2>
+          <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">
+            {rescheduleMode ? "Select New Time Slot" : "Available Time Slots"}
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {timeSlots.map((slot, index) => (
               <motion.div 
@@ -71,7 +125,7 @@ const SchedulePage = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }} 
                 whileHover={{ y: -5 }} 
                 className={`bg-white rounded-xl shadow-md hover:shadow-xl cursor-pointer ${!slot.available ? 'opacity-50 cursor-not-allowed' : ''}`} 
-                onClick={() => slot.available && setSelectedSlot(slot)}
+                onClick={() => slot.available && (rescheduleMode ? handleSelectNewSlot(slot) : setSelectedSlot(slot))}
               >
                 <div className="p-6">
                   <div className="flex justify-between mb-4">
@@ -92,26 +146,29 @@ const SchedulePage = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-pink-500 to-pink-700 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12"
+          className="bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12 shadow-xl"
         >
-          <h2 className="text-3xl font-bold mb-4 text-white">Need Assistance?</h2>
+          <h2 className="text-3xl font-bold mb-4 text-white">Ready to Begin Your Journey?</h2>
+          <p className="text-white/90 mb-6">Book your VIP consultation session today</p>
           <motion.button 
-            whileHover={{ scale: 1.05 }} 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setIsContactOpen(true)}
-            className="bg-white text-pink-600 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-pink-50"
+            className="bg-white text-pink-600 px-8 py-4 rounded-full font-semibold shadow-lg hover:bg-pink-50 flex items-center justify-center mx-auto space-x-2"
           >
-            Contact Us
+            <Calendar className="w-5 h-5" />
+            <span>Book Your Session</span>
           </motion.button>
         </motion.div>
       </div>
 
       <AnimatePresence>
-        {selectedSlot && (
+        {selectedSlot && !bookingConfirmed && !rescheduleMode && (
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50" 
             onClick={() => setSelectedSlot(null)}
           >
             <motion.div 
@@ -119,33 +176,187 @@ const SchedulePage = () => {
               animate={{ opacity: 1, y: 0 }} 
               exit={{ opacity: 0, y: 50 }} 
               transition={{ type: "spring", damping: 25 }} 
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6" 
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8" 
               onClick={e => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">{selectedSlot.time}</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  Confirm Your Booking
+                </h2>
                 <button onClick={() => setSelectedSlot(null)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  <XCircle className="w-6 h-6" />
                 </button>
               </div>
-              <div className="bg-pink-50 p-4 rounded-xl mb-6">
-                <div className="flex flex-col md:flex-row justify-between">
-                  <div className="mb-3 md:mb-0">
-                    <div className="flex items-center text-yellow-400">{Array(5).fill('★').join('')} <span className="text-gray-600 ml-2">(127 reviews)</span></div>
+              <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-center">
+                  <div className="mb-4 md:mb-0">
+                    <div className="flex items-center text-amber-400">
+                      {Array(5).fill('★').join('')} 
+                      <span className="text-gray-600 ml-2">(127 reviews)</span>
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-pink-600">$150</div>
-                    <div className="text-gray-600">per session</div>
+                    <div className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                      ₦525,000
+                    </div>
+                    <div className="text-gray-600">VIP Session</div>
                   </div>
                 </div>
               </div>
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-800 mb-2">Counselor</h3>
-                <p className="text-gray-600">{selectedSlot.counselor}</p>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <Clock className="w-5 h-5 text-pink-500" />
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Time</h3>
+                    <p className="text-gray-600">{selectedSlot.time}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <User className="w-5 h-5 text-pink-500" />
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Counselor</h3>
+                    <p className="text-gray-600">{selectedSlot.counselor}</p>
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700">Confirm Booking</button>
-                <button className="flex-1 bg-white border border-pink-600 text-pink-600 py-3 rounded-lg font-semibold hover:bg-pink-50">Reschedule</button>
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleConfirmBooking}
+                  disabled={bookingAnimation}
+                  className={`flex-1 py-4 rounded-xl font-semibold relative overflow-hidden ${
+                    bookingAnimation 
+                      ? 'bg-gradient-to-r from-pink-400 to-purple-400 cursor-wait' 
+                      : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
+                  } text-white shadow-lg`}
+                >
+                  {bookingAnimation ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </div>
+                  ) : (
+                    'Confirm Booking'
+                  )}
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleReschedule}
+                  className="flex-1 py-4 bg-white border-2 border-pink-500 text-pink-500 rounded-xl font-semibold hover:bg-pink-50"
+                >
+                  Reschedule
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showBookingSuccess && bookingDetails && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 0.9 }} 
+              transition={{ type: "spring", damping: 25 }} 
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8"
+            >
+              <div className="text-center mb-8">
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 15 }}
+                  className="w-20 h-20 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                >
+                  <CheckCircle2 className="w-10 h-10 text-white" />
+                </motion.div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  Booking Confirmed!
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Your VIP session has been successfully scheduled.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1">Confirmation Number</h3>
+                    <p className="text-lg font-semibold text-gray-800">{bookingDetails.confirmationNumber}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1">Date</h3>
+                    <p className="text-lg font-semibold text-gray-800">{bookingDetails.date}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1">Time</h3>
+                    <p className="text-lg font-semibold text-gray-800">{bookingDetails.time}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1">Counselor</h3>
+                    <p className="text-lg font-semibold text-gray-800">{bookingDetails.counselor}</p>
+                  </div>
+                </div>
+              </div>
+
+              {bookingDetails.previousTime && (
+                <div className="bg-amber-50 rounded-xl p-4 mb-6">
+                  <div className="flex items-start">
+                    <svg className="w-5 h-5 text-amber-500 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm text-amber-800">
+                        Your appointment was rescheduled from {bookingDetails.previousTime} with {bookingDetails.previousCounselor}.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-3">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setShowBookingSuccess(false);
+                    setBookingConfirmed(false);
+                    setBookingDetails(null);
+                  }}
+                  className="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-4 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-600 shadow-lg"
+                >
+                  Done
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setRescheduleMode(true);
+                    setShowBookingSuccess(false);
+                    setBookingConfirmed(false);
+                  }}
+                  className="bg-white border-2 border-pink-500 text-pink-500 py-4 rounded-xl font-semibold hover:bg-pink-50"
+                >
+                  Reschedule Again
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50"
+                >
+                  Add to Calendar
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>

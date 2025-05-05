@@ -43,7 +43,7 @@ const plans = [
   {
     id: 'personalized',
     name: 'Personalized Matching',
-    price: '₦525,000 / $350 / €315 per month',
+    price: '₦475,000 / $350 / €315 per month',
     period: 'monthly',
     features: [
       'Dedicated matchmaking specialist',

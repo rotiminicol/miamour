@@ -3,9 +3,30 @@ import User from "../models/User.js";
 
 export const updateProfile = async (req, res) => {
 	try {
-		const { image, ...otherData } = req.body;
+		const { 
+			name, 
+			bio, 
+			age, 
+			gender, 
+			relationshipStatus, 
+			maritalHistory, 
+			numberOfChildren, 
+			nationality, 
+			hobbies, 
+			image 
+		} = req.body;
 
-		let updatedData = otherData;
+		let updatedData = {
+			name,
+			bio,
+			age,
+			gender,
+			relationshipStatus,
+			maritalHistory,
+			numberOfChildren,
+			nationality,
+			hobbies: Array.isArray(hobbies) ? hobbies : hobbies.split(',').map(h => h.trim())
+		};
 
 		if (image) {
 			// Validate Base64 image
@@ -29,7 +50,21 @@ export const updateProfile = async (req, res) => {
 			}
 		}
 
-		const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
+		const updatedUser = await User.findByIdAndUpdate(
+			req.user.id, 
+			updatedData, 
+			{ 
+				new: true,
+				runValidators: true 
+			}
+		);
+
+		if (!updatedUser) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found",
+			});
+		}
 
 		res.status(200).json({
 			success: true,
@@ -39,7 +74,28 @@ export const updateProfile = async (req, res) => {
 		console.log("Error in updateProfile: ", error);
 		res.status(500).json({
 			success: false,
-			message: "Internal server error",
+			message: error.message || "Internal server error",
+		});
+	}
+};
+
+export const getDashboardStats = async (req, res) => {
+	try {
+		// For now, return sample data
+		const stats = {
+			matchRequests: 5,
+			messages: 12,
+			upcomingSessions: 3,
+			relationshipScore: 85,
+			completedSessions: 8
+		};
+		
+		res.json(stats);
+	} catch (error) {
+		console.error('Error in getDashboardStats:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Internal server error'
 		});
 	}
 };

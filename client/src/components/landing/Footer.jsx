@@ -97,7 +97,7 @@ const Footer = () => {
         </div>
         
         <div className="pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
-          <p>© {currentYear} Miamour. All rights reserved. <Link to="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
+          <p>© {currentYear} Miamour. All rights reserved. <Link to="/policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
           <p className="mt-2">Developed by <a href="https://arigotechnologies.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">Arigo Technologies</a></p>
         </div>
       </div>

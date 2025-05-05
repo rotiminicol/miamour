@@ -2,7 +2,8 @@ import { useRef, useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Camera, Save, X, CheckCircle2, AlertCircle, Edit2, User, Heart,  Users } from 'lucide-react';
 
 const ProfilePage = () => {
 	const { authUser } = useAuthStore();
@@ -20,6 +21,9 @@ const ProfilePage = () => {
 	const [successMessage, setSuccessMessage] = useState("");
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [tempImage, setTempImage] = useState(null);
+	const [isSaving, setIsSaving] = useState(false);
+	const [showSuccessToast, setShowSuccessToast] = useState(false);
+	const [showErrorToast, setShowErrorToast] = useState(false);
 	const fileInputRef = useRef(null);
 	const { updateProfile } = useUserStore();
 
@@ -38,12 +42,14 @@ const ProfilePage = () => {
 		e.preventDefault();
 		setErrorMessage("");
 		setSuccessMessage("");
+		setIsSaving(true);
 
 		if (!name || !bio || !age || !gender || !relationshipStatus || !nationality) {
 			setErrorMessage("Please fill all required fields.");
+			setShowErrorToast(true);
+			setIsSaving(false);
 			return;
 		}
-
 		try {
 			await updateProfile({
 				name,
@@ -57,7 +63,9 @@ const ProfilePage = () => {
 				hobbies,
 				image: tempImage || image,
 			});
+
 			setSuccessMessage("Profile updated successfully!");
+			setShowSuccessToast(true);
 			if (tempImage) {
 				setImage(tempImage);
 				setTempImage(null);
@@ -65,6 +73,9 @@ const ProfilePage = () => {
 			setIsEditModalOpen(false);
 		} catch (error) {
 			setErrorMessage("Failed to update profile. Please try again.");
+			setShowErrorToast(true);
+		} finally {
+			setIsSaving(false);
 		}
 	};
 
@@ -90,6 +101,7 @@ const ProfilePage = () => {
 
 	const handleSaveImage = async () => {
 		if (!tempImage) return;
+		setIsSaving(true);
 
 		try {
 			await updateProfile({
@@ -105,10 +117,14 @@ const ProfilePage = () => {
 				image: tempImage,
 			});
 			setSuccessMessage("Profile picture updated successfully!");
+			setShowSuccessToast(true);
 			setImage(tempImage);
 			setTempImage(null);
 		} catch (error) {
 			setErrorMessage("Failed to update profile picture. Please try again.");
+			setShowErrorToast(true);
+		} finally {
+			setIsSaving(false);
 		}
 	};
 
@@ -118,20 +134,53 @@ const ProfilePage = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gray-50 flex flex-col'>
+		<div className='min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-pink-100 flex flex-col'>
 			<Header />
 
+			{/* Toast Notifications */}
+			<AnimatePresence>
+				{showSuccessToast && (
+					<motion.div
+						initial={{ opacity: 0, y: -100 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -100 }}
+						className="fixed top-4 right-4 z-50"
+					>
+						<div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+							<CheckCircle2 className="w-5 h-5" />
+							<span>{successMessage}</span>
+						</div>
+					</motion.div>
+				)}
+				{showErrorToast && (
+					<motion.div
+						initial={{ opacity: 0, y: -100 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -100 }}
+						className="fixed top-4 right-4 z-50"
+					>
+						<div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+							<AlertCircle className="w-5 h-5" />
+							<span>{errorMessage}</span>
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
 			{/* Profile Section */}
-			<div className='flex-grow flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8'>
+			<div className='flex-grow flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8'>
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5 }}
-					className='w-full max-w-4xl bg-white rounded-lg shadow-lg p-6'
+					className='w-full max-w-4xl bg-white rounded-2xl shadow-xl p-8'
 				>
 					{/* Profile Picture */}
 					<div className='flex flex-col items-center relative'>
-						<div className='relative w-32 h-32 rounded-full overflow-hidden border-4 border-pink-500 shadow-lg mx-auto mb-4'>
+						<motion.div 
+							whileHover={{ scale: 1.02 }}
+							className='relative w-40 h-40 rounded-full overflow-hidden border-4 border-pink-500 shadow-lg mx-auto mb-6'
+						>
 							{tempImage || image ? (
 								<img
 									src={tempImage || image}
@@ -139,37 +188,20 @@ const ProfilePage = () => {
 									className='w-full h-full object-cover'
 								/>
 							) : (
-								<div className='w-full h-full bg-gray-200 flex items-center justify-center'>
-									<span className='text-gray-500 text-sm'>No Image</span>
+								<div className='w-full h-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center'>
+									<User className="w-16 h-16 text-pink-400" />
 								</div>
 							)}
-							<button
+							<motion.button
+								whileHover={{ scale: 1.1 }}
+								whileTap={{ scale: 0.9 }}
 								type='button'
 								onClick={() => fileInputRef.current.click()}
-								className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity'
+								className='absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity'
 							>
-								<svg
-									className='w-8 h-8 text-white'
-									fill='none'
-									stroke='currentColor'
-									viewBox='0 0 24 24'
-									xmlns='http://www.w3.org/2000/svg'
-								>
-									<path
-										strokeLinecap='round'
-										strokeLinejoin='round'
-										strokeWidth={2}
-										d='M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z'
-									/>
-									<path
-										strokeLinecap='round'
-										strokeLinejoin='round'
-										strokeWidth={2}
-										d='M15 13a3 3 0 11-6 0 3 3 0 016 0z'
-									/>
-								</svg>
-							</button>
-						</div>
+								<Camera className='w-8 h-8 text-white' />
+							</motion.button>
+						</motion.div>
 						<input
 							ref={fileInputRef}
 							type='file'
@@ -178,53 +210,159 @@ const ProfilePage = () => {
 							onChange={handleImageSelection}
 						/>
 						{tempImage && (
-							<button
-								onClick={handleSaveImage}
-								className='mt-2 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors'
+							<motion.div
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								className="flex space-x-2"
 							>
-								Save Image
-							</button>
+								<motion.button
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									onClick={handleSaveImage}
+									disabled={isSaving}
+									className='px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full hover:from-pink-600 hover:to-purple-600 shadow-md flex items-center space-x-2'
+								>
+									{isSaving ? (
+										<>
+											<svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+											<span>Saving...</span>
+										</>
+									) : (
+										<>
+											<Save className="w-5 h-5" />
+											<span>Save Image</span>
+										</>
+									)}
+								</motion.button>
+								<motion.button
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+									onClick={() => setTempImage(null)}
+									className='px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 shadow-md flex items-center space-x-2'
+								>
+									<X className="w-5 h-5" />
+									<span>Cancel</span>
+								</motion.button>
+							</motion.div>
 						)}
-						<h1 className='mt-4 text-2xl font-bold text-gray-900'>{name}</h1>
-						<p className='text-sm text-gray-600'>{bio}</p>
-						<button
-							onClick={() => setIsEditModalOpen(true)}
-							className='mt-4 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors'
+						<motion.h1 
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							className='mt-6 text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'
 						>
-							Edit Profile
-						</button>
+							{name}
+						</motion.h1>
+						<p className='text-gray-600 mt-2 text-center max-w-md'>{bio}</p>
+						<motion.button
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+							onClick={() => setIsEditModalOpen(true)}
+							className='mt-6 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full hover:from-pink-600 hover:to-purple-600 shadow-md flex items-center space-x-2'
+						>
+							<Edit2 className="w-5 h-5" />
+							<span>Edit Profile</span>
+						</motion.button>
 					</div>
 
 					{/* Display User Information */}
-					<div className='mt-8 w-full space-y-4'>
-						<div className='bg-gray-50 p-4 rounded-lg'>
-							<h3 className='text-lg font-semibold text-gray-900'>Profile Information</h3>
-							<div className='mt-2 space-y-2 text-sm text-gray-700'>
-								<p><strong>Age:</strong> {age}</p>
-								<p><strong>Gender:</strong> {gender}</p>
-								<p><strong>Relationship Status:</strong> {relationshipStatus}</p>
-								<p><strong>Marital History:</strong> {maritalHistory}</p>
-								<p><strong>Number of Children:</strong> {numberOfChildren}</p>
-								<p><strong>Nationality:</strong> {nationality}</p>
-								<p><strong>Hobbies:</strong> {hobbies.join(", ")}</p>
+					<div className='mt-12 grid grid-cols-1 md:grid-cols-2 gap-6'>
+						<motion.div 
+							initial={{ opacity: 0, x: -20 }}
+							animate={{ opacity: 1, x: 0 }}
+							className='bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-xl shadow-md'
+						>
+							<h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+								<User className="w-5 h-5 mr-2 text-pink-500" />
+								Personal Information
+							</h3>
+							<div className='space-y-3 text-gray-700'>
+								<p className="flex items-center"><span className="font-medium w-32">Age:</span> {age}</p>
+								<p className="flex items-center"><span className="font-medium w-32">Gender:</span> {gender}</p>
+								<p className="flex items-center"><span className="font-medium w-32">Nationality:</span> {nationality}</p>
 							</div>
-						</div>
-					</div>
+						</motion.div>
 
-					{/* Edit Profile Modal */}
-					{isEditModalOpen && (
-						<div className='fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4'>
-							<motion.div
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.3 }}
-								className='bg-white rounded-lg w-full max-w-2xl p-6 overflow-y-auto max-h-screen'
-							>
-								<h2 className='text-xl font-bold mb-4'>Edit Profile</h2>
-								<form onSubmit={handleSubmit} className='space-y-4'>
+						<motion.div 
+							initial={{ opacity: 0, x: 20 }}
+							animate={{ opacity: 1, x: 0 }}
+							className='bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-xl shadow-md'
+						>
+							<h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+								<Heart className="w-5 h-5 mr-2 text-pink-500" />
+								Relationship Status
+							</h3>
+							<div className='space-y-3 text-gray-700'>
+								<p className="flex items-center"><span className="font-medium w-32">Status:</span> {relationshipStatus}</p>
+								<p className="flex items-center"><span className="font-medium w-32">Marital History:</span> {maritalHistory}</p>
+								<p className="flex items-center"><span className="font-medium w-32">Children:</span> {numberOfChildren}</p>
+							</div>
+						</motion.div>
+
+						<motion.div 
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							className='md:col-span-2 bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-xl shadow-md'
+						>
+							<h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
+								<Users className="w-5 h-5 mr-2 text-pink-500" />
+								Interests & Hobbies
+							</h3>
+							<div className='flex flex-wrap gap-2'>
+								{hobbies.map((hobby, index) => (
+									<motion.span
+										key={index}
+										initial={{ opacity: 0, scale: 0.8 }}
+										animate={{ opacity: 1, scale: 1 }}
+										transition={{ delay: index * 0.1 }}
+										className='px-3 py-1 bg-white rounded-full text-sm text-gray-700 shadow-sm'
+									>
+										{hobby}
+									</motion.span>
+								))}
+							</div>
+						</motion.div>
+					</div>
+				</motion.div>
+			</div>
+
+			{/* Edit Profile Modal */}
+			<AnimatePresence>
+				{isEditModalOpen && (
+					<motion.div 
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4'
+					>
+						<motion.div
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.9 }}
+							transition={{ type: "spring", damping: 25 }}
+							className='bg-white rounded-2xl w-full max-w-2xl p-8 overflow-y-auto max-h-[90vh]'
+						>
+							<div className="flex justify-between items-center mb-6">
+								<h2 className='text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'>
+									Edit Profile
+								</h2>
+								<motion.button
+									whileHover={{ scale: 1.1 }}
+									whileTap={{ scale: 0.9 }}
+									onClick={handleCancel}
+									className='text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100'
+								>
+									<X className="w-6 h-6" />
+								</motion.button>
+							</div>
+
+							<form onSubmit={handleSubmit} className='space-y-6'>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									{/* Name */}
 									<div>
-										<label htmlFor='name' className='block text-sm font-medium text-gray-700'>
+										<label htmlFor='name' className='block text-sm font-medium text-gray-700 mb-2'>
 											Name <span className='text-red-500'>*</span>
 										</label>
 										<input
@@ -233,30 +371,14 @@ const ProfilePage = () => {
 											type='text'
 											value={name}
 											onChange={(e) => setName(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
-											required
-										/>
-									</div>
-
-									{/* Bio */}
-									<div>
-										<label htmlFor='bio' className='block text-sm font-medium text-gray-700'>
-											Bio <span className='text-red-500'>*</span>
-										</label>
-										<textarea
-											id='bio'
-											name='bio'
-											rows={3}
-											value={bio}
-											onChange={(e) => setBio(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										/>
 									</div>
 
 									{/* Age */}
 									<div>
-										<label htmlFor='age' className='block text-sm font-medium text-gray-700'>
+										<label htmlFor='age' className='block text-sm font-medium text-gray-700 mb-2'>
 											Age <span className='text-red-500'>*</span>
 										</label>
 										<input
@@ -267,20 +389,20 @@ const ProfilePage = () => {
 											max='100'
 											value={age}
 											onChange={(e) => setAge(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										/>
 									</div>
 
 									{/* Gender */}
 									<div>
-										<label className='block text-sm font-medium text-gray-700'>
+										<label className='block text-sm font-medium text-gray-700 mb-2'>
 											Gender <span className='text-red-500'>*</span>
 										</label>
 										<select
 											value={gender}
 											onChange={(e) => setGender(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										>
 											<option value=''>Select</option>
@@ -293,13 +415,13 @@ const ProfilePage = () => {
 
 									{/* Relationship Status */}
 									<div>
-										<label className='block text-sm font-medium text-gray-700'>
+										<label className='block text-sm font-medium text-gray-700 mb-2'>
 											Relationship Status <span className='text-red-500'>*</span>
 										</label>
 										<select
 											value={relationshipStatus}
 											onChange={(e) => setRelationshipStatus(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										>
 											<option value=''>Select</option>
@@ -312,13 +434,13 @@ const ProfilePage = () => {
 
 									{/* Marital History */}
 									<div>
-										<label className='block text-sm font-medium text-gray-700'>
+										<label className='block text-sm font-medium text-gray-700 mb-2'>
 											Have you been married before? <span className='text-red-500'>*</span>
 										</label>
 										<select
 											value={maritalHistory}
 											onChange={(e) => setMaritalHistory(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										>
 											<option value=''>Select</option>
@@ -329,7 +451,7 @@ const ProfilePage = () => {
 
 									{/* Number of Children */}
 									<div>
-										<label htmlFor='numberOfChildren' className='block text-sm font-medium text-gray-700'>
+										<label htmlFor='numberOfChildren' className='block text-sm font-medium text-gray-700 mb-2'>
 											Number of Children
 										</label>
 										<input
@@ -339,13 +461,13 @@ const ProfilePage = () => {
 											min='0'
 											value={numberOfChildren}
 											onChange={(e) => setNumberOfChildren(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 										/>
 									</div>
 
 									{/* Nationality */}
 									<div>
-										<label htmlFor='nationality' className='block text-sm font-medium text-gray-700'>
+										<label htmlFor='nationality' className='block text-sm font-medium text-gray-700 mb-2'>
 											Nationality <span className='text-red-500'>*</span>
 										</label>
 										<input
@@ -354,14 +476,14 @@ const ProfilePage = () => {
 											type='text'
 											value={nationality}
 											onChange={(e) => setNationality(e.target.value)}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											required
 										/>
 									</div>
 
 									{/* Hobbies */}
 									<div>
-										<label htmlFor='hobbies' className='block text-sm font-medium text-gray-700'>
+										<label htmlFor='hobbies' className='block text-sm font-medium text-gray-700 mb-2'>
 											Hobbies
 										</label>
 										<input
@@ -370,30 +492,56 @@ const ProfilePage = () => {
 											type='text'
 											value={hobbies.join(", ")}
 											onChange={(e) => setHobbies(e.target.value.split(", "))}
-											className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500'
+											className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
 											placeholder='e.g., Reading, Traveling, Cooking'
 										/>
 									</div>
+								</div>
 
-									{/* Save Button */}
-									<button
-										type='submit'
-										className='w-full px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors'
-									>
-										Save Changes
-									</button>
-								</form>
-								<button
-									onClick={handleCancel}
-									className='mt-4 w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors'
+								{/* Bio */}
+								<div>
+									<label htmlFor='bio' className='block text-sm font-medium text-gray-700 mb-2'>
+										Bio <span className='text-red-500'>*</span>
+									</label>
+									<textarea
+										id='bio'
+										name='bio'
+										rows={3}
+										value={bio}
+										onChange={(e) => setBio(e.target.value)}
+										className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent'
+										required
+									/>
+								</div>
+
+								{/* Save Button */}
+								<motion.button
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+									type='submit'
+									disabled={isSaving}
+									className='w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:from-pink-600 hover:to-purple-600 shadow-lg flex items-center justify-center space-x-2'
 								>
-									Cancel
-								</button>
-							</motion.div>
-						</div>
-					)}
-				</motion.div>
-			</div>
+									{isSaving ? (
+										<>
+											<svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+											<span>Saving Changes...</span>
+										</>
+									) : (
+										<>
+											<Save className="w-5 h-5" />
+											<span>Save Changes</span>
+										</>
+									)}
+								</motion.button>
+							</form>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 };

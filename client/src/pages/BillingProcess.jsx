@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { CreditCard, Calendar, Lock, CheckCircle, Heart, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CreditCard, Calendar, Lock, CheckCircle, Heart, Gift, ChevronLeft, ChevronRight, Sparkles, Crown, Star } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { Header } from "../components/Header";
@@ -9,64 +9,69 @@ const BillingProcess = () => {
   const [paymentMethod, setPaymentMethod] = useState('credit');
   const [step, setStep] = useState(1);
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const { scrollY } = useScroll();
-  const backgroundOpacity = useTransform(scrollY, [0, 500], [0.4, 0.8]);
+  const opacity = useTransform(scrollY, [0, 500], [0.4, 0.8]);
+
+  useEffect(() => {
+    if (isPaymentComplete) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isPaymentComplete]);
 
   const plans = [
     {
       id: 'blossom',
       name: 'Blossom Package',
-      price: '₦75,000 / $50 / €45',
+      price: '₦75,000',
+      priceUSD: '$20',
+      priceEUR: '€18',
       period: 'monthly',
       features: [
         'Exclusive matchmaking within your country',
         'Access to live sessions',
-        'Basic personality matching'
+        'Basic profile verification',
+        'Standard customer support'
       ],
-      color: 'from-rose-400 to-pink-500'
+      icon: <Star className="w-6 h-6 text-pink-500" />,
+      color: 'from-pink-500 to-rose-500'
     },
     {
       id: 'harmony',
       name: 'Harmony Package',
-      price: '₦125,000 / $83 / €75',
+      price: '₦125,000',
+      priceUSD: '$33',
+      priceEUR: '€30',
       period: 'monthly',
       features: [
         'Exclusive matchmaking within and outside your country',
         'Access to live sessions',
-        'Advanced personality assessment'
+        'Priority profile verification',
+        'Premium customer support',
+        'Advanced matching algorithms'
       ],
-      color: 'from-purple-400 to-pink-500'
+      icon: <Crown className="w-6 h-6 text-purple-500" />,
+      color: 'from-purple-500 to-indigo-500'
     },
     {
       id: 'forever',
       name: 'My Forever Package',
-      price: '₦250,000 / $166 / €150 per month',
+      price: '₦225,000',
+      priceUSD: '$66',
+      priceEUR: '€60',
       period: 'monthly',
       features: [
         'Personal matches',
         'Private sessions',
         'Access to high-profile members',
         'Matches within and outside Nigeria',
-        'Priority customer support'
+        'VIP customer support',
+        'Exclusive events access'
       ],
-      color: 'from-fuchsia-400 to-pink-500'
-    },
-    {
-      id: 'personalized',
-      name: 'Personalized Matching',
-      price: '₦525,000 / $350 / €315 per month',
-      period: 'monthly',
-      features: [
-        'Dedicated matchmaking specialist',
-        'Customized matching algorithm',
-        'Unlimited private sessions',
-        'Global match access',
-        'VIP event invitations',
-        '24/7 concierge service',
-        'Background verification included'
-      ],
-      isPremium: true,
-      color: 'from-amber-300 to-pink-500'
+      icon: <Sparkles className="w-6 h-6 text-amber-500" />,
+      color: 'from-amber-500 to-orange-500'
     }
   ];
 
@@ -92,63 +97,72 @@ const BillingProcess = () => {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="w-full"
     >
-      <h2 className="text-3xl font-bold text-gray-900 mb-8 bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">Choose Your Love Journey</h2>
-      <div className="grid md:grid-cols-3 gap-6">
-        {plans.map((plan) => (
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <Sparkles className="w-8 h-8 text-pink-500" />
+        <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+          Choose Your Love Journey
+        </h2>
+        <Sparkles className="w-8 h-8 text-pink-500" />
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8">
+        {plans.map((plan, index) => (
           <motion.div
             key={plan.id}
-            whileHover={{ scale: 1.05, y: -10 }}
-            whileTap={{ scale: 0.95 }}
-            className={`relative border border-gray-200/30 rounded-2xl p-6 cursor-pointer backdrop-blur-lg bg-white/30 shadow-xl transition-all duration-300 overflow-hidden
-              ${selectedPlan === plan.id ? `bg-gradient-to-br ${plan.color} text-white` : 'hover:bg-white/50'}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            className={`relative bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-pink-100 
+              ${selectedPlan === plan.id ? 'ring-2 ring-pink-500' : ''}`}
             onClick={() => setSelectedPlan(plan.id)}
           >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
-              animate={{ opacity: selectedPlan === plan.id ? 0.3 : 0 }}
-            />
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="font-bold text-xl">{plan.name}</h3>
-                <p className={`text-sm ${selectedPlan === plan.id ? 'text-white/80' : 'text-gray-500'}`}>{plan.period}</p>
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <div className={`p-3 rounded-full bg-gradient-to-r ${plan.color} text-white shadow-lg`}>
+                {plan.icon}
               </div>
-              {selectedPlan === plan.id && (
-                <CheckCircle className="h-6 w-6 text-white" />
-              )}
             </div>
-            
-            <div className="mb-6">
-              <span className="text-3xl font-bold">{plan.price}</span>
-              {plan.period === 'monthly' && <span className={`text-sm ml-2 ${selectedPlan === plan.id ? 'text-white/80' : 'text-gray-500'}`}>/month</span>}
+
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</h3>
+              <div className="space-y-1">
+                <p className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  {plan.price}
+                </p>
+                <p className="text-sm text-gray-500">{plan.priceUSD} / {plan.priceEUR}</p>
+                <p className="text-sm text-gray-500">per month</p>
+              </div>
             </div>
-            
-            <ul className="space-y-3">
+
+            <ul className="space-y-4 mb-8">
               {plan.features.map((feature, index) => (
-                <motion.li
+                <motion.li 
                   key={index}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   className="flex items-start"
                 >
-                  <Heart className={`h-5 w-5 ${selectedPlan === plan.id ? 'text-white' : 'text-pink-500'} mr-2 flex-shrink-0 mt-0.5`} />
-                  <span className={`text-sm ${selectedPlan === plan.id ? 'text-white/90' : 'text-gray-700'}`}>{feature}</span>
+                  <CheckCircle className="h-5 w-5 text-pink-500 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{feature}</span>
                 </motion.li>
               ))}
             </ul>
-            {plan.isPremium && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute top-4 right-4 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full"
-              >
-                Premium
-              </motion.span>
-            )}
+
+            <button
+              onClick={() => setSelectedPlan(plan.id)}
+              className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                selectedPlan === plan.id
+                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg'
+                  : 'bg-white border-2 border-pink-200 text-pink-600 hover:border-pink-400'
+              }`}
+            >
+              {selectedPlan === plan.id ? 'Selected Plan' : 'Select Plan'}
+            </button>
           </motion.div>
         ))}
       </div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -174,8 +188,14 @@ const BillingProcess = () => {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="w-full"
     >
-      <h2 className="text-3xl font-bold text-gray-900 mb-8 bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">Secure Payment</h2>
-      
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <Lock className="w-8 h-8 text-pink-500" />
+        <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+          Secure Payment
+        </h2>
+        <Lock className="w-8 h-8 text-pink-500" />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {['credit', 'paypal'].map((method) => (
           <motion.div
@@ -206,7 +226,7 @@ const BillingProcess = () => {
           </motion.div>
         ))}
       </div>
-      
+
       {paymentMethod === 'credit' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -224,7 +244,7 @@ const BillingProcess = () => {
                 placeholder="Name as shown on card"
               />
             </div>
-            
+
             <div className="mb-4">
               <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
               <div className="relative">
@@ -238,7 +258,7 @@ const BillingProcess = () => {
                 <CreditCard className="absolute right-3 top-3 h-6 w-6 text-gray-400" />
               </div>
             </div>
-            
+
             <div className="mb-4">
               <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
               <div className="relative">
@@ -248,11 +268,11 @@ const BillingProcess = () => {
                   id="expiry"
                   className="w-full pl-3 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/50"
                   placeholder="MM/YY"
-                />
+adó                />
                 <Calendar className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
               </div>
             </div>
-            
+
             <div className="mb-4">
               <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
               <div className="relative">
@@ -269,7 +289,7 @@ const BillingProcess = () => {
           </div>
         </motion.div>
       )}
-      
+
       {paymentMethod === 'paypal' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -291,7 +311,7 @@ const BillingProcess = () => {
 
   const renderOrderSummary = () => {
     const selectedPlanDetails = plans.find(plan => plan.id === selectedPlan);
-    
+
     return (
       <motion.div
         initial={{ opacity: 0, x: 50 }}
@@ -300,8 +320,14 @@ const BillingProcess = () => {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="w-full"
       >
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">Order Summary</h2>
-        
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <CheckCircle className="w-8 h-8 text-pink-500" />
+          <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+            Order Summary
+          </h2>
+          <CheckCircle className="w-8 h-8 text-pink-500" />
+        </div>
+
         <motion.div
           className="bg-white/30 border border-gray-200/30 rounded-xl p-6 backdrop-blur-lg mb-6"
           whileHover={{ boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}
@@ -319,13 +345,13 @@ const BillingProcess = () => {
               {selectedPlanDetails.price}
             </motion.span>
           </div>
-          
+
           {selectedPlanDetails.period === 'monthly' && (
             <div className="py-4 border-b border-gray-200/30">
               <p className="text-sm text-gray-700">Your subscription auto-renews monthly. Cancel anytime with one click.</p>
             </div>
           )}
-          
+
           <div className="pt-4">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -335,7 +361,7 @@ const BillingProcess = () => {
               <span className="text-gray-700">Subtotal</span>
               <span className="font-medium">{selectedPlanDetails.price}</span>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -345,7 +371,7 @@ const BillingProcess = () => {
               <span className="text-gray-700">Tax</span>
               <span className="font-medium">$0.00</span>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -353,11 +379,13 @@ const BillingProcess = () => {
               className="flex justify-between items-center pt-4 border-t border-gray-200/30 mt-4"
             >
               <span className="font-semibold text-lg">Total</span>
-              <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">{selectedPlanDetails.price}</span>
+              <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+                {selectedPlanDetails.price}
+              </span>
             </motion.div>
           </div>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -371,7 +399,7 @@ const BillingProcess = () => {
             </div>
           </div>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -382,11 +410,11 @@ const BillingProcess = () => {
             <Heart className="h-6 w-6 text-pink-500 mr-3 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-gray-900">Our Love Guarantee</p>
-              <p className="text-sm text-gray-700">No meaningful connections in 30 days? We’ll extend your subscription free!</p>
+              <p className="text-sm text-gray-700">No meaningful connections in 30 days? Well extend your subscription free!</p>
             </div>
           </div>
         </motion.div>
-        
+
         <motion.button
           whileHover={{ scale: 1.05, boxShadow: '0 8px 30px rgba(236,72,153,0.3)' }}
           whileTap={{ scale: 0.95 }}
@@ -406,14 +434,22 @@ const BillingProcess = () => {
       transition={{ duration: 0.8, ease: 'easeOut' }}
       className="w-full text-center relative"
     >
-      <Confetti width={window.innerWidth} height={window.innerHeight} />
+      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <motion.div
         className="absolute inset-0 bg-gradient-to-b from-pink-200/30 to-purple-200/30 backdrop-blur-lg"
         animate={{ opacity: [0.3, 0.5, 0.3] }}
         transition={{ repeat: Infinity, duration: 4 }}
       />
-      <h2 className="text-4xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600 relative z-10">Welcome to Your Love Journey!</h2>
-      <p className="text-gray-700 mb-8 text-lg max-w-2xl mx-auto relative z-10">Your subscription is active! Get ready to meet your perfect match.</p>
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <Sparkles className="w-8 h-8 text-pink-500" />
+        <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+          Welcome to Your Love Journey!
+        </h2>
+        <Sparkles className="w-8 h-8 text-pink-500" />
+      </div>
+      <p className="text-gray-700 mb-8 text-lg max-w-2xl mx-auto relative z-10">
+        Your subscription is active! Get ready to meet your perfect match.
+      </p>
       <motion.button
         whileHover={{ scale: 1.05, boxShadow: '0 8px 30px rgba(236,72,153,0.3)' }}
         whileTap={{ scale: 0.95 }}
@@ -454,33 +490,37 @@ const BillingProcess = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-b from-pink-100 to-purple-100 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        </div>
+
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-pink-200/30 to-purple-200/30"
-          style={{ opacity: backgroundOpacity }}
-        />
-        <motion.div
-          className="absolute top-0 left-0 w-full h-full"
-          animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{ duration: 20, repeat: Infinity, repeatType: 'reverse' }}
-          style={{
-            background: 'radial-gradient(circle at 20% 20%, rgba(236,72,153,0.2) 0%, transparent 50%)',
-          }}
-        />
-        <div className="max-w-6xl mx-auto px-4 py-16 relative z-10">
+          className="max-w-6xl mx-auto px-4 py-16 relative z-10"
+          style={{ opacity }} // Apply the scroll-based opacity animation here
+        >
           <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600 mb-4">Find Your Soulmate</h1>
-            <p className="text-gray-700 text-lg max-w-3xl mx-auto">Select your perfect plan and start your journey to love with our premium matchmaking services.</p>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Sparkles className="w-8 h-8 text-pink-500" />
+              <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
+                Find Your Soulmate
+              </h1>
+              <Sparkles className="w-8 h-8 text-pink-500" />
+            </div>
+            <p className="text-gray-700 text-lg max-w-3xl mx-auto">
+              Select your perfect plan and start your journey to love with our premium matchmaking services.
+            </p>
           </motion.div>
-          
+
           {renderStepIndicator()}
-          
+
           <motion.div
             className="bg-white/20 backdrop-blur-xl shadow-2xl rounded-3xl p-8 md:p-12 border border-gray-200/30"
             whileHover={{ boxShadow: '0 20px 60px rgba(0,0,0,0.1)' }}
@@ -496,7 +536,7 @@ const BillingProcess = () => {
                 </>
               )}
             </AnimatePresence>
-            
+
             {!isPaymentComplete && step !== 3 && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -524,7 +564,7 @@ const BillingProcess = () => {
               </motion.div>
             )}
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </>
   );

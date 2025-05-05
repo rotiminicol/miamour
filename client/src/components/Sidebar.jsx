@@ -5,7 +5,8 @@ import { useMatchStore } from "../store/useMatchStore";
 import { 
   Heart, Loader, MessageCircle, Home, CreditCard, 
   Settings, Shield, Calendar, HelpCircle, FileText, Gift,
-  ChevronRight, User, Menu, ArrowLeftCircle, Users, Sparkles
+  ChevronRight, User, Menu, ArrowLeftCircle, Users, Sparkles,
+  BarChart2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,7 +23,6 @@ const Sidebar = () => {
     setExpandedCategory(expandedCategory === category ? null : category);
   };
 
-  // Avatar function to select male or female avatar
   const getAvatar = () => {
     const isFemale = authUser?.gender === "female";
     return isFemale ? "/assets/avatarwoman.png" : "/assets/avatarmale.png";
@@ -32,10 +32,8 @@ const Sidebar = () => {
     getMyMatches();
   }, [getMyMatches]);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      // Default state based on screen size, but don't force it to open if user closed it
       if (window.innerWidth < 1024) {
         setIsOpen(false);
       }
@@ -45,21 +43,19 @@ const Sidebar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Close sidebar on route change on mobile
   useEffect(() => {
     if (window.innerWidth < 1024) {
       setIsOpen(false);
     }
   }, [location.pathname]);
 
-  // Define icon colors for each category
-  const iconColors = {
-    services: "text-purple-500",
-    billing: "text-green-500",
-    settings: "text-blue-500",
-    support: "text-orange-500",
-    dashboard: "text-indigo-500"
-  };
+  // const iconColors = {
+  //   services: "text-purple-500",
+  //   billing: "text-green-500",
+  //   settings: "text-blue-500",
+  //   support: "text-orange-500",
+  //   dashboard: "text-indigo-500"
+  // };
 
   const categories = {
     services: [
@@ -90,12 +86,10 @@ const Sidebar = () => {
     ]
   };
 
-  // Check if current path matches any route
   const isActiveRoute = (path) => location.pathname === path;
 
   return (
     <>
-      {/* Overlay for mobile */}
       <AnimatePresence>
         {isOpen && window.innerWidth < 1024 && (
           <motion.div 
@@ -108,7 +102,6 @@ const Sidebar = () => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar Container */}
       <motion.div
         className={`
           fixed inset-y-0 left-0 z-30 bg-white shadow-lg overflow-hidden
@@ -122,15 +115,14 @@ const Sidebar = () => {
         transition={{ type: "spring", stiffness: 400, damping: 40 }}
       >
         <div className='flex flex-col h-full'>
-          {/* Sidebar Header */}
-          <div className='py-4 px-4 border-b border-pink-200 flex justify-between items-center bg-gradient-to-r from-pink-50 to-pink-100'>
+          <div className='py-4 px-4 border-b border-pink-100 flex justify-between items-center bg-gradient-to-r from-pink-50 to-pink-100'>
             {isOpen ? (
               <Link to="/" className="flex items-center space-x-2">
                 <motion.div
                   whileHover={{ rotate: 360, scale: 1.1 }}
                   transition={{ duration: 0.8 }}
                 >
-                  <Heart className='text-pink-600' size={28} />
+                 <Heart className='text-pink-600' size={28} />
                 </motion.div>
                 <motion.h2 
                   initial={{ opacity: 0, x: -10 }}
@@ -143,7 +135,7 @@ const Sidebar = () => {
               </Link>
             ) : (
               <div className="flex justify-center w-full">
-                {/* Heart icon removed here */}
+               
               </div>
             )}
             
@@ -161,7 +153,6 @@ const Sidebar = () => {
             </motion.button>
           </div>
 
-          {/* Matches Section - only show when expanded */}
           <AnimatePresence>
             {isOpen && (
               <motion.div 
@@ -214,28 +205,43 @@ const Sidebar = () => {
             )}
           </AnimatePresence>
 
-          {/* Navigation Items */}
           <div className='flex-grow overflow-y-auto py-2'>
-            {/* Dashboard - Always visible */}
             <Link 
-                to="/dashboard" 
-                className={`flex items-center px-6 py-3 transition-colors duration-200 ${
-                  isActiveRoute('/dashboard') 
-                    ? 'bg-pink-100 text-pink-700' 
-                    : 'text-gray-700 hover:bg-pink-50'
-                }`}
+              to="/dashboard" 
+              className={`flex items-center px-6 py-3 transition-colors duration-200 ${
+                isActiveRoute('/dashboard') 
+                  ? 'bg-pink-100 text-pink-700' 
+                  : 'text-gray-700 hover:bg-pink-50'
+              }`}
+            >
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 10 }}
+                whileTap={{ scale: 0.9 }}
+                className="mr-3"
               >
-                <motion.div
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="mr-3"
-                >
-                  <Home size={20} className={isOpen ? iconColors.dashboard : "text-indigo-500"} />
-                </motion.div>
-                {isOpen && <span className="font-medium">Dashboard</span>}
-              </Link>
+                <BarChart2 size={20} className={isOpen ? "text-pink-600" : "text-pink-500"} />
+              </motion.div>
+              {isOpen && <span className="font-medium">Dashboard</span>}
+            </Link>
 
-            {/* Categories */}
+            <Link 
+              to="/homepage" 
+              className={`flex items-center px-6 py-3 transition-colors duration-200 ${
+                isActiveRoute('/homepage') 
+                  ? 'bg-pink-100 text-pink-700' 
+                  : 'text-gray-700 hover:bg-pink-50'
+              }`}
+            >
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 10 }}
+                whileTap={{ scale: 0.9 }}
+                className="mr-3"
+              >
+                <Home size={20} className={isOpen ? "text-pink-600" : "text-pink-500"} />
+              </motion.div>
+              {isOpen && <span className="font-medium">Home</span>}
+            </Link>
+
             {Object.entries(categories).map(([category, items]) => (
               <div key={category} className="mb-1">
                 {isOpen ? (
@@ -256,10 +262,20 @@ const Sidebar = () => {
                     whileHover={{ scale: 1.1, x: 5 }}
                     className="py-3 flex justify-center"
                   >
-                    {category === 'services' && <Heart size={20} className="text-purple-500" />}
-                    {category === 'billing' && <CreditCard size={20} className="text-green-500" />}
-                    {category === 'settings' && <Settings size={20} className="text-blue-500" />}
-                    {category === 'support' && <HelpCircle size={20} className="text-orange-500" />}
+                    <motion.button
+                      whileHover={{ scale: 1.2, rotate: 10 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        setIsOpen(true);
+                        setExpandedCategory(category);
+                      }}
+                      className="p-2 rounded-lg hover:bg-pink-50 transition-colors"
+                    >
+                      {category === 'services' && <Heart size={20} className="text-purple-500" />}
+                      {category === 'billing' && <CreditCard size={20} className="text-green-500" />}
+                      {category === 'settings' && <Settings size={20} className="text-blue-500" />}
+                      {category === 'support' && <HelpCircle size={20} className="text-orange-500" />}
+                    </motion.button>
                   </motion.div>
                 )}
 
@@ -298,7 +314,6 @@ const Sidebar = () => {
             ))}
           </div>
 
-          {/* User Quick Info (Only show when expanded) */}
           <AnimatePresence>
             {isOpen && authUser && (
               <motion.div 
@@ -330,7 +345,6 @@ const Sidebar = () => {
         </div>
       </motion.div>
 
-      {/* Toggle button for mobile - only show when sidebar is closed */}
       <AnimatePresence>
         {!isOpen && window.innerWidth < 1024 && (
           <motion.button

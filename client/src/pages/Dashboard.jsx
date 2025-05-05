@@ -1,47 +1,84 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { 
   Heart, MessageCircle, Calendar, User, 
   HelpCircle, Users, Sparkles, TrendingUp, 
-  Activity, Award,
-  CreditCard, FileText, Settings, Shield,
-  BookOpen, Star, Info, Phone, Gift, Bell
+  Activity, Award, Settings, Shield, 
+  BookOpen, Star, Info, Phone, Bell, ChevronRight
 } from 'lucide-react';
 import { Header } from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { useAuthStore } from '../store/useAuthStore';
 
-// Dashboard Stats Card Component
+// Enhanced StatCard Component with 3D effect
 const StatCard = ({ icon, title, value, change, isPositive = true, to }) => {
   const navigate = useNavigate();
-  const handleClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (to) {
-      navigate(to);
-    }
+  const cardRef = useRef(null);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e) => {
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateXValue = ((y - centerY) / centerY) * 10;
+    const rotateYValue = ((x - centerX) / centerX) * 10;
+    
+    setRotateX(-rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
   };
 
   return (
     <motion.div 
-      className="bg-gradient-to-br from-white to-pink-50 rounded-xl p-6 shadow-lg cursor-pointer border border-pink-100/50"
-      whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(236, 72, 153, 0.15)" }}
-      transition={{ duration: 0.2 }}
-      onClick={handleClick}
+      ref={cardRef}
+      className="bg-gradient-to-br from-white to-rose-50/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-rose-100/50 cursor-pointer backdrop-blur-sm"
+      onClick={() => navigate(to)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transformStyle: 'preserve-3d',
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+      }}
     >
-      <div className="flex items-start justify-between">
-        <div className="p-3 rounded-lg bg-gradient-to-br from-pink-500 to-pink-400 text-white">
+      <div className="flex items-start justify-between mb-4">
+        <motion.div 
+          className="p-3 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-white shadow-lg"
+          whileHover={{ scale: 1.1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
           {icon}
-        </div>
-        <div className={`flex items-center text-sm ${isPositive ? 'text-green-500' : 'text-red-500'} font-medium`}>
+        </motion.div>
+        <motion.div 
+          className={`flex items-center text-sm ${isPositive ? 'text-emerald-500' : 'text-rose-500'} font-medium bg-${isPositive ? 'emerald' : 'rose'}-50 px-2 py-1 rounded-full`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
           {isPositive ? <TrendingUp size={14} className="mr-1" /> : <TrendingUp size={14} className="mr-1 transform rotate-180" />}
           <span>{change}</span>
-        </div>
+        </motion.div>
       </div>
-      <h3 className="text-gray-600 text-sm font-medium mt-4">{title}</h3>
-      <p className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-pink-400 bg-clip-text text-transparent mt-1">{value}</p>
+      <h3 className="text-gray-600 text-sm font-medium">{title}</h3>
+      <motion.p 
+        className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mt-1"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        {value}
+      </motion.p>
     </motion.div>
   );
 };
@@ -55,24 +92,45 @@ StatCard.propTypes = {
   to: PropTypes.string.isRequired
 };
 
-// Navigation Card Component
-const NavigationCard = ({ title, icon, description, to, color }) => {
+// Enhanced NavigationCard Component with hover effects
+const NavigationCard = ({ title, icon, description, to }) => {
   const navigate = useNavigate();
   
   return (
     <motion.div
-      whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(236, 72, 153, 0.15)" }}
-      className={`bg-gradient-to-br from-white to-pink-50 rounded-xl p-6 shadow-lg cursor-pointer border border-pink-100/50 ${color}`}
+      className="bg-gradient-to-br from-white to-rose-50/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-rose-100/50 cursor-pointer backdrop-blur-sm"
       onClick={() => navigate(to)}
+      whileHover={{ 
+        scale: 1.02,
+        boxShadow: "0 20px 25px -5px rgba(244, 114, 182, 0.1), 0 10px 10px -5px rgba(244, 114, 182, 0.04)"
+      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <div className="flex items-center space-x-4">
-        <div className="p-3 rounded-lg bg-gradient-to-br from-pink-500 to-pink-400 text-white">
+        <motion.div 
+          className="p-3 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-white shadow-lg"
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
           {icon}
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-600 to-pink-400 bg-clip-text text-transparent">{title}</h3>
+        </motion.div>
+        <div className="flex-grow">
+          <motion.h3 
+            className="text-lg font-semibold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent"
+            whileHover={{ scale: 1.05 }}
+          >
+            {title}
+          </motion.h3>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
+        <motion.div
+          whileHover={{ x: 5 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <ChevronRight className="w-5 h-5 text-rose-400" />
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -82,429 +140,320 @@ NavigationCard.propTypes = {
   title: PropTypes.string.isRequired,
   icon: PropTypes.node.isRequired,
   description: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired
+  to: PropTypes.string.isRequired
 };
 
-// Enhanced Homepage Component
+// Enhanced Homepage Component with parallax scrolling
 const EnhancedHomepage = () => {
   const navigate = useNavigate();
   const { authUser } = useAuthStore();
   const [showPopup, setShowPopup] = useState(false);
-  const mainControls = useAnimation();
-  const scrollY = useRef(0);
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      scrollY.current = window.scrollY;
-      if (scrollY.current > 50) {
-        mainControls.start("visible");
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [mainControls]);
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
-  const popupVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2 } }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.1 
-      } 
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
-  };
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useSpring(useTransform(scrollYProgress, [0, 0.5], [1, 0.8]), {
+    stiffness: 100,
+    damping: 30
+  });
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-gray-50 to-pink-50/30">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
       <Sidebar />
-      <div className="flex-grow flex flex-col">
+      <div className="flex-grow flex flex-col" ref={containerRef}>
         <Header />
-        <main className="flex-grow overflow-y-auto px-8 py-10">
-          {/* Welcome Section */}
+        <main className="flex-grow overflow-y-auto px-6 py-8 lg:px-8 lg:py-10">
+          {/* Welcome Section with Parallax */}
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            className="mb-10 relative"
+            style={{ y, opacity, scale }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-rose-200/20 to-pink-200/20 rounded-3xl blur-3xl" />
+            <div className="relative">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
+                Welcome back, <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">{authUser?.name || 'User'}</span>
+              </h1>
+              <p className="text-gray-600 text-lg mt-2">Here is what happening with your relationship journey today.</p>
+            </div>
+          </motion.div>
+
+          {/* Stats Overview with staggered animation */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+          >
+            <StatCard 
+              icon={<Heart size={20} />}
+              title="Match Requests"
+              value="8"
+              change="+4 this week"
+              isPositive={true}
+              to="/match-requests"
+            />
+            <StatCard 
+              icon={<MessageCircle size={20} />}
+              title="Messages"
+              value="24"
+              change="12 unread"
+              isPositive={true}
+              to="/messages"
+            />
+            <StatCard 
+              icon={<Calendar size={20} />}
+              title="Upcoming Sessions"
+              value="3"
+              change="Next: Today 3PM"
+              isPositive={true}
+              to="/upcoming-sessions"
+            />
+            <StatCard 
+              icon={<Activity size={20} />}
+              title="Relationship Score"
+              value="85%"
+              change="+12% vs last month"
+              isPositive={true}
+              to="/relationship-score"
+            />
+          </motion.div>
+
+          {/* Main Services Section with floating animation */}
+          <motion.div 
             className="mb-10"
-          >
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-pink-400 bg-clip-text text-transparent">Welcome back, {authUser?.name || 'User'}!</h1>
-            <p className="text-gray-600 text-lg mt-2">Here is what is happening with your relationship journey today.</p>
-          </motion.div>
-
-          {/* Stats Overview */}
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12"
-          >
-            <motion.div variants={itemVariants}>
-              <StatCard 
-                icon={<Heart size={20} className="text-white" />}
-                title="Match Requests"
-                value="8"
-                change="+4 this week"
-                isPositive={true}
-                to="/match-requests"
-              />
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <StatCard 
-                icon={<MessageCircle size={20} className="text-white" />}
-                title="Messages"
-                value="24"
-                change="12 unread"
-                isPositive={true}
-                to="/messages"
-              />
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <StatCard 
-                icon={<Calendar size={20} className="text-white" />}
-                title="Upcoming Sessions"
-                value="3"
-                change="Next: Today 3PM"
-                isPositive={true}
-                to="/upcoming-sessions"
-              />
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <StatCard 
-                icon={<Activity size={20} className="text-white" />}
-                title="Relationship Score"
-                value="85%"
-                change="+12% vs last month"
-                isPositive={true}
-                to="/relationship-score"
-              />
-            </motion.div>
-          </motion.div>
-
-          {/* Section Headers */}
-          <motion.h2 
-            className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-pink-400 bg-clip-text text-transparent mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ delay: 0.2 }}
           >
-            Our Services
-          </motion.h2>
-
-          {/* Main Services Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12"
-          >
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-6">Our Services</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <NavigationCard
                 title="Marriage Counseling"
-                icon={<Heart size={24} className="text-white" />}
+                icon={<Heart size={24} />}
                 description="Professional counseling for couples"
                 to="/marriage-counseling"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Dating App"
-                icon={<Users size={24} className="text-white" />}
+                icon={<Users size={24} />}
                 description="Find your perfect match"
                 to="/dating-app"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Relationship Therapy"
-                icon={<MessageCircle size={24} className="text-white" />}
+                icon={<MessageCircle size={24} />}
                 description="Expert relationship guidance"
                 to="/relationship-therapy"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
             </div>
           </motion.div>
 
-          {/* Planning Services Section */}
-          <motion.div
+          {/* Planning Services Section with floating animation */}
+          <motion.div 
+            className="mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-12"
+            transition={{ delay: 0.3 }}
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Planning Services</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-6">Planning Services</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <NavigationCard
                 title="Ceremony Planning"
-                icon={<Sparkles size={24} className="text-white" />}
+                icon={<Sparkles size={24} />}
                 description="Plan your perfect ceremony"
                 to="/ceremony-planning"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Marriage Planning"
-                icon={<Calendar size={24} className="text-white" />}
+                icon={<Calendar size={24} />}
                 description="Comprehensive marriage planning"
                 to="/marriage-planning"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Personalized Matchmaking"
-                icon={<Star size={24} className="text-white" />}
+                icon={<Star size={24} />}
                 description="Find your soulmate"
                 to="/personalized-matchmaking"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
             </div>
           </motion.div>
 
-          {/* Support & Resources Section */}
-          <motion.div
+          {/* Support & Resources Section with floating animation */}
+          <motion.div 
+            className="mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-12"
+            transition={{ delay: 0.4 }}
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Support & Resources</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-6">Support & Resources</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <NavigationCard
                 title="Help Center"
-                icon={<HelpCircle size={24} className="text-white" />}
+                icon={<HelpCircle size={24} />}
                 description="Get help and support"
                 to="/help-center"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="FAQs"
-                icon={<Info size={24} className="text-white" />}
+                icon={<Info size={24} />}
                 description="Frequently asked questions"
                 to="/faqs"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Contact Us"
-                icon={<Phone size={24} className="text-white" />}
+                icon={<Phone size={24} />}
                 description="Get in touch with us"
                 to="/contact-us"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Resources"
-                icon={<BookOpen size={24} className="text-white" />}
+                icon={<BookOpen size={24} />}
                 description="Helpful resources"
                 to="/resources"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
             </div>
           </motion.div>
 
-          {/* User Management Section */}
-          <motion.div
+          {/* User Management Section with floating animation */}
+          <motion.div 
+            className="mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-12"
+            transition={{ delay: 0.5 }}
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Account Management</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-6">Account Management</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <NavigationCard
                 title="Profile"
-                icon={<User size={24} className="text-white" />}
+                icon={<User size={24} />}
                 description="Manage your profile"
                 to="/profile"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Preferences"
-                icon={<Settings size={24} className="text-white" />}
+                icon={<Settings size={24} />}
                 description="Update your preferences"
                 to="/preference"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Privacy"
-                icon={<Shield size={24} className="text-white" />}
+                icon={<Shield size={24} />}
                 description="Privacy settings"
                 to="/privacy"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
               <NavigationCard
                 title="Notifications"
-                icon={<Bell size={24} className="text-white" />}
+                icon={<Bell size={24} />}
                 description="Manage notifications"
                 to="/notifications"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
               />
             </div>
           </motion.div>
 
-          {/* Billing & Subscriptions Section */}
-          <motion.div
+          {/* Achievement Section with 3D effect */}
+          <motion.div 
+            className="mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mb-12"
+            transition={{ delay: 0.6 }}
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Billing & Subscriptions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <NavigationCard
-                title="Subscriptions"
-                icon={<CreditCard size={24} className="text-white" />}
-                description="Manage subscriptions"
-                to="/subscriptions"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Invoices"
-                icon={<FileText size={24} className="text-white" />}
-                description="View your invoices"
-                to="/invoices"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Discounts"
-                icon={<Gift size={24} className="text-white" />}
-                description="Available discounts"
-                to="/discounts"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Payment Methods"
-                icon={<CreditCard size={24} className="text-white" />}
-                description="Manage payment methods"
-                to="/billing-process"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-            </div>
-          </motion.div>
-
-          {/* Content Pages Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mb-12"
-          >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Explore More</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <NavigationCard
-                title="Blog"
-                icon={<BookOpen size={24} className="text-white" />}
-                description="Latest articles and news"
-                to="/blog"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Success Stories"
-                icon={<Star size={24} className="text-white" />}
-                description="Read success stories"
-                to="/success-stories"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Dating Tips"
-                icon={<Heart size={24} className="text-white" />}
-                description="Expert dating advice"
-                to="/dating-tips"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-              <NavigationCard
-                title="Safety Guide"
-                icon={<Shield size={24} className="text-white" />}
-                description="Online safety tips"
-                to="/safety-guide"
-                color="hover:bg-gradient-to-br hover:from-pink-100 hover:to-pink-50"
-              />
-            </div>
-          </motion.div>
-
-          {/* Achievement Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mb-12"
-          >
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-pink-400 bg-clip-text text-transparent mb-6">Achievements</h2>
-            <NavigationCard
-              title="Relationship Milestone Achieved!"
-              icon={<Award size={24} className="text-white" />}
-              description="Completed 10 counseling sessions together. View all your achievements!"
-              to={authUser ? "/achievements" : "/login"}
-              color="bg-gradient-to-r from-pink-500 via-pink-600 to-pink-500 text-white hover:from-pink-600 hover:via-pink-700 hover:to-pink-600"
-            />
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-6">Recent Achievement</h2>
+            <motion.div 
+              className="bg-gradient-to-r from-rose-400 to-pink-500 rounded-2xl p-6 text-white shadow-lg"
+              whileHover={{ 
+                scale: 1.02,
+                rotateX: 5,
+                rotateY: 5,
+                transition: { type: "spring", stiffness: 300, damping: 20 }
+              }}
+            >
+              <div className="flex items-center space-x-4">
+                <motion.div 
+                  className="p-3 rounded-xl bg-white/20 backdrop-blur-sm"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Award size={24} />
+                </motion.div>
+                <div>
+                  <h3 className="text-xl font-semibold">Relationship Milestone Achieved!</h3>
+                  <p className="text-white/80 mt-1">Completed 10 counseling sessions together. View all your achievements!</p>
+                </div>
+                <motion.button 
+                  onClick={() => navigate(authUser ? "/achievements" : "/login")}
+                  className="ml-auto px-4 py-2 bg-white text-rose-600 rounded-lg font-medium hover:bg-white/90 transition-colors duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  View All
+                </motion.button>
+              </div>
+            </motion.div>
           </motion.div>
         </main>
       </div>
 
-      {/* Popup */}
-      <AnimatePresence>
-        {showPopup && (
-          <motion.div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+      {/* Popup with 3D effect */}
+      {showPopup && (
+        <motion.div 
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div 
+            className="bg-gradient-to-br from-white to-rose-50 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
-            <motion.div
-              variants={popupVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="bg-white rounded-2xl p-10 max-w-md w-full mx-4 shadow-2xl border border-pink-200"
-            >
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-pink-600 mb-4">
-                  Ready to Find Your Match?
-                </h2>
-                <p className="text-gray-600 mb-8 text-lg">
-                  Our advanced algorithm is working to find your perfect partner. Track your match progress in real-time!
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <motion.button
-                    className="bg-pink-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-pink-700 transition-colors"
-                    onClick={() => {
-                      handleClosePopup();
-                      navigate('/match-track');
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Track My Match
-                  </motion.button>
-                  <motion.button
-                    className="bg-white text-pink-600 font-semibold py-3 px-8 rounded-full border border-pink-300 hover:bg-pink-50 transition-colors"
-                    onClick={handleClosePopup}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Maybe Later
-                  </motion.button>
-                </div>
+            <div className="text-center">
+              <motion.h2 
+                className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-4"
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                Ready to Find Your Match?
+              </motion.h2>
+              <motion.p 
+                className="text-gray-600 mb-8"
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Our advanced algorithm is working to find your perfect partner. Track your match progress in real-time!
+              </motion.p>
+              <div className="flex justify-center space-x-4">
+                <motion.button
+                  className="bg-gradient-to-r from-rose-500 to-pink-500 text-white font-medium py-2 px-6 rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+                  onClick={() => {
+                    setShowPopup(false);
+                    navigate('/match-track');
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Track My Match
+                </motion.button>
+                <motion.button
+                  className="bg-white text-rose-600 font-medium py-2 px-6 rounded-lg border border-rose-200 hover:bg-rose-50 transition-all duration-300"
+                  onClick={() => setShowPopup(false)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Maybe Later
+                </motion.button>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../components/Header";
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Calendar, User, Phone, Mail, MessageSquare } from 'lucide-react';
+import { Calendar, User, Phone, Mail, MessageSquare, Sparkles } from 'lucide-react';
 
 const MarriageCounseling = () => {
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [filter, setFilter] = useState('all');
   const [screenSize, setScreenSize] = useState('desktop');
-  const [showJourneyPopup, setShowJourneyPopup] = useState(false);
   const [showConsultationPopup, setShowConsultationPopup] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingData, setBookingData] = useState({
@@ -115,35 +114,94 @@ const MarriageCounseling = () => {
             backgroundAttachment: 'fixed',
           }}
         />
-        <div className="container mx-auto px-4 py-16 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">Rediscover Your Connection</h1>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="bg-white text-pink-600 px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-pink-50"
-              onClick={() => setShowJourneyPopup(true)}
+        <div className="container mx-auto px-4 py-24 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl mx-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="mb-8"
             >
-              Begin Your Journey
-            </motion.button>
+              <Sparkles className="h-12 w-12 text-pink-200 mx-auto mb-4" />
+            </motion.div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+              Rediscover Your 
+              <span className="bg-gradient-to-r from-pink-200 to-purple-200 bg-clip-text text-transparent"> Connection</span>
+            </h1>
+            <p className="text-xl md:text-2xl mb-12 text-pink-100 max-w-2xl mx-auto">
+              Expert guidance to strengthen your relationship and build a lasting bond.
+            </p>
+            <motion.div 
+              className="flex flex-wrap justify-center gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold shadow-lg hover:bg-pink-50 transition-all duration-300"
+                onClick={() => setShowConsultationPopup(true)}
+              >
+                Book Free Consultation
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300"
+                onClick={() => window.scrollTo({ top: document.querySelector('.services-section').offsetTop - 100, behavior: 'smooth' })}
+              >
+                Explore Services
+              </motion.button>
+            </motion.div>
           </motion.div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-16">
         <motion.div
           style={{ y: servicesParallax }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-12"
+          className="mb-20 services-section"
         >
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">Our Approach</h2>
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-6"
+            >
+              <Sparkles className="h-10 w-10 text-pink-500 mx-auto" />
+            </motion.div>
+            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+              Our Approach
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              We combine evidence-based techniques with personalized care to help you build a stronger, more fulfilling relationship.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <motion.div key={index} whileHover={{ y: -5 }} className="bg-white p-8 rounded-xl shadow-md text-center hover:shadow-xl">
-                <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={service.icon} /></svg>
+              <motion.div 
+                key={index} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.15)" }}
+                className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-pink-100 text-center group"
+              >
+                <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:rotate-6 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={service.icon} /></svg>
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-gray-800">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
@@ -152,17 +210,24 @@ const MarriageCounseling = () => {
           </div>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {['all', 'clinical', 'family', 'premarital'].map(category => (
-            <button
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {['all', 'clinical', 'family', 'premarital'].map((category, index) => (
+            <motion.button
               key={category}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setFilter(category)}
-              className={`px-4 py-2 rounded-full ${
-                filter === category ? 'bg-pink-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-pink-200'
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                filter === category 
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg' 
+                  : 'bg-white text-gray-700 hover:bg-pink-50 border border-pink-100'
               }`}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -454,52 +519,6 @@ const MarriageCounseling = () => {
                   </form>
                 </motion.div>
               )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showJourneyPopup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowJourneyPopup(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              transition={{ type: "spring", damping: 25 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Start Your Journey with Miamour</h2>
-                <button
-                  onClick={() => setShowJourneyPopup(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-              <div className="mb-6">
-                <p className="text-gray-600">
-                  Begin your journey with Miamour by exploring our expert counselors and tailored services. 
-                  Select a counselor that fits your needs, browse their specialties, and book a free consultation 
-                  to discuss your goals. Our platform makes it easy to connect with professionals who can help 
-                  you strengthen your relationship. Get started by choosing from our list of experts or filtering 
-                  by category to find the perfect match.
-                </p>
-              </div>
-              <button
-                className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700"
-                onClick={() => setShowJourneyPopup(false)}
-              >
-                Explore Counselors
-              </button>
             </motion.div>
           </motion.div>
         )}

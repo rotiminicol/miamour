@@ -262,10 +262,20 @@ const Sidebar = () => {
                     whileHover={{ scale: 1.1, x: 5 }}
                     className="py-3 flex justify-center"
                   >
-                    {category === 'services' && <Heart size={20} className="text-purple-500" />}
-                    {category === 'billing' && <CreditCard size={20} className="text-green-500" />}
-                    {category === 'settings' && <Settings size={20} className="text-blue-500" />}
-                    {category === 'support' && <HelpCircle size={20} className="text-orange-500" />}
+                    <motion.button
+                      whileHover={{ scale: 1.2, rotate: 10 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        setIsOpen(true);
+                        setExpandedCategory(category);
+                      }}
+                      className="p-2 rounded-lg hover:bg-pink-50 transition-colors"
+                    >
+                      {category === 'services' && <Heart size={20} className="text-purple-500" />}
+                      {category === 'billing' && <CreditCard size={20} className="text-green-500" />}
+                      {category === 'settings' && <Settings size={20} className="text-blue-500" />}
+                      {category === 'support' && <HelpCircle size={20} className="text-orange-500" />}
+                    </motion.button>
                   </motion.div>
                 )}
 

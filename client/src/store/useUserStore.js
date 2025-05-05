@@ -10,10 +10,19 @@ export const useUserStore = create((set) => ({
 		try {
 			set({ loading: true });
 			const res = await axiosInstance.put("/users/update", data);
-			useAuthStore.getState().setAuthUser(res.data.user);
+			
+			// Update the auth user in the auth store
+			const updatedUser = res.data.user;
+			useAuthStore.getState().setAuthUser(updatedUser);
+			
+			// Update localStorage
+			localStorage.setItem("authUser", JSON.stringify(updatedUser));
+			
 			toast.success("Profile updated successfully");
+			return updatedUser;
 		} catch (error) {
-			toast.error(error.response.data.message || "Something went wrong");
+			toast.error(error.response?.data?.message || "Something went wrong");
+			throw error;
 		} finally {
 			set({ loading: false });
 		}

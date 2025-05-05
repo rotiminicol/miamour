@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Header } from "../components/Header";
-import { motion } from "framer-motion";
-import { ArrowRight, Shield, Eye, EyeOff, UserX } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Shield, Eye, EyeOff, UserX, Sparkles } from "lucide-react";
 
 const PrivacyPage = () => {
   const [profileVisibility, setProfileVisibility] = useState("Public");
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
 
   // Example blocked users for demonstration
   useEffect(() => {
@@ -45,25 +46,28 @@ const PrivacyPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-pink-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 flex flex-col">
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
       <Header />
 
-      <div className="flex-grow flex flex-col justify-center py-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex-grow flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8 relative">
         <motion.div 
           className="sm:mx-auto sm:w-full sm:max-w-2xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
         >
           <motion.div 
-            className="bg-white py-8 px-6 shadow-lg sm:rounded-lg border border-pink-100 relative overflow-hidden"
-            whileHover={{ boxShadow: "0 10px 25px -5px rgba(236, 72, 153, 0.1), 0 10px 10px -5px rgba(236, 72, 153, 0.04)" }}
+            className="bg-white/90 backdrop-blur-sm py-8 px-6 shadow-2xl sm:rounded-2xl sm:px-8 border border-pink-100"
+            whileHover={{ boxShadow: "0 8px 30px rgba(236, 72, 153, 0.15)" }}
             transition={{ duration: 0.3 }}
           >
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-100 rounded-bl-full opacity-20" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-pink-100 rounded-tr-full opacity-20" />
-
             <motion.div 
               className="relative z-10"
               variants={containerVariants}
@@ -71,29 +75,40 @@ const PrivacyPage = () => {
               animate="visible"
             >
               <motion.div 
-                className="flex items-center mb-8"
+                className="flex items-center justify-center mb-8"
                 variants={itemVariants}
               >
-                <Shield className="text-pink-600 mr-3 h-7 w-7" />
-                <h2 className="text-3xl font-bold text-gray-800">
-                  <span className="text-pink-600">Privacy</span> Settings
+                <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  Privacy Settings
                 </h2>
+                <Sparkles className="h-6 w-6 text-pink-500 ml-2" />
               </motion.div>
 
               <form className="space-y-8" onSubmit={handleSubmit}>
                 {/* Profile Visibility */}
-                <motion.div variants={itemVariants}>
-                  <label htmlFor="profileVisibility" className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                    <Eye className="h-4 w-4 mr-2 text-pink-500" />
-                    Profile Visibility
-                  </label>
+                <motion.div 
+                  className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl border border-pink-100"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.01, boxShadow: "0 4px 20px rgba(236, 72, 153, 0.1)" }}
+                  onHoverStart={() => setActiveSection('visibility')}
+                  onHoverEnd={() => setActiveSection(null)}
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="p-2 bg-white rounded-lg shadow-sm mr-3">
+                      <Eye className="h-5 w-5 text-pink-500" />
+                    </div>
+                    <label className="block text-lg font-semibold text-gray-800">
+                      Profile Visibility
+                    </label>
+                  </div>
                   <div className="mt-1 relative">
                     <motion.select
                       id="profileVisibility"
                       name="profileVisibility"
                       value={profileVisibility}
                       onChange={(e) => setProfileVisibility(e.target.value)}
-                      className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 text-gray-700 transition-colors duration-200"
+                      className="appearance-none block w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-700 bg-white transition-all duration-300"
                       whileFocus={{ boxShadow: "0 0 0 3px rgba(236, 72, 153, 0.2)" }}
                     >
                       <option value="Public">Public - Anyone can view your profile</option>
@@ -103,22 +118,35 @@ const PrivacyPage = () => {
                       <ArrowRight className="h-4 w-4 text-pink-500" />
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <motion.p 
+                    className="mt-3 text-sm text-gray-600"
+                    animate={{ opacity: activeSection === 'visibility' ? 1 : 0.7 }}
+                  >
                     {profileVisibility === "Public" ? 
                       "Your profile and posts are visible to everyone." : 
                       "Only people you approve can see your content."}
-                  </p>
+                  </motion.p>
                 </motion.div>
 
                 {/* Blocked Users */}
-                <motion.div variants={itemVariants}>
-                  <label htmlFor="blockedUsers" className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                    <UserX className="h-4 w-4 mr-2 text-pink-500" />
-                    Blocked Users
-                  </label>
+                <motion.div 
+                  className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-100"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.01, boxShadow: "0 4px 20px rgba(168, 85, 247, 0.1)" }}
+                  onHoverStart={() => setActiveSection('blocked')}
+                  onHoverEnd={() => setActiveSection(null)}
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="p-2 bg-white rounded-lg shadow-sm mr-3">
+                      <UserX className="h-5 w-5 text-purple-500" />
+                    </div>
+                    <label className="block text-lg font-semibold text-gray-800">
+                      Blocked Users
+                    </label>
+                  </div>
                   <div className="mt-1">
                     <motion.div 
-                      className="bg-gray-50 rounded-lg border border-gray-200 p-4"
+                      className="bg-white/50 backdrop-blur-sm rounded-xl border border-purple-100 p-4"
                       initial={{ height: "auto" }}
                       animate={{ height: "auto" }}
                       transition={{ duration: 0.3 }}
@@ -128,19 +156,19 @@ const PrivacyPage = () => {
                           {blockedUsers.map((user, index) => (
                             <motion.li 
                               key={index} 
-                              className="flex justify-between items-center bg-white p-3 rounded-lg shadow-sm border border-gray-100"
+                              className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-purple-100"
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
                               exit={{ opacity: 0, x: 20 }}
-                              whileHover={{ backgroundColor: "rgba(252, 231, 243, 0.5)", x: 5 }}
+                              whileHover={{ scale: 1.02, boxShadow: "0 4px 20px rgba(168, 85, 247, 0.1)" }}
                             >
                               <span className="font-medium text-gray-700">{user}</span>
                               <motion.button
                                 type="button"
                                 onClick={() => setBlockedUsers(blockedUsers.filter((u) => u !== user))}
-                                className="text-sm text-pink-600 hover:text-pink-800 bg-pink-50 px-3 py-1 rounded-full flex items-center"
-                                whileHover={{ scale: 1.05, backgroundColor: "#FCE7F3" }}
+                                className="text-sm text-purple-600 hover:text-purple-800 bg-purple-50 px-4 py-2 rounded-xl flex items-center transition-all duration-300"
+                                whileHover={{ scale: 1.05, backgroundColor: "#F3E8FF" }}
                                 whileTap={{ scale: 0.95 }}
                               >
                                 Unblock
@@ -152,9 +180,9 @@ const PrivacyPage = () => {
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="flex flex-col items-center justify-center py-6 text-center"
+                          className="flex flex-col items-center justify-center py-8 text-center"
                         >
-                          <EyeOff className="h-10 w-10 text-pink-300 mb-2" />
+                          <EyeOff className="h-12 w-12 text-purple-300 mb-3" />
                           <p className="text-gray-500">No blocked users at the moment.</p>
                         </motion.div>
                       )}
@@ -163,37 +191,41 @@ const PrivacyPage = () => {
                 </motion.div>
 
                 {/* Save Button */}
-                <motion.div variants={itemVariants}>
-                  <motion.button
-                    type="submit"
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                    whileHover={{ backgroundColor: "#DB2777", scale: 1.01 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    Save Privacy Settings
-                  </motion.button>
-                </motion.div>
+                <motion.button
+                  type="submit"
+                  className="w-full flex justify-center items-center py-4 px-6 rounded-xl text-lg font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 shadow-lg"
+                  whileHover={{ scale: 1.02, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Shield className="w-6 h-6 mr-3" />
+                  Save Privacy Settings
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </motion.button>
               </form>
-
-              {/* Success message */}
-              <motion.div
-                className="fixed bottom-10 inset-x-0 flex justify-center"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: showSuccess ? 1 : 0, y: showSuccess ? 0 : 50 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-green-50 text-green-800 px-6 py-3 rounded-full shadow-lg border border-green-100 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Settings saved successfully!
-                </div>
-              </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Success Message */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="fixed bottom-6 right-6 bg-white px-6 py-4 rounded-xl shadow-2xl border border-green-100 flex items-center"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="w-3 h-3 bg-green-500 rounded-full mr-3"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+            <span className="text-green-700 font-medium">Settings saved successfully!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

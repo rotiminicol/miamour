@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Download, FileText,  } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Download, FileText, Sparkles, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from "../components/Header";
 
 const InvoicesPage = () => {
@@ -10,71 +10,172 @@ const InvoicesPage = () => {
       date: '2023-10-01',
       amount: '$49.99',
       status: 'Paid',
-      downloadLink: '#'
+      downloadLink: '#',
+      dueDate: '2023-10-15'
     },
     {
       id: 2,
       date: '2023-09-01',
       amount: '$49.99',
       status: 'Paid',
-      downloadLink: '#'
+      downloadLink: '#',
+      dueDate: '2023-09-15'
     },
     {
       id: 3,
       date: '2023-08-01',
       amount: '$49.99',
-      status: 'Paid',
-      downloadLink: '#'
+      status: 'Pending',
+      downloadLink: '#',
+      dueDate: '2023-08-15'
     }
   ]);
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'Paid':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'Pending':
+        return <Clock className="h-5 w-5 text-yellow-500" />;
+      default:
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Paid':
+        return 'bg-green-100 text-green-700';
+      case 'Pending':
+        return 'bg-yellow-100 text-yellow-700';
+      default:
+        return 'bg-red-100 text-red-700';
+    }
+  };
 
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-pink-700 mb-3">Your Invoices</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">View and download your payment invoices.</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-white py-12 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute -top-40 -right-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 30, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, -30, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
 
-          <div className="bg-white shadow-lg rounded-2xl p-6 md:p-10">
+        <div className="max-w-6xl mx-auto px-4 relative">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-6"
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Invoice History</h2>
-              <div className="space-y-4">
-                {invoices.map((invoice) => (
+              <Sparkles className="h-12 w-12 text-pink-500 mx-auto" />
+            </motion.div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+              Your Invoices
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              View and download your payment invoices. Keep track of your subscription history.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-6 md:p-10 border border-pink-100"
+          >
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800">Invoice History</h2>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Download All
+              </motion.button>
+            </div>
+
+            <div className="space-y-4">
+              <AnimatePresence>
+                {invoices.map((invoice, index) => (
                   <motion.div
                     key={invoice.id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="border border-gray-200 rounded-lg p-4 flex justify-between items-center"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      boxShadow: "0 8px 30px rgba(236, 72, 153, 0.15)"
+                    }}
+                    className="bg-white/50 backdrop-blur-sm border border-pink-100 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-pink-200 transition-all duration-300"
                   >
-                    <div className="flex items-center">
-                      <FileText className="h-6 w-6 text-pink-500 mr-3" />
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl">
+                        <FileText className="h-6 w-6 text-white" />
+                      </div>
                       <div>
-                        <p className="font-medium text-gray-800">Invoice #{invoice.id}</p>
-                        <p className="text-sm text-gray-500">{invoice.date}</p>
+                        <p className="font-semibold text-gray-800">Invoice #{invoice.id}</p>
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <span>Issued: {invoice.date}</span>
+                          <span>•</span>
+                          <span>Due: {invoice.dueDate}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-700 mr-4">{invoice.amount}</span>
-                      <a 
+                    <div className="flex items-center space-x-6">
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(invoice.status)}
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(invoice.status)}`}>
+                          {invoice.status}
+                        </span>
+                      </div>
+                      <span className="text-xl font-semibold text-gray-800">{invoice.amount}</span>
+                      <motion.a 
                         href={invoice.downloadLink}
-                        className="text-pink-600 hover:text-pink-700"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="p-2 bg-pink-50 rounded-lg text-pink-600 hover:bg-pink-100 transition-colors"
                       >
                         <Download className="h-5 w-5" />
-                      </a>
+                      </motion.a>
                     </div>
                   </motion.div>
                 ))}
-              </div>
-            </motion.div>
-          </div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </div>
       </div>
     </>

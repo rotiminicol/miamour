@@ -50,7 +50,6 @@ const ProfilePage = () => {
 			setIsSaving(false);
 			return;
 		}
-
 		try {
 			await updateProfile({
 				name,
@@ -64,6 +63,7 @@ const ProfilePage = () => {
 				hobbies,
 				image: tempImage || image,
 			});
+
 			setSuccessMessage("Profile updated successfully!");
 			setShowSuccessToast(true);
 			if (tempImage) {

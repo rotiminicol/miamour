@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["male", "female"],
+      enum: ["male", "female", "non-binary", "other"],
     },
     genderPreference: {
       type: String,
@@ -32,6 +32,27 @@ const userSchema = new mongoose.Schema(
     },
     bio: { type: String, default: "" },
     image: { type: String, default: "" },
+    relationshipStatus: {
+      type: String,
+      enum: ["single", "married", "divorced", "widowed"],
+      default: "single"
+    },
+    maritalHistory: {
+      type: String,
+      enum: ["yes", "no"],
+      default: "no"
+    },
+    numberOfChildren: {
+      type: Number,
+      default: 0
+    },
+    nationality: {
+      type: String,
+      default: ""
+    },
+    hobbies: [{
+      type: String
+    }],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -44,6 +44,8 @@ import MatchTrack from "./components/MatchTrack";
 import GoogleAuthFlow from './components/GoogleAuthFlow';
 import Homepage from "./pages/Homepage";
 import IjeuwaAuthFlow from './components/IjeuwaAuthFlow';
+import Policy from "./components/Policy";
+import Terms from "./components/Terms";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -82,6 +84,9 @@ function App() {
 
           {/* Auth route */}
           <Route path="/auth" element={!authUser ? <AuthPage /> : <Navigate to="/" />} />
+
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/policy" element={<Policy />} />
 
           {/* Protected routes (only accessible when authenticated) */}
           {authUser && (

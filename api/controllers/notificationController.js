@@ -1,7 +1,7 @@
 const Notification = require('../models/Notification');
 
 // Get all notifications for a user
-exports.getNotifications = async (req, res) => {
+exports.getUserNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user._id })
       .sort({ createdAt: -1 })
@@ -15,10 +15,12 @@ exports.getNotifications = async (req, res) => {
 };
 
 // Mark a notification as read
-exports.markAsRead = async (req, res) => {
+exports.markNotificationAsRead = async (req, res) => {
   try {
+    const { notificationId } = req.params;
+    
     const notification = await Notification.findOneAndUpdate(
-      { _id: req.params.id, user: req.user._id },
+      { _id: notificationId, user: req.user._id },
       { read: true },
       { new: true }
     );
@@ -35,7 +37,7 @@ exports.markAsRead = async (req, res) => {
 };
 
 // Mark all notifications as read
-exports.markAllAsRead = async (req, res) => {
+exports.markAllNotificationsAsRead = async (req, res) => {
   try {
     await Notification.updateMany(
       { user: req.user._id, read: false },
@@ -52,8 +54,10 @@ exports.markAllAsRead = async (req, res) => {
 // Delete a notification
 exports.deleteNotification = async (req, res) => {
   try {
+    const { notificationId } = req.params;
+    
     const notification = await Notification.findOneAndDelete({
-      _id: req.params.id,
+      _id: notificationId,
       user: req.user._id
     });
 
@@ -71,15 +75,15 @@ exports.deleteNotification = async (req, res) => {
 // Create a new notification
 exports.createNotification = async (userId, title, message, type, link = null) => {
   try {
-    const notification = new Notification({
+    const notification = await Notification.create({
       user: userId,
       title,
       message,
       type,
-      link
+      link,
+      read: false
     });
 
-    await notification.save();
     return notification;
   } catch (error) {
     console.error('Error creating notification:', error);

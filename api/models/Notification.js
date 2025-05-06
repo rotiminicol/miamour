@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
   user: {
@@ -16,18 +16,21 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['profile_update', 'new_match', 'new_message', 'system', 'getting_started'],
-    required: true
+    required: true,
+    enum: ['getting_started', 'match', 'message', 'system']
+  },
+  link: {
+    type: String,
+    default: null
   },
   read: {
     type: Boolean,
     default: false
-  },
-  link: {
-    type: String
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Notification', notificationSchema); 
+const Notification = mongoose.model('Notification', notificationSchema);
+
+export default Notification; 

@@ -4,14 +4,23 @@ import { Header } from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageCircle, Calendar, CreditCard, FileText, User, Settings, HelpCircle, Users, Sparkles } from 'lucide-react';
+import useMatchStore from '../store/matchStore';
+import { useAuthStore } from '../store/useAuthStore';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isCarouselPlaying, setIsCarouselPlaying] = useState(true);
-  const [formCompleted, setFormCompleted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [isHoveringHero, setIsHoveringHero] = useState(false);
+  const { matchCard, loading, fetchMatchCard } = useMatchStore();
+  const { authUser, checkAuth } = useAuthStore();
+
+  // Fetch user profile and match card status when component mounts
+  useEffect(() => {
+    checkAuth();
+    fetchMatchCard();
+  }, [checkAuth, fetchMatchCard]);
 
   // Categories data
   const categories = {
@@ -36,14 +45,6 @@ const Homepage = () => {
       { icon: <HelpCircle size={24} className="text-pink-400" />, text: 'FAQs', to: '/faqs', description: 'Find answers.' },
     ],
   };
-
-  // Check form completion status (client-side only)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const completed = localStorage.getItem('formCompleted') === 'true';
-      setFormCompleted(completed);
-    }
-  }, []);
 
   // Hero content
   const heroContent = {
@@ -235,7 +236,15 @@ const Homepage = () => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.8 }}
                   >
-                    {formCompleted ? (
+                    {loading ? (
+                      <motion.div
+                        className="bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        Loading...
+                      </motion.div>
+                    ) : matchCard && matchCard.status === 'active' ? (
                       <motion.button
                         aria-label="Track awaiting match"
                         className="relative overflow-hidden bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-700 transition-all duration-300 soft-glow pulse-animation"
@@ -254,7 +263,7 @@ const Homepage = () => {
                       <motion.button
                         aria-label="Start matching"
                         className="relative overflow-hidden bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-700 transition-all duration-300 soft-glow"
-                        onClick={() => handleNavigate('/getting-started')}
+                        onClick={() => navigate('/getting-started', { state: { userData: authUser } })}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >

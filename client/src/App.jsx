@@ -46,6 +46,7 @@ import Homepage from "./pages/Homepage";
 import IjeuwaAuthFlow from './components/IjeuwaAuthFlow';
 import Policy from "./components/Policy";
 import Terms from "./components/Terms";
+import LiveChat from "./components/LiveChat";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -115,6 +116,8 @@ function App() {
               <Route path="/google" element={<GoogleAuthFlow  />} />
               <Route path="/ijeuwa" element={<IjeuwaAuthFlow />} />
               <Route path="/homepage" element={<Homepage />} />
+              <Route path="/live-chat" element={<LiveChat />} />
+              
             </>
           )}
 

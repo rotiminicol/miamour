@@ -4,6 +4,7 @@ import { Header } from "../components/Header";
 import { MailIcon, PhoneIcon, MessageSquareIcon } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import BackButton from '../components/BackButton';
+import LiveChat from "../components/LiveChat";
 
 const ContactUsPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const ContactUsPage = () => {
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [showLiveChat, setShowLiveChat] = useState(false);
   
   // Parallax effect setup
   const { scrollYProgress } = useScroll();
@@ -33,24 +35,30 @@ const ContactUsPage = () => {
   const contactMethods = [
     {
       method: "Email",
-      detail: "support@example.com",
+      detail: "info@miamour.me",
       description: "We typically respond within 24 hours.",
       icon: <MailIcon className="w-6 h-6" />,
-      action: "Copy Email"
+      action: "Copy Email",
+      handler: () => {
+        navigator.clipboard.writeText("info@miamour.me");
+        alert("Email copied to clipboard!");
+      }
     },
     {
       method: "Live Chat",
       detail: "Available 24/7",
       description: "Get instant help from our support team.",
       icon: <MessageSquareIcon className="w-6 h-6" />,
-      action: "Start Chat"
+      action: "Start Chat",
+      handler: () => setShowLiveChat(true)
     },
     {
       method: "Phone",
-      detail: "+1 (555) 123-4567",
+      detail: "+234 9044130171",
       description: "Available Monday-Friday, 9am-5pm EST.",
       icon: <PhoneIcon className="w-6 h-6" />,
-      action: "Call Now"
+      action: "Call Now",
+      handler: () => window.location.href = "tel:+2349044130171"
     }
   ];
 
@@ -147,7 +155,10 @@ const ContactUsPage = () => {
                     </div>
                     <p className="text-pink-600 font-semibold mb-3 text-lg">{method.detail}</p>
                     <p className="text-gray-600 mb-6">{method.description}</p>
-                    <button className="w-full py-3 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-md transition-colors font-medium">
+                    <button 
+                      className="w-full py-3 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-md transition-colors font-medium"
+                      onClick={method.handler}
+                    >
                       {method.action}
                     </button>
                   </motion.div>
@@ -235,6 +246,9 @@ const ContactUsPage = () => {
           </div>
         </main>
       </div>
+      {showLiveChat && (
+        <LiveChat onClose={() => setShowLiveChat(false)} />
+      )}
     </div>
   );
 };

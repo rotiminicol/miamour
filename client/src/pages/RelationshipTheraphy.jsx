@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Heart, MessageCircle, Users, Award, Sparkles, X, Star, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Header } from "../components/Header";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,29 +9,34 @@ const RelationshipTherapy = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [isAnimating, setIsAnimating] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState(null);
   const [hoveredService, setHoveredService] = useState(null);
 
-  // Function to handle back navigation
   const handleBack = () => {
     navigate(-1);
   };
 
-  // Animation trigger for hearts
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 2000);
-    }, 5000);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
-  // Function to handle all button clicks
-  const handleButtonClick = (e) => {
+  const handleButtonClick = useCallback((e, content) => {
     e.preventDefault();
+    setPopupContent(content);
     setShowPopup(true);
+  }, []);
+
+  const scrollToTabContent = () => {
+    const tabContent = document.getElementById('tab-content');
+    if (tabContent) {
+      tabContent.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
-  // Testimonials data
   const testimonials = [
     {
       name: "Sarah & Mike",
@@ -53,7 +58,6 @@ const RelationshipTherapy = () => {
     }
   ];
 
-  // Services offered
   const services = [
     {
       title: "Communication Coaching",
@@ -81,11 +85,108 @@ const RelationshipTherapy = () => {
     }
   ];
 
+  const popupConfigs = {
+    "Book a Free Consultation": {
+      title: "Book Your Free Consultation",
+      message: "Schedule a complimentary 30-minute session with one of our expert therapists to discuss your relationship goals.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "View Therapy Plans": {
+      title: "Explore Our Therapy Plans",
+      message: "Discover our customized therapy packages tailored to your needs, available exclusively through our mobile app.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Start Assessment": {
+      title: "Begin Your Relationship Assessment",
+      message: "Take the first step by completing our relationship assessment questionnaire in the app to receive personalized insights.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Select Plan": {
+      title: "Select Your Therapy Plan",
+      message: "Choose from our tailored therapy packages and start your journey to a stronger relationship via our app.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Learn More": {
+      title: "Learn More About Our Plans",
+      message: "Get detailed information about our therapy packages and how they can benefit your relationship in our app.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Schedule a Session": {
+      title: "Schedule Your Therapy Session",
+      message: "Book your therapy session with our expert therapists through our mobile app for a convenient and personalized experience.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Learn More About Our Approach": {
+      title: "Discover Our Therapy Approach",
+      message: "Explore our evidence-based techniques and personalized therapy methods by downloading our app.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    },
+    "Complete Quiz & Get Results": {
+      title: "Complete the Relationship Quiz",
+      message: "Finish the relationship health quiz and view your personalized results by downloading our app.",
+      buttons: [
+        {
+          text: "Get Started",
+          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
+        }
+      ]
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 py-12 px-4 sm:px-6 lg:px-8">
-        {/* Back Button */}
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 py-12 px-4 sm:px-6 lg:px-8" style={{ scrollBehavior: 'smooth' }}>
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -96,9 +197,8 @@ const RelationshipTherapy = () => {
           <span>Back</span>
         </motion.button>
 
-        {/* Floating hearts animation */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {isAnimating && Array.from({ length: 15 }).map((_, i) => (
+          {isAnimating && Array.from({ length: 10 }).map((_, i) => (
             <motion.div 
               key={i}
               className="absolute text-pink-400 opacity-70"
@@ -109,12 +209,13 @@ const RelationshipTherapy = () => {
                 rotate: Math.random() * 360
               }}
               transition={{
-                duration: Math.random() * 3 + 2,
+                duration: Math.random() * 2 + 1.5,
                 ease: "easeOut",
-                delay: Math.random() * 2
+                delay: Math.random() * 1.5
               }}
               style={{
-                fontSize: `${Math.random() * 20 + 10}px`
+                fontSize: `${Math.random() * 15 + 8}px`,
+                willChange: 'transform, opacity'
               }}
             >
               ❤️
@@ -122,9 +223,8 @@ const RelationshipTherapy = () => {
           ))}
         </div>
 
-        {/* Popup Modal */}
         <AnimatePresence>
-          {showPopup && (
+          {showPopup && popupContent && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -136,6 +236,7 @@ const RelationshipTherapy = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl relative"
+                style={{ willChange: 'transform, opacity' }}
               >
                 <button 
                   onClick={() => setShowPopup(false)}
@@ -152,26 +253,23 @@ const RelationshipTherapy = () => {
                     <Heart className="h-16 w-16 mx-auto" />
                   </motion.div>
                   <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                    Experience Only Available in App
+                    {popupConfigs[popupContent].title}
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Download our app to access all relationship therapy features and services.
+                    {popupConfigs[popupContent].message}
                   </p>
                   <div className="flex justify-center space-x-4">
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-black text-white px-5 py-2 rounded-lg flex items-center"
-                    >
-                      <span className="mr-2">App Store</span>
-                    </motion.button>
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-black text-white px-5 py-2 rounded-lg flex items-center"
-                    >
-                      <span className="mr-2">Google Play</span>
-                    </motion.button>
+                    {popupConfigs[popupContent].buttons.map((button, index) => (
+                      <motion.button 
+                        key={index}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={button.className}
+                        style={{ willChange: 'transform' }}
+                      >
+                        {button.text}
+                      </motion.button>
+                    ))}
                   </div>
                 </div>
               </motion.div>
@@ -180,7 +278,6 @@ const RelationshipTherapy = () => {
         </AnimatePresence>
 
         <div className="max-w-7xl mx-auto">
-          {/* Header Section */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,23 +303,24 @@ const RelationshipTherapy = () => {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleButtonClick}
+                onClick={(e) => handleButtonClick(e, "Book a Free Consultation")}
                 className="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-medium py-3 px-6 rounded-full shadow-lg transform transition focus:outline-none"
+                style={{ willChange: 'transform' }}
               >
                 Book a Free Consultation
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleButtonClick}
+                onClick={(e) => handleButtonClick(e, "View Therapy Plans")}
                 className="bg-white hover:bg-gray-100 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-200 transform transition focus:outline-none"
+                style={{ willChange: 'transform' }}
               >
                 View Therapy Plans
               </motion.button>
             </div>
           </motion.div>
 
-          {/* Tabs Navigation */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -233,7 +331,10 @@ const RelationshipTherapy = () => {
               {['about', 'services', 'testimonials', 'quiz'].map((tab) => (
                 <motion.button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    scrollToTabContent();
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`px-4 py-2 font-medium rounded-md transition-all duration-300 ${
@@ -241,6 +342,7 @@ const RelationshipTherapy = () => {
                       ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-md' 
                       : 'text-gray-700 hover:text-pink-500'
                   }`}
+                  style={{ willChange: 'transform' }}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </motion.button>
@@ -248,14 +350,14 @@ const RelationshipTherapy = () => {
             </div>
           </motion.div>
 
-          {/* Tab Content */}
           <motion.div 
+            id="tab-content"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-10 transition-all duration-500 transform hover:shadow-2xl"
+            style={{ willChange: 'transform, box-shadow' }}
           >
-            {/* About Section */}
             {activeTab === 'about' && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -279,7 +381,7 @@ const RelationshipTherapy = () => {
                     </p>
                     <div className="mt-8">
                       <h3 className="text-xl font-semibold text-pink-600 mb-3">Why Choose Our Therapy?</h3>
-                      <ul className="space-y-2">
+                      <motion.ul variants={containerVariants} initial="hidden" animate="visible" className="space-y-2">
                         {[
                           "Personalized approach for your unique relationship",
                           "Flexible scheduling with virtual and in-person options",
@@ -288,16 +390,14 @@ const RelationshipTherapy = () => {
                         ].map((item, index) => (
                           <motion.li 
                             key={index}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
+                            variants={itemVariants}
                             className="flex items-start"
                           >
                             <span className="text-pink-500 mr-2">✓</span>
                             <span className="text-gray-700">{item}</span>
                           </motion.li>
                         ))}
-                      </ul>
+                      </motion.ul>
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-6 relative overflow-hidden">
@@ -307,7 +407,7 @@ const RelationshipTherapy = () => {
                     <p className="text-gray-700 mb-6 relative z-10">
                       Begin your journey toward a healthier, happier relationship with our simple process:
                     </p>
-                    <ol className="space-y-4 relative z-10">
+                    <motion.ol variants={containerVariants} initial="hidden" animate="visible" className="space-y-4 relative z-10">
                       {[
                         "Complete our relationship assessment questionnaire",
                         "Schedule your complimentary 30-minute consultation",
@@ -316,9 +416,7 @@ const RelationshipTherapy = () => {
                       ].map((step, index) => (
                         <motion.li 
                           key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          variants={itemVariants}
                           className="flex"
                         >
                           <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">
@@ -327,12 +425,13 @@ const RelationshipTherapy = () => {
                           <p className="text-gray-700">{step}</p>
                         </motion.li>
                       ))}
-                    </ol>
+                    </motion.ol>
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={handleButtonClick}
+                      onClick={(e) => handleButtonClick(e, "Start Assessment")}
                       className="mt-8 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-2 px-4 rounded-lg transition transform focus:outline-none relative z-10"
+                      style={{ willChange: 'transform' }}
                     >
                       Start Assessment
                     </motion.button>
@@ -341,7 +440,6 @@ const RelationshipTherapy = () => {
               </motion.div>
             )}
 
-            {/* Services Section */}
             {activeTab === 'services' && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -352,17 +450,16 @@ const RelationshipTherapy = () => {
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-10 text-center">
                   Our Therapy Services
                 </h2>
-                <div className="grid md:grid-cols-2 gap-8">
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-2 gap-8">
                   {services.map((service, index) => (
                     <motion.div 
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      variants={itemVariants}
                       whileHover={{ y: -5 }}
                       onHoverStart={() => setHoveredService(index)}
                       onHoverEnd={() => setHoveredService(null)}
                       className={`bg-white p-6 rounded-xl border border-pink-100 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden group`}
+                      style={{ willChange: 'transform, box-shadow' }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300"
                            style={{ backgroundImage: `linear-gradient(to right, ${service.gradient})` }}></div>
@@ -380,10 +477,11 @@ const RelationshipTherapy = () => {
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: hoveredService === index ? 1 : 0 }}
                         transition={{ duration: 0.3 }}
+                        style={{ willChange: 'transform' }}
                       />
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
                 
                 <div className="mt-12 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-xl p-8 text-white text-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-white opacity-10"></div>
@@ -392,7 +490,7 @@ const RelationshipTherapy = () => {
                     <p className="mb-6">
                       We offer tailored therapy packages to meet your specific needs and goals. From short-term intervention to ongoing support.
                     </p>
-                    <div className="grid md:grid-cols-3 gap-4 mt-8">
+                    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-3 gap-4 mt-8">
                       {[
                         { name: "Starter", sessions: "4", price: "349", save: "15%" },
                         { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
@@ -400,10 +498,9 @@ const RelationshipTherapy = () => {
                       ].map((plan, index) => (
                         <motion.div 
                           key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          variants={itemVariants}
                           className={`bg-white/20 p-4 rounded-lg backdrop-filter backdrop-blur-sm ${plan.popular ? 'transform scale-105' : ''}`}
+                          style={{ willChange: 'transform' }}
                         >
                           {plan.popular && (
                             <div className="absolute -top-3 left-0 right-0 flex justify-center">
@@ -419,20 +516,20 @@ const RelationshipTherapy = () => {
                           <motion.button 
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={handleButtonClick}
+                            onClick={(e) => handleButtonClick(e, plan.popular ? "Select Plan" : "Learn More")}
                             className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition"
+                            style={{ willChange: 'transform' }}
                           >
                             {plan.popular ? 'Select Plan' : 'Learn More'}
                           </motion.button>
                         </motion.div>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
             )}
 
-            {/* Testimonials Section */}
             {activeTab === 'testimonials' && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -443,15 +540,14 @@ const RelationshipTherapy = () => {
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-10 text-center">
                   Success Stories
                 </h2>
-                <div className="grid md:grid-cols-3 gap-6">
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-3 gap-6">
                   {testimonials.map((testimonial, index) => (
                     <motion.div 
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      variants={itemVariants}
                       whileHover={{ y: -5 }}
                       className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
+                      style={{ willChange: 'transform, box-shadow' }}
                     >
                       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink-100 to-purple-100 rounded-bl-full opacity-50"></div>
                       <div className="flex items-center mb-4">
@@ -476,15 +572,16 @@ const RelationshipTherapy = () => {
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
                         transition={{ duration: 0.3, delay: 0.2 }}
+                        style={{ willChange: 'transform' }}
                       />
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
                 
                 <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
                   className="mt-12 p-8 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl text-center relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white opacity-50"></div>
@@ -496,17 +593,17 @@ const RelationshipTherapy = () => {
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={handleButtonClick}
+                      onClick={(e) => handleButtonClick(e, "Book a Free Consultation")}
                       className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition focus:outline-none"
+                      style={{ willChange: 'transform' }}
                     >
-                      Book Your Free Consultation
+                      Book a Free Consultation
                     </motion.button>
                   </div>
                 </motion.div>
               </motion.div>
             )}
 
-            {/* Quiz Section */}
             {activeTab === 'quiz' && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -522,7 +619,7 @@ const RelationshipTherapy = () => {
                 </p>
                 
                 <div className="max-w-2xl mx-auto">
-                  <div className="space-y-8">
+                  <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
                     {[
                       {
                         question: "How often do you and your partner have meaningful conversations?",
@@ -549,9 +646,7 @@ const RelationshipTherapy = () => {
                     ].map((question, index) => (
                       <motion.div 
                         key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        variants={itemVariants}
                         className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg"
                       >
                         <h3 className="font-semibold text-gray-800 mb-4">{index + 1}. {question.question}</h3>
@@ -561,8 +656,9 @@ const RelationshipTherapy = () => {
                               key={optionIndex}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              onClick={handleButtonClick}
+                              onClick={(e) => handleButtonClick(e, "Complete Quiz & Get Results")}
                               className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition group"
+                              style={{ willChange: 'transform' }}
                             >
                               <span className="flex items-center">
                                 {option}
@@ -573,19 +669,20 @@ const RelationshipTherapy = () => {
                         </div>
                       </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                   
                   <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
                     className="mt-10 flex justify-center"
                   >
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={handleButtonClick}
+                      onClick={(e) => handleButtonClick(e, "Complete Quiz & Get Results")}
                       className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition focus:outline-none"
+                      style={{ willChange: 'transform' }}
                     >
                       Complete Quiz & Get Results
                     </motion.button>
@@ -595,8 +692,8 @@ const RelationshipTherapy = () => {
             )}
           </motion.div>
           
-          {/* Call-to-action Section */}
           <motion.div 
+            variants={itemVariants}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -612,8 +709,9 @@ const RelationshipTherapy = () => {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleButtonClick}
+                onClick={(e) => handleButtonClick(e, "Schedule a Session")}
                 className="group relative bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-3 px-6 rounded-full shadow-lg overflow-hidden"
+                style={{ willChange: 'transform' }}
               >
                 <span className="relative z-10">Schedule a Session</span>
                 <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-20"></span>
@@ -621,8 +719,9 @@ const RelationshipTherapy = () => {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleButtonClick}
+                onClick={(e) => handleButtonClick(e, "Learn More About Our Approach")}
                 className="group relative bg-transparent hover:bg-pink-50 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-300 overflow-hidden"
+                style={{ willChange: 'transform' }}
               >
                 <span className="relative z-10">Learn More About Our Approach</span>
                 <span className="absolute inset-0 bg-pink-100 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-50"></span>

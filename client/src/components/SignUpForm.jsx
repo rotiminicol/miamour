@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
 import { FaEye, FaEyeSlash, FaHeart } from 'react-icons/fa';
 
-const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
+const SignupForm = ({ toggleForm }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -80,9 +79,7 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
   };
 
   return (
-    // Added overflow-y-auto for scrolling and h-full to take full height of parent
     <div className="h-full flex flex-col">
-      {/* Fixed header section */}
       <div className="p-6 bg-white">
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-pink-600">Create Your Account</h2>
@@ -95,10 +92,8 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
         )}
       </div>
 
-      {/* Scrollable form section */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Personal Information */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -203,7 +198,6 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
             </div>
           </div>
 
-          {/* Password Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
@@ -264,7 +258,6 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
             </div>
           </div>
 
-          {/* Gender Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Your Gender
@@ -294,7 +287,6 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
             )}
           </div>
 
-          {/* Gender Preference */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Interested In
@@ -337,36 +329,6 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
           </button>
         </form>
 
-        <div className="my-6 relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="px-2 bg-white text-sm text-gray-500">
-              Or sign up with
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={onGoogleClick}
-            className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
-          >
-            <FcGoogle className="mr-2" size={18} />
-            Google
-          </button>
-          <button 
-            onClick={onIjeuwaClick}
-            className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
-          >
-            <div className="h-4 w-4 rounded-full bg-pink-600 flex items-center justify-center mr-2">
-              <FaHeart className="text-white" size={10} />
-            </div>
-            Ijeuwa
-          </button>
-        </div>
-
         <div className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{' '}
           <button
@@ -383,8 +345,6 @@ const SignupForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
 
 SignupForm.propTypes = {
   toggleForm: PropTypes.func.isRequired,
-  onGoogleClick: PropTypes.func.isRequired,
-  onIjeuwaClick: PropTypes.func.isRequired
 };
 
 export default SignupForm;

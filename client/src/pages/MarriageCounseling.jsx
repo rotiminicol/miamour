@@ -485,25 +485,29 @@ const MarriageCounseling = () => {
                               />
                             </div>
                           </div>
+
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Time</label>
-                            <div className="grid grid-cols-2 gap-2">
-                              {availableTimeSlots.map((slot, index) => (
-                                <button
-                                  key={index}
-                                  type="button"
-                                  onClick={() => setBookingData(prev => ({ ...prev, time: slot }))}
-                                  className={`p-2 text-sm rounded-lg border ${
-                                    bookingData.time === slot
-                                      ? "bg-pink-600 text-white border-pink-600"
-                                      : "border-gray-300 hover:border-pink-500"
-                                  }`}
-                                >
-                                  {slot}
-                                </button>
-                              ))}
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Select Time</label>
+                              <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-2">
+                                <div className="grid grid-cols-2 gap-2">
+                                  {availableTimeSlots.map((slot, index) => (
+                                    <button
+                                      key={index}
+                                      type="button"
+                                      onClick={() => setBookingData(prev => ({ ...prev, time: slot }))}
+                                      className={`p-2 text-sm rounded-lg border ${
+                                        bookingData.time === slot
+                                          ? "bg-pink-600 text-white border-pink-600"
+                                          : "border-gray-300 hover:border-pink-500"
+                                      }`}
+                                    >
+                                      {slot}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
-                          </div>
+
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Additional Message</label>
                             <div className="relative">

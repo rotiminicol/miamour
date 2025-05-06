@@ -88,6 +88,9 @@ const WeddingDatingDashboard = () => {
     offset: ["start start", "end end"]
   });
 
+  // Profile image from assets
+  const profileImage = "assets/test.png";
+
   // Simple parallax effect
   const yBackground = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
@@ -111,15 +114,24 @@ const WeddingDatingDashboard = () => {
         <main className="relative flex-grow overflow-y-auto px-6 py-8 lg:px-10 lg:py-12">
           {/* Welcome Section */}
           <div className="mb-10 bg-white rounded-xl p-6 shadow">
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-800">
-              Welcome back, 
-              <span className="ml-2 text-pink-600">
-                {authUser?.name || 'User'}
-              </span>
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Discover what new in your relationship journey today.
-            </p>
+            <div className="flex items-center">
+              <div className="mr-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-pink-200">
+                  <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-bold text-gray-800">
+                  Welcome back, 
+                  <span className="ml-2 text-pink-600">
+                    {authUser?.name || 'User'}
+                  </span>
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  Discover whats new in your relationship journey today.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Stats Overview */}
@@ -318,7 +330,7 @@ const WeddingDatingDashboard = () => {
                 <div className="md:w-1/3 bg-pink-100 p-6 flex items-center justify-center">
                   <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg">
                     <img 
-                      src="/api/placeholder/200/200" 
+                      src="assets/test.png" 
                       alt="Couple" 
                       className="w-full h-full object-cover"
                     />

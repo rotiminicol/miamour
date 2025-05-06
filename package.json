@@ -15,6 +15,7 @@
   "dependencies": {
     "@eslint/config-array": "^0.19.2",
     "@eslint/object-schema": "^2.1.6",
+    "@mui/material": "^7.1.0",
     "@react-three/drei": "^10.0.5",
     "@react-three/fiber": "^9.1.0",
     "@stripe/react-stripe-js": "^3.5.1",

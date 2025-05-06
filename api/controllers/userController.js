@@ -1,6 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import User from "../models/User.js";
 import { createNotification } from './notificationController.js';
+import asyncHandler from 'express-async-handler';
 
 export const updateProfile = async (req, res) => {
 	try {
@@ -136,4 +137,68 @@ export const getDashboardStats = async (req, res) => {
 			message: 'Internal server error'
 		});
 	}
+};
+
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id).select('-password');
+	
+	if (!user) {
+		res.status(404);
+		throw new Error('User not found');
+	}
+
+	res.json({
+		_id: user._id,
+		name: user.name,
+		email: user.email,
+		phone: user.phone,
+		location: user.location,
+		age: user.age,
+		gender: user.gender,
+		images: user.images || []
+	});
+});
+
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+
+	if (!user) {
+		res.status(404);
+		throw new Error('User not found');
+	}
+
+	const { name, email, phone, location, age, gender, images } = req.body;
+
+	// Update user fields
+	user.name = name || user.name;
+	user.email = email || user.email;
+	user.phone = phone || user.phone;
+	user.location = location || user.location;
+	user.age = age || user.age;
+	user.gender = gender || user.gender;
+	user.images = images || user.images;
+
+	const updatedUser = await user.save();
+
+	res.json({
+		_id: updatedUser._id,
+		name: updatedUser.name,
+		email: updatedUser.email,
+		phone: updatedUser.phone,
+		location: updatedUser.location,
+		age: updatedUser.age,
+		gender: updatedUser.gender,
+		images: updatedUser.images
+	});
+});
+
+export {
+	getUserProfile,
+	updateUserProfile
 };

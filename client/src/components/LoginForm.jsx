@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FcGoogle } from 'react-icons/fc';
 import { FaHeart, FaEye, FaEyeSlash } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
 
-const LoginForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
+const LoginForm = ({ toggleForm }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -133,36 +132,6 @@ const LoginForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
         </button>
       </form>
 
-      <div className="my-6 relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
-        </div>
-        <div className="relative flex justify-center">
-          <span className="px-2 bg-white text-sm text-gray-500">
-            Or continue with
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={onGoogleClick}
-          className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
-        >
-          <FcGoogle className="mr-2" size={18} />
-          Google
-        </button>
-        <button 
-          onClick={onIjeuwaClick}
-          className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-md text-sm font-medium hover:bg-gray-50"
-        >
-          <div className="h-4 w-4 rounded-full bg-pink-600 flex items-center justify-center mr-2">
-            <FaHeart className="text-white" size={10} />
-          </div>
-          Ijeuwa
-        </button>
-      </div>
-
       <div className="mt-6 text-center text-sm text-gray-500">
         Dont have an account?{' '}
         <button
@@ -178,8 +147,6 @@ const LoginForm = ({ toggleForm, onGoogleClick, onIjeuwaClick }) => {
 
 LoginForm.propTypes = {
   toggleForm: PropTypes.func.isRequired,
-  onGoogleClick: PropTypes.func.isRequired,
-  onIjeuwaClick: PropTypes.func.isRequired
 };
 
 export default LoginForm;

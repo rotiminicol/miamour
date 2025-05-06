@@ -1,13 +1,17 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.js";
-import { updateProfile, getDashboardStats } from "../controllers/userController.js";
+import { updateProfile, getDashboardStats, getUserProfile, updateUserProfile } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.put("/update", protectRoute, updateProfile);
-router.get("/profile", protectRoute, (req, res) => {
-  res.json({ username: "Alex", email: "alex@example.com" });
-});
-router.get("/dashboard/stats", protectRoute, getDashboardStats);
+// All routes are protected
+router.use(protectRoute);
+
+// Profile routes
+router.get('/profile', getUserProfile);
+router.put('/profile', updateUserProfile);
+
+router.put("/update", updateProfile);
+router.get("/dashboard/stats", getDashboardStats);
 
 export default router;

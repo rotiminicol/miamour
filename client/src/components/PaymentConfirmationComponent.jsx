@@ -205,14 +205,14 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
             </h3>
             <div className="bg-green-50 rounded-xl p-4 mb-6">
               <p className="text-gray-700 mb-2">
-                <span className="font-semibold">Bank Name:</span> Zenith Bank
+                <span className="font-semibold">Bank Name:</span> Providus Bank
               </p>
               <p className="text-gray-700 mb-2">
-                <span className="font-semibold">Account Name:</span> Matchmaking
+                <span className="font-semibold">Account Name:</span> Arigo Energy
                 Services Ltd
               </p>
               <p className="text-gray-700 mb-2">
-                <span className="font-semibold">Account Number:</span> 1234567890
+                <span className="font-semibold">Account Number:</span>5400881912
               </p>
               <p className="text-gray-700 mb-2">
                 <span className="font-semibold">Reference:</span> {option}_

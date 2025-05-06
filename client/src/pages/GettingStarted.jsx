@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import { Header } from "../components/Header";
@@ -14,6 +14,14 @@ const GettingStarted = () => {
   const [privacyOption, setPrivacyOption] = useState(null);
   const [animationDirection, setAnimationDirection] = useState("forward");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Initialize form data with user data from navigation state
+  useEffect(() => {
+    if (location.state?.userData) {
+      setFormData(location.state.userData);
+    }
+  }, [location.state]);
 
   // Gradient colors for different views
   const viewGradients = {
@@ -40,14 +48,14 @@ const GettingStarted = () => {
     setCurrentView("payment");
   };
 
-// In GettingStarted.jsx
-const handlePaymentConfirm = () => {
-  setAnimationDirection("forward");
-  setCurrentView("success");
-  // Save form completion status to local storage
-  localStorage.setItem("formCompleted", "true");
-  setTimeout(() => navigate("/dashboard"), 300000);
-};
+  const handlePaymentConfirm = () => {
+    setAnimationDirection("forward");
+    setCurrentView("success");
+    // Save form completion status to local storage
+    localStorage.setItem("formCompleted", "true");
+    setTimeout(() => navigate("/dashboard"), 300000);
+  };
+
   const handlePaymentCancel = () => {
     setAnimationDirection("backward");
     setCurrentView("privacy");
@@ -179,7 +187,7 @@ const handlePaymentConfirm = () => {
           </div>
 
           {/* Main content container with enhanced animations */}
-          <div className="relative flex-grow flex justify-center items-center ">
+          <div className="relative flex-grow flex justify-center items-center">
             <AnimatePresence custom={animationDirection} mode="wait">
               <motion.div
                 key={currentView}

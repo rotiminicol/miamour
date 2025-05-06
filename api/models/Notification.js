@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['getting_started', 'match', 'message', 'system']
+    enum: ['getting_started', 'match', 'message', 'system', 'profile_update']
   },
   link: {
     type: String,

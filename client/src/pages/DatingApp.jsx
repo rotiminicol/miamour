@@ -20,7 +20,7 @@ const DatingApp = () => {
   ];
 
   const testimonials = [
-    { names: "Sarah & Michael", date: "April 2024", quote: "MiAmour’s personality matching was spot on! We’re planning our wedding.", rating: 5 },
+    { names: "Sarah & Michael", date: "April 2024", quote: "miamour’s personality matching was spot on! We’re planning our wedding.", rating: 5 },
   ];
 
   return (
@@ -39,7 +39,7 @@ const DatingApp = () => {
         />
         <div className="container mx-auto px-4 py-16 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Find Your Match with MiAmour</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Find Your Match with miamour</h1>
             <p className="text-lg text-pink-100 mb-8 max-w-2xl mx-auto">Our AI connects you with compatible partners based on personality and values.</p>
             <Link to="/counseling" className="inline-flex items-center text-pink-200 hover:text-white transition-colors mb-8">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
@@ -59,7 +59,7 @@ const DatingApp = () => {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Why Choose MiAmour?</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Why Choose miamour?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
               <motion.div key={index} whileHover={{ y: -5 }} className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl">
@@ -82,7 +82,7 @@ const DatingApp = () => {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">How MiAmour Works</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">How miamour Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {howItWorks.map((step, index) => (
               <motion.div key={index} whileHover={{ y: -5 }} className="text-center">

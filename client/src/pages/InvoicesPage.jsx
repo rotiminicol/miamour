@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, FileText, Sparkles, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Download, FileText, Sparkles, CheckCircle, Clock, AlertCircle, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from "../components/Header";
 
@@ -10,7 +10,7 @@ const InvoicesPage = () => {
       date: '2023-10-01',
       amount: '$49.99',
       status: 'Paid',
-      downloadLink: '#',
+      invoiceFile: '/invoices/invoice-2023-10.pdf',
       dueDate: '2023-10-15'
     },
     {
@@ -18,7 +18,7 @@ const InvoicesPage = () => {
       date: '2023-09-01',
       amount: '$49.99',
       status: 'Paid',
-      downloadLink: '#',
+      invoiceFile: '/invoices/invoice-2023-09.pdf',
       dueDate: '2023-09-15'
     },
     {
@@ -26,7 +26,7 @@ const InvoicesPage = () => {
       date: '2023-08-01',
       amount: '$49.99',
       status: 'Pending',
-      downloadLink: '#',
+      invoiceFile: '/invoices/invoice-2023-08.pdf',
       dueDate: '2023-08-15'
     }
   ]);
@@ -53,9 +53,56 @@ const InvoicesPage = () => {
     }
   };
 
+  const handleDownload = async (invoiceFile) => {
+    try {
+      const response = await fetch(invoiceFile);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = invoiceFile.split('/').pop();
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      alert('Failed to download invoice. Please try again later.');
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    try {
+      const response = await fetch('/invoices/all-invoices.zip');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'all-invoices.zip';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading all invoices:', error);
+      alert('Failed to download invoices. Please try again later.');
+    }
+  };
+
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Header />
+      <div className="container mx-auto px-4 py-6">
+        <motion.button
+          whileHover={{ x: -3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => window.history.back()}
+          className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" />
+          Back
+        </motion.button>
+      </div>
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-white py-12 relative overflow-hidden">
         {/* Decorative background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -121,6 +168,7 @@ const InvoicesPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={handleDownloadAll}
                 className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 Download All
@@ -162,14 +210,14 @@ const InvoicesPage = () => {
                         </span>
                       </div>
                       <span className="text-xl font-semibold text-gray-800">{invoice.amount}</span>
-                      <motion.a 
-                        href={invoice.downloadLink}
+                      <motion.button 
+                        onClick={() => handleDownload(invoice.invoiceFile)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         className="p-2 bg-pink-50 rounded-lg text-pink-600 hover:bg-pink-100 transition-colors"
                       >
                         <Download className="h-5 w-5" />
-                      </motion.a>
+                      </motion.button>
                     </div>
                   </motion.div>
                 ))}
@@ -178,7 +226,7 @@ const InvoicesPage = () => {
           </motion.div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

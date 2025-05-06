@@ -18,7 +18,7 @@ const Homepage = () => {
     services: [
       { icon: <Heart size={24} className="text-pink-500" />, text: 'Marriage Counseling', to: '/marriage-counseling', description: 'Build a lasting partnership.' },
       { icon: <Users size={24} className="text-pink-400" />, text: 'Relationship Therapy', to: '/relationship-therapy', description: 'Strengthen your bond.' },
-      { icon: <MessageCircle size={24} className="text-pink-400" />, text: 'Miamour App', to: '/dating-app', description: 'Connect with matches.' },
+      { icon: <MessageCircle size={24} className="text-pink-400" />, text: 'miamour App', to: '/dating-app', description: 'Connect with matches.' },
       { icon: <Calendar size={24} className="text-pink-300" />, text: 'Schedule', to: '/schedule', description: 'Book your sessions.' },
       { icon: <Sparkles size={24} className="text-pink-500" />, text: 'Ceremony Planning', to: '/ceremony-planning', description: 'Plan your dream event.' },
       { icon: <MessageCircle size={24} className="text-pink-500" />, text: 'Personalized Matching', to: '/getting-started', description: 'Find your perfect partner.' },
@@ -267,7 +267,7 @@ const Homepage = () => {
                       </motion.button>
                     )}
                     <motion.button
-                      aria-label="Learn more about Miamour"
+                      aria-label="Learn more about miamour"
                       className="bg-white/10 backdrop-blur-sm text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
                       onClick={() => handleNavigate('/learn-more')}
                       whileHover={{ scale: 1.05 }}

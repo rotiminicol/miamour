@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from "../components/Header";
+import { Header } from '../components/Header';
 import { ChevronRightIcon } from 'lucide-react';
+import Sidebar from '../components/Sidebar';
+import BackButton from '../components/BackButton';
 
 const ResourcesPage = () => {
   const [selectedResource, setSelectedResource] = useState(null);
@@ -58,86 +60,90 @@ const ResourcesPage = () => {
   };
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-br from-white to-pink-50">
-        {/* Hero Banner */}
-        <div className="bg-gradient-to-r from-pink-500 to-pink-700 text-white w-full parallax-hero">
-          <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-center"
-            >
-              <h1 className="text-4xl font-bold mb-4">Resources</h1>
-              <p className="text-xl opacity-90 max-w-3xl mx-auto">
-                Find helpful guides, tutorials, and community resources to get the most out of our platform.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="space-y-6">
-            {resourceCategories.map((category, index) => (
-              <motion.div 
-                key={category.id}
-                className="border border-pink-200 rounded-lg overflow-hidden bg-white"
-                initial={{ opacity: 0, y: 20 }}
+    <div className="flex min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+      <Sidebar />
+      <div className="flex-grow flex flex-col">
+        <Header />
+        <main className="flex-grow overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Hero Banner */}
+          <div className="bg-gradient-to-r from-pink-500 to-pink-700 text-white w-full parallax-hero">
+            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.5 }}
+                className="text-center"
               >
-                <div 
-                  className="flex justify-between items-center p-6 cursor-pointer hover:bg-pink-50"
-                  onClick={() => handleResourceClick(category.id)}
-                >
-                  <div>
-                    <h3 className="text-xl font-medium text-pink-900">{category.title}</h3>
-                    <p className="text-gray-600">{category.description}</p>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: selectedResource === category.id ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronRightIcon className="w-6 h-6 text-pink-500" />
-                  </motion.div>
-                </div>
-                
-                <AnimatePresence>
-                  {selectedResource === category.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="p-6 pt-0 bg-pink-50 border-t border-pink-200">
-                        <ul className="grid md:grid-cols-2 gap-4">
-                          {category.items.map((item, idx) => (
-                            <li key={idx} className="flex items-center">
-                              <button className="text-pink-600 hover:text-pink-800 hover:underline text-left flex items-center py-2 text-lg">
-                                <span className="mr-2">•</span> {item}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-6 text-right">
-                          <button className="text-pink-600 hover:text-pink-800 font-medium hover:underline">
-                            View All {category.title}
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <h1 className="text-4xl font-bold mb-4">Resources</h1>
+                <p className="text-xl opacity-90 max-w-3xl mx-auto">
+                  Find helpful guides, tutorials, and community resources to get the most out of our platform.
+                </p>
               </motion.div>
-            ))}
+            </div>
           </div>
-        </div>
+
+          {/* Main Content */}
+          <div className="max-w-7xl mx-auto py-8">
+            <BackButton />
+            <div className="space-y-6">
+              {resourceCategories.map((category, index) => (
+                <motion.div 
+                  key={category.id}
+                  className="border border-pink-200 rounded-lg overflow-hidden bg-white"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <div 
+                    className="flex justify-between items-center p-6 cursor-pointer hover:bg-pink-50"
+                    onClick={() => handleResourceClick(category.id)}
+                  >
+                    <div>
+                      <h3 className="text-xl font-medium text-pink-900">{category.title}</h3>
+                      <p className="text-gray-600">{category.description}</p>
+                    </div>
+                    <motion.div
+                      animate={{ rotate: selectedResource === category.id ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronRightIcon className="w-6 h-6 text-pink-500" />
+                    </motion.div>
+                  </div>
+                  
+                  <AnimatePresence>
+                    {selectedResource === category.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-6 pt-0 bg-pink-50 border-t border-pink-200">
+                          <ul className="grid md:grid-cols-2 gap-4">
+                            {category.items.map((item, idx) => (
+                              <li key={idx} className="flex items-center">
+                                <button className="text-pink-600 hover:text-pink-800 hover:underline text-left flex items-center py-2 text-lg">
+                                  <span className="mr-2">•</span> {item}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="mt-6 text-right">
+                            <button className="text-pink-600 hover:text-pink-800 font-medium hover:underline">
+                              View All {category.title}
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
-    </>
+    </div>
   );
 };
 

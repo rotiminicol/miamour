@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Gift, Clock, Copy, CheckCircle, Sparkles } from 'lucide-react';
+import { Gift, Clock, Copy, CheckCircle, Sparkles, ChevronLeft } from 'lucide-react';
 import { Header } from "../components/Header";
+import { motion } from 'framer-motion';
 
 const DiscountsPage = () => {
   const [discounts] = useState([
@@ -72,8 +73,19 @@ const DiscountsPage = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Header />
+      <div className="container mx-auto px-4 py-6">
+        <motion.button
+          whileHover={{ x: -3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => window.history.back()}
+          className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" />
+          Back
+        </motion.button>
+      </div>
       <div className="min-h-screen bg-gradient-to-b from-pink-100 to-white py-12">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -205,7 +217,7 @@ const DiscountsPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

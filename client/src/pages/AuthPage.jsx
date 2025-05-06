@@ -56,7 +56,7 @@ const AuthPage = () => {
       case 'signup': return 'Find Your Perfect Match';
       case 'google': return authMode === 'login' ? 'Login with Google' : 'Sign up with Google';
       case 'ijeuwa': return authMode === 'login' ? 'Login with Ijeuwa' : 'Sign up with Ijeuwa';
-      default: return 'Join Miamour';
+      default: return 'Join miamour';
     }
   };
 
@@ -93,7 +93,7 @@ const AuthPage = () => {
         <div className="hidden md:flex absolute top-4 left-4 md:top-6 md:left-6 z-20 items-center gap-3">
           <motion.img
             src={logo}
-            alt="Miamour Logo"
+            alt="miamour Logo"
             className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full"
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
@@ -104,7 +104,7 @@ const AuthPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
           >
-            Miamour
+            miamour
           </motion.h1>
         </div>
 
@@ -204,7 +204,7 @@ const AuthPage = () => {
             <p className="text-base md:text-lg">
               {activeForm === 'login' 
                 ? 'Welcome back to your journey to lasting love' 
-                : 'Join Miamour and begin your journey to lasting love'}
+                : 'Join miamour and begin your journey to lasting love'}
             </p>
           </motion.div>
         </div>

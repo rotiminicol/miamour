@@ -1,105 +1,126 @@
 import { motion } from "framer-motion";
-import { Heart, Quote } from "lucide-react";
+import { ChevronLeft, Heart } from "lucide-react";
+import { Header } from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
-const stories = [
+const successStories = [
   {
     id: 1,
-    quote: "Miamour helped me find my soulmate when I had almost given up hope. We're getting married next spring!",
-    author: "Sarah & Michael",
-    date: "Married 2023",
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    names: "Sarah & Michael",
+    story: "We met on miamour and instantly connected over our shared love for travel and adventure. After 6 months of dating, we're now planning our wedding!",
+    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    date: "Married 2023"
   },
   {
     id: 2,
-    quote: "After just two months on Miamour, I met the love of my life. The compatibility matching is incredible!",
-    author: "James & Emily",
-    date: "Engaged 2023",
-    image: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    names: "Emma & James",
+    story: "Thanks to miamour's smart matching algorithm, we found each other despite living in different cities. Now we're happily married with two beautiful children.",
+    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    date: "Married 2022"
   },
   {
     id: 3,
-    quote: "We connected over our shared love of hiking and travel. Thanks to Miamour, we're now exploring the world together.",
-    author: "David & Jessica",
-    date: "Together since 2022",
-    image: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    names: "David & Lisa",
+    story: "We were both skeptical about online dating, but miamour's verification process made us feel safe. Now we're celebrating our first anniversary!",
+    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    date: "Married 2023"
   }
 ];
 
 export default function SuccessStoriesPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
-      >
-        <div className="text-center mb-16">
-          <motion.h2 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent mb-4"
-          >
-            Love Stories That Inspire
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg text-gray-600 max-w-3xl mx-auto"
-          >
-            Real couples who found love through Miamour. Your success story could be next!
-          </motion.p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stories.map((story, index) => (
-            <motion.div
-              key={story.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-              whileHover={{ scale: 1.03 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden border border-pink-100"
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+      <Sidebar />
+      <div className="flex-grow flex flex-col">
+        <Header />
+        <main className="flex-grow overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
+          <div className="container mx-auto px-4 py-6">
+            <motion.button
+              whileHover={{ x: -3 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => window.history.back()}
+              className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
             >
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src={story.image} 
-                  alt={story.author} 
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-start mb-4 text-pink-500">
-                  <Quote className="w-6 h-6" />
-                </div>
-                <p className="text-gray-600 italic mb-6">{story.quote}</p>
-                <div className="flex items-center">
-                  <Heart className="w-5 h-5 text-pink-500 mr-2" />
-                  <span className="font-medium text-gray-800">{story.author}</span>
-                  <span className="ml-auto text-sm text-gray-500">{story.date}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              <ChevronLeft className="h-5 w-5 mr-1" />
+              Back
+            </motion.button>
+          </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-16 text-center"
-        >
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Share Your Story</h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Found love through Miamour? Wed love to hear your story and possibly feature it here!
-          </p>
-          <button className="bg-gradient-to-r from-pink-500 to-pink-400 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all hover:scale-105">
-            Share Your Success Story
-          </button>
-        </motion.div>
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-4xl font-bold text-[#FF1493] mb-4"
+              >
+                Success Stories
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-lg text-gray-600 max-w-3xl mx-auto"
+              >
+                Real stories from couples who found love through miamour
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {successStories.map((story, index) => (
+                <motion.div
+                  key={story.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  whileHover={{ y: -5 }}
+                  className="bg-white rounded-xl shadow-lg border-2 border-[#FF1493]/20 overflow-hidden"
+                >
+                  <div className="relative h-48">
+                    <img
+                      src={story.image}
+                      alt={story.names}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <h3 className="text-xl font-bold">{story.names}</h3>
+                      <p className="text-sm opacity-90">{story.date}</p>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-600 mb-4">{story.story}</p>
+                    <div className="flex items-center text-[#FF1493]">
+                      <Heart className="w-5 h-5 mr-1" />
+                      <span className="text-sm font-medium">Success Story</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="mt-16 text-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.03, boxShadow: '0 4px 20px rgba(255,20,147,0.3)' }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-[#FF1493] text-white px-8 py-3 rounded-lg font-medium"
+              >
+                Share Your Story
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 }

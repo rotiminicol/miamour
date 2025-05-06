@@ -1,106 +1,91 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft } from "lucide-react";
+import { Header } from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
-const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState(null);
-
-  const faqs = [
+const SafetyGuide = () => {
+  const guidelines = [
     {
-      question: "How does Miamour match users?",
-      answer: "MiAmour uses a combination of user preferences, personality assessments, and advanced algorithms to suggest compatible matches.",
+      title: "Meet in Public Places",
+      description: "For initial meetings, choose well-lit, public locations to ensure safety.",
     },
     {
-      question: "Is my information secure?",
-      answer: "Yes, we prioritize your privacy with industry-standard encryption and strict data protection policies.",
+      title: "Inform a Friend",
+      description: "Let someone you trust know your plans, including where you're going and who you're meeting.",
     },
     {
-      question: "Can I use Miamour for free?",
-      answer: "Miamour offers a free basic plan with limited features, and premium plans for enhanced functionality.",
+      title: "Trust Your Instincts",
+      description: "If something feels off, don't hesitate to end the date or leave the situation.",
     },
     {
-      question: "How do I report an issue?",
-      answer: "You can contact our support team via the Help Center or email us at info@miamour_me.com.",
+      title: "Protect Personal Information",
+      description: "Avoid sharing sensitive details like your address or financial information early on.",
     },
   ];
 
-  const toggleFAQ = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-pink-500 to-pink-300 text-white py-4">
-        <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <Heart className="text-white w-8 h-8 mr-2" />
-            <span className="text-2xl font-bold">Miamour</span>
-          </Link>
-          <nav>
-            <Link to="/" className="text-white hover:text-pink-100 mx-4">Home</Link>
-            <Link to="/faq" className="text-white hover:text-pink-100 mx-4">FAQ</Link>
-          </nav>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 sm:px-6 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl font-bold text-pink-500 mb-4">Frequently Asked Questions</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Find answers to common questions about using Miamour.
-          </p>
-        </motion.div>
-
-        <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="mb-4"
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+      <Sidebar />
+      <div className="flex-grow flex flex-col">
+        <Header />
+        <main className="flex-grow overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
+          <div className="container mx-auto px-4 py-6">
+            <motion.button
+              whileHover={{ x: -3 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => window.history.back()}
+              className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
             >
-              <button
-                onClick={() => toggleFAQ(index)}
-                className="w-full text-left bg-pink-50 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow flex justify-between items-center"
-              >
-                <span className="text-lg font-semibold text-pink-500">{faq.question}</span>
-                <svg
-                  className={`w-5 h-5 text-pink-400 transform transition-transform ${openIndex === index ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-pink-50 p-4 rounded-b-lg text-gray-600"
-                >
-                  {faq.answer}
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </main>
+              <ChevronLeft className="h-5 w-5 mr-1" />
+              Back
+            </motion.button>
+          </div>
 
-      {/* Footer */}
-    
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-4xl font-bold text-[#FF1493] mb-4"
+              >
+                Safety Guide
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-lg text-gray-600 max-w-3xl mx-auto"
+              >
+                Stay safe while dating with these essential tips to protect yourself and your heart.
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {guidelines.map((guide, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                  className="bg-white rounded-xl shadow-lg border-2 border-[#FF1493]/20 p-6"
+                >
+                  <h3 className="text-xl font-semibold text-[#FF1493] mb-2">{guide.title}</h3>
+                  <p className="text-gray-600">{guide.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 };
 
-export default FAQ;
+export default SafetyGuide;

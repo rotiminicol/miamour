@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useMatchStore } from "../store/useMatchStore";
 import { 
   Heart, Loader, MessageCircle, Home, CreditCard, 
-  Settings, Shield, Calendar, HelpCircle, FileText, Gift,
+  Settings, Shield,  HelpCircle, FileText, Gift,
   ChevronRight, User, Menu, ArrowLeftCircle, Users, Sparkles,
   BarChart2
 } from "lucide-react";
@@ -60,8 +60,6 @@ const Sidebar = () => {
   const categories = {
     services: [
       { icon: <Heart size={18} className="text-red-500" />, text: 'Counseling', to: '/marriage-counseling' },
-      { icon: <MessageCircle size={18} className="text-blue-400" />, text: 'MiAmour App', to: '/dating-app' },
-      { icon: <Calendar size={18} className="text-teal-500" />, text: 'Schedule', to: '/schedule' },
       { icon: <Home size={18} className="text-amber-500" />, text: 'Ceremony Planning', to: '/ceremony-planning' },
       { icon: <Home size={18} className="text-amber-500" />, text: 'Marriage Planning', to: '/marriage-planning' },
       { icon: <Users size={18} className="text-pink-500" />, text: 'Relationship Therapy', to: '/relationship-therapy' },
@@ -130,7 +128,7 @@ const Sidebar = () => {
                   transition={{ duration: 0.2 }}
                   className='text-xl font-bold text-pink-600'
                 >
-                  Miamour
+                  miamour
                 </motion.h2>
               </Link>
             ) : (

@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { Calendar,  MessageSquare, User } from "lucide-react";
+import { Calendar, MessageSquare, User, ChevronLeft } from "lucide-react";
+import { Header } from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
 const blogPosts = [
   {
@@ -60,82 +62,89 @@ const blogPosts = [
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
-      >
-        <div className="text-center mb-16">
-          <motion.h2 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-pink-300 bg-clip-text text-transparent mb-4"
-          >
-            Miamour Blog
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg text-gray-600 max-w-3xl mx-auto"
-          >
-            Expert advice, dating tips, and success stories to help you navigate your journey to love.
-          </motion.p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {blogPosts.map((post, index) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden border border-pink-100"
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
+      <Sidebar />
+      <div className="flex-grow flex flex-col">
+        <Header />
+        <main className="flex-grow overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
+          <div className="container mx-auto px-4 py-6">
+            <motion.button
+              whileHover={{ x: -3 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => window.history.back()}
+              className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
             >
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3">{post.title}</h3>
-                <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                  <span className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {post.date}
-                  </span>
-                  <span className="flex items-center">
-                    <User className="w-4 h-4 mr-1" />
-                    {post.author}
-                  </span>
-                  <span className="flex items-center">
-                    <MessageSquare className="w-4 h-4 mr-1" />
-                    {post.comments} comments
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              <ChevronLeft className="h-5 w-5 mr-1" />
+              Back
+            </motion.button>
+          </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center"
-        >
-          <button className="bg-gradient-to-r from-pink-500 to-pink-400 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all hover:scale-105">
-            Load More Articles
-          </button>
-        </motion.div>
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-4xl font-bold text-[#FF1493] mb-4"
+              >
+                miamour Blog
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-lg text-gray-600 max-w-3xl mx-auto"
+              >
+                Expert advice, dating tips, and success stories to help you navigate your journey to love.
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {blogPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-[#FF1493]/20"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3">{post.title}</h3>
+                    <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                      <span className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        {post.date}
+                      </span>
+                      <span className="flex items-center">
+                        <User className="w-4 h-4 mr-1" />
+                        {post.author}
+                      </span>
+                      <span className="flex items-center">
+                        <MessageSquare className="w-4 h-4 mr-1" />
+                        {post.comments} comments
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 }

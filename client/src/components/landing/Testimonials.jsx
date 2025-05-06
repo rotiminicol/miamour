@@ -10,70 +10,70 @@ const Testimonials = () => {
       couple: {
         name1: 'Sarah',
         name2: 'Michael',
-        image1: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-        image2: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+        image1: '/assets/test.png',
+        image2: '/assets/test2.png',
       },
       location: 'New York, NY',
       weddingDate: 'June 15, 2023',
-      quote: "Miamour changed our lives forever. We connected instantly and knew we were meant to be together.",
-      story: "After countless disappointing experiences on other dating apps, Miamour's approach to matching based on values and life goals brought us together. We got married last summer and couldn't be happier!",
-      weddingImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+      quote: "miamour changed our lives forever. We connected instantly and knew we were meant to be together.",
+      story: "After countless disappointing experiences on other dating apps, miamour's approach to matching based on values and life goals brought us together. We got married last summer and couldn't be happier!",
+      weddingImage: '/assets/test3.png',
     },
     {
       id: 2,
       couple: {
         name1: 'James',
         name2: 'David',
-        image1: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-        image2: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+        image1: '/assets/test4.png',
+        image2: '/assets/test5.png',
       },
       location: 'San Francisco, CA',
       weddingDate: 'August 20, 2023',
       quote: "We were matched within a week of joining and immediately felt a deep connection.",
-      story: "Miamour understood our preferences and values better than any other platform we tried. Their inclusive approach helped us find exactly what we were looking for in a partner.",
-      weddingImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+      story: "miamour understood our preferences and values better than any other platform we tried. Their inclusive approach helped us find exactly what we were looking for in a partner.",
+      weddingImage: '/assets/test6.png',
     },
     {
       id: 3,
       couple: {
         name1: 'Aisha',
         name2: 'Omar',
-        image1: 'https://images.unsplash.com/photo-1526666923127-b2970f64b422?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-        image2: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+        image1: '/assets/test7.png',
+        image2: '/assets/test.png',
       },
       location: 'Chicago, IL',
       weddingDate: 'September 5, 2023',
-      quote: "From our first conversation to our wedding day, Miamour was there every step of the way.",
+      quote: "From our first conversation to our wedding day, miamour was there every step of the way.",
       story: "The detailed profiles and compatibility metrics helped us find each other despite living in different cities. Their event planning resources made our wedding day absolutely perfect.",
-      weddingImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+      weddingImage: '/assets/test2.png',
     },
     {
       id: 4,
       couple: {
         name1: 'Emily',
         name2: 'Carlos',
-        image1: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-        image2: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+        image1: '/assets/test3.png',
+        image2: '/assets/test4.png',
       },
       location: 'Miami, FL',
       weddingDate: 'October 12, 2023',
-      quote: "We never believed in online dating until we tried Miamour.",
+      quote: "We never believed in online dating until we tried miamour.",
       story: "The compatibility matching was scarily accurate. We're now celebrating our 2nd anniversary and expecting our first child!",
-      weddingImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+      weddingImage: '/assets/test5.png',
     },
     {
       id: 5,
       couple: {
         name1: 'Priya',
         name2: 'Raj',
-        image1: 'https://images.unsplash.com/photo-1526666923127-b2970f64b422?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
-        image2: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+        image1: '/assets/test6.png',
+        image2: '/assets/test7.png',
       },
       location: 'Austin, TX',
       weddingDate: 'November 18, 2023',
-      quote: "Cultural compatibility was important to us, and Miamour delivered.",
-      story: "We found each other through Miamour's cultural matching system. Our families connected instantly and we had the most beautiful traditional wedding last year.",
-      weddingImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80',
+      quote: "Cultural compatibility was important to us, and miamour delivered.",
+      story: "We found each other through miamour's cultural matching system. Our families connected instantly and we had the most beautiful traditional wedding last year.",
+      weddingImage: '/assets/test.png',
     }
   ];
 
@@ -135,7 +135,7 @@ const Testimonials = () => {
             <Sparkles className="w-8 h-8 text-pink-500" />
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Real couples who found their forever love through MiAmour. Your love story could be next.
+            Real couples who found their forever love through miamour. Your love story could be next.
           </p>
         </motion.div>
 

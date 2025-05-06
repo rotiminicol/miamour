@@ -1,18 +1,31 @@
 import { useRef, useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useNotificationStore } from "../store/useNotificationStore";
 import { Link } from "react-router-dom";
-import { User, LogOut, ChevronDown, Bell, ChevronRight, Settings, Heart, MessageCircle, Shield } from "lucide-react";
+import { User, LogOut, ChevronDown, Bell, ChevronRight, Settings, Heart, MessageCircle, Shield, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const Header = () => {
   const { authUser, logout } = useAuthStore();
+  const { notifications, unreadCount, fetchNotifications, markAsRead, deleteNotification } = useNotificationStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
+
+  useEffect(() => {
+    if (authUser) {
+      fetchNotifications();
+    }
+  }, [authUser, fetchNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setNotificationDropdownOpen(false);
       }
     };
 
@@ -20,10 +33,32 @@ export const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Determine avatar based on gender (male/female)
+  // Determine avatar based on user's profile image or gender
   const getAvatar = () => {
+    if (authUser?.image) {
+      return authUser.image;
+    }
     const isFemale = authUser?.gender === "female";
     return isFemale ? "/assets/avatarwoman.png" : "/assets/avatarmale.png";
+  };
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification.read) {
+      await markAsRead(notification._id);
+    }
+    // Handle navigation based on notification type
+    switch (notification.type) {
+      case 'profile_update':
+        window.location.href = '/profile';
+        break;
+      case 'new_match':
+        window.location.href = '/matches';
+        break;
+      case 'new_message':
+        window.location.href = '/messages';
+        break;
+      // Add more cases as needed
+    }
   };
 
   const menuItems = [
@@ -83,21 +118,81 @@ export const Header = () => {
       <Link to="/homepage" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
         <img 
           src="/assets/miLogo2.png" 
-          alt="Miamour Logo" 
+          alt="miamour Logo" 
           className="h-8 mr-2"
         />
-        <span className="text-2xl font-bold text-pink-600">Miamour</span>
+        <span className="text-2xl font-bold text-pink-600">miamour</span>
       </Link>
       
       <div className="flex items-center space-x-4">
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="p-2 rounded-full hover:bg-pink-50 relative"
-        >
-          <Bell size={20} className="text-pink-500" />
-          <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-        </motion.button>
+        <div className="relative" ref={notificationRef}>
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
+            className="p-2 rounded-full hover:bg-pink-50 relative"
+          >
+            <Bell size={20} className="text-pink-500" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </motion.button>
+
+          <AnimatePresence>
+            {notificationDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-pink-100 overflow-hidden z-50"
+              >
+                <div className="p-4 border-b border-pink-50">
+                  <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <motion.div
+                        key={notification._id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className={`p-4 border-b border-pink-50 hover:bg-pink-50 cursor-pointer ${
+                          !notification.read ? 'bg-pink-50' : ''
+                        }`}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-800">{notification.title}</p>
+                            <p className="text-xs text-gray-500 mt-1">{notification.message}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {new Date(notification.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteNotification(notification._id);
+                            }}
+                            className="ml-2 text-gray-400 hover:text-gray-600"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
         
         {authUser ? (
           <div className="relative" ref={dropdownRef}>
@@ -139,7 +234,7 @@ export const Header = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.98 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl border border-pink-100 overflow-hidden"
+                  className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-2xl border-2 border-pink-200 overflow-hidden z-50"
                 >
                   <motion.div
                     initial={{ y: -5, opacity: 0 }}

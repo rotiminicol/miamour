@@ -35,13 +35,13 @@ const Terms = () => {
           
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 mb-6 leading-relaxed">
-              Welcome to Miamour.me! These terms govern your use of our wedding matching platform. By accessing or using our site, you agree to be bound by these terms.
+              Welcome to miamour.me! These terms govern your use of our wedding matching platform. By accessing or using our site, you agree to be bound by these terms.
             </p>
 
             <div className="space-y-8">
               <section className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl">
                 <h2 className="text-2xl font-semibold mb-4 text-pink-700">1. Eligibility</h2>
-                <p className="text-gray-700">You must be 18 or older to use Miamour.me.</p>
+                <p className="text-gray-700">You must be 18 or older to use miamour.me.</p>
               </section>
 
               <section className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl">

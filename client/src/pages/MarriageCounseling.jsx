@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Header } from "../components/Header";
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Calendar, User, Phone, Mail, MessageSquare, Sparkles } from 'lucide-react';
+import { Calendar, User, Phone, Mail, MessageSquare, Sparkles, ChevronLeft, X, Heart, Shield, Star, Clock, UserCheck, FileText } from 'lucide-react';
 
 const MarriageCounseling = () => {
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [filter, setFilter] = useState('all');
   const [screenSize, setScreenSize] = useState('desktop');
   const [showConsultationPopup, setShowConsultationPopup] = useState(false);
+  const [showServicesPopup, setShowServicesPopup] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingData, setBookingData] = useState({
     name: '',
@@ -44,6 +45,24 @@ const MarriageCounseling = () => {
     { title: "Communication Coaching", description: "Learn to express needs and listen effectively.", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
     { title: "Relationship Rebuilding", description: "Restore trust and emotional intimacy.", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" },
     { title: "Premarital Preparation", description: "Build a strong foundation before marriage.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
+  ];
+
+  const benefits = [
+    {
+      icon: <Heart className="w-6 h-6 text-pink-500" />,
+      title: "Strengthen Your Bond",
+      description: "Deepen your connection and understanding of each other"
+    },
+    {
+      icon: <Shield className="w-6 h-6 text-pink-500" />,
+      title: "Safe Space",
+      description: "Confidential and supportive environment for open communication"
+    },
+    {
+      icon: <Star className="w-6 h-6 text-pink-500" />,
+      title: "Expert Guidance",
+      description: "Professional counselors with years of experience"
+    }
   ];
 
   const handleBookingSubmit = async (e) => {
@@ -103,6 +122,17 @@ const MarriageCounseling = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <div className="container mx-auto px-4 py-6">
+        <motion.button
+          whileHover={{ x: -3 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => window.history.back()}
+          className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" />
+          Back
+        </motion.button>
+      </div>
       <div className="relative bg-gradient-to-r from-pink-500 to-pink-700 text-white overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-20"
@@ -119,7 +149,7 @@ const MarriageCounseling = () => {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -127,7 +157,9 @@ const MarriageCounseling = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="mb-8"
             >
-              <Sparkles className="h-12 w-12 text-pink-200 mx-auto mb-4" />
+              <div className="inline-block p-4 bg-white/10 rounded-full backdrop-blur-sm">
+                <Sparkles className="h-12 w-12 text-pink-200" />
+              </div>
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
               Rediscover Your 
@@ -136,29 +168,22 @@ const MarriageCounseling = () => {
             <p className="text-xl md:text-2xl mb-12 text-pink-100 max-w-2xl mx-auto">
               Expert guidance to strengthen your relationship and build a lasting bond.
             </p>
-            <motion.div 
-              className="flex flex-wrap justify-center gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white text-pink-600 px-8 py-4 rounded-xl font-semibold shadow-lg hover:bg-pink-50 transition-all duration-300"
-                onClick={() => setShowConsultationPopup(true)}
-              >
-                Book Free Consultation
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300"
-                onClick={() => window.scrollTo({ top: document.querySelector('.services-section').offsetTop - 100, behavior: 'smooth' })}
-              >
-                Explore Services
-              </motion.button>
-            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {benefits.map((benefit, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+                >
+                  <div className="mb-4">{benefit.icon}</div>
+                  <h3 className="text-lg font-semibold mb-2">{benefit.title}</h3>
+                  <p className="text-pink-100">{benefit.description}</p>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
@@ -279,7 +304,7 @@ const MarriageCounseling = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-pink-500 to-pink-700 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12"
+          className="bg-gradient-to-r from-pink-500 to-pink-700 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12 mt-24"
         >
           <h2 className="text-3xl font-bold mb-4 text-white">Ready to transform your relationship?</h2>
           <motion.button
@@ -525,6 +550,80 @@ const MarriageCounseling = () => {
       </AnimatePresence>
 
       <AnimatePresence>
+        {showServicesPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={() => setShowServicesPopup(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Our Services</h2>
+                  <p className="text-gray-600 mt-1">Comprehensive relationship support for every stage</p>
+                </div>
+                <button
+                  onClick={() => setShowServicesPopup(false)}
+                  className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="space-y-6">
+                {services.map((service, index) => (
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-pink-50 p-6 rounded-xl"
+                  >
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={service.icon} />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">{service.title}</h3>
+                        <p className="text-gray-600">{service.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                <div className="mt-8 text-center">
+                  <p className="text-gray-600 mb-6">
+                    Our comprehensive services are designed to help you build a stronger, more fulfilling relationship.
+                    Each service is tailored to your specific needs and goals.
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors"
+                    onClick={() => {
+                      setShowServicesPopup(false);
+                      setShowConsultationPopup(true);
+                    }}
+                  >
+                    Book Your Free Consultation
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {showConsultationPopup && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -542,28 +641,68 @@ const MarriageCounseling = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Book Your Free Consultation</h2>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Book Your Free Consultation</h2>
+                  <p className="text-gray-600 mt-1">Take the first step towards a stronger relationship</p>
+                </div>
                 <button
                   onClick={() => setShowConsultationPopup(false)}
                   className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-              <div className="mb-6">
-                <p className="text-gray-600">
-                  Booking a free consultation with Miamour is simple. Choose a counselor from our expert list, 
-                  review their availability, and select a time slot that works for you. During the consultation, 
-                  youll discuss your relationship goals and how our services can help. Theres no commitment 
-                  required—use this opportunity to find the right counselor and start building a stronger connection.
-                </p>
+              <div className="space-y-6">
+                <div className="bg-pink-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">What to Expect</h3>
+                  <ul className="space-y-4">
+                    <li className="flex items-start">
+                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
+                        <Clock className="w-5 h-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800">30-Minute Session</h4>
+                        <p className="text-gray-600">Initial consultation with a relationship expert</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
+                        <UserCheck className="w-5 h-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800">Personalized Assessment</h4>
+                        <p className="text-gray-600">Understanding your unique relationship needs</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-pink-100 p-2 rounded-lg mr-4">
+                        <FileText className="w-5 h-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800">Customized Plan</h4>
+                        <p className="text-gray-600">Tailored therapy recommendations for your journey</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div className="text-center">
+                  <p className="text-gray-600 mb-6">
+                    Our expert counselors are here to help you navigate your journey to a more fulfilling partnership.
+                    No commitment required - take the first step today.
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-pink-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:bg-pink-700 transition-all duration-300"
+                    onClick={() => {
+                      setShowConsultationPopup(false);
+                      window.scrollTo({ top: document.querySelector('.services-section').offsetTop - 100, behavior: 'smooth' });
+                    }}
+                  >
+                    View Our Counselors
+                  </motion.button>
+                </div>
               </div>
-              <button
-                className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700"
-                onClick={() => setShowConsultationPopup(false)}
-              >
-                View Counselors
-              </button>
             </motion.div>
           </motion.div>
         )}

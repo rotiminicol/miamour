@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Heart, MessageCircle, Users, Award, Sparkles, X, Star, ChevronRight } from 'lucide-react';
+import { Heart, MessageCircle, Users, Award, Sparkles, X, Star, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Header } from "../components/Header";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const RelationshipTherapy = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('about');
   const [isAnimating, setIsAnimating] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [hoveredService, setHoveredService] = useState(null);
+
+  // Function to handle back navigation
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   // Animation trigger for hearts
   useEffect(() => {
@@ -78,6 +85,17 @@ const RelationshipTherapy = () => {
     <>
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 py-12 px-4 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          onClick={handleBack}
+          className="flex items-center text-gray-600 hover:text-pink-500 mb-6 transition-colors duration-200"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          <span>Back</span>
+        </motion.button>
+
         {/* Floating hearts animation */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {isAnimating && Array.from({ length: 15 }).map((_, i) => (

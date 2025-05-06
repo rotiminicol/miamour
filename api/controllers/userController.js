@@ -1,8 +1,10 @@
 import cloudinary from "../config/cloudinary.js";
 import User from "../models/User.js";
+import { createNotification } from './notificationController';
 
 export const updateProfile = async (req, res) => {
 	try {
+		console.log("Received update profile request for user:", req.user.id);
 		const { 
 			name, 
 			bio, 
@@ -29,52 +31,88 @@ export const updateProfile = async (req, res) => {
 		};
 
 		if (image) {
-			// Validate Base64 image
-			const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
-			if (base64Regex.test(image)) {
-				try {
-					const uploadResponse = await cloudinary.uploader.upload(image);
-					updatedData.image = uploadResponse.secure_url;
-				} catch (error) {
-					console.error("Error uploading image:", error);
-					return res.status(400).json({
-						success: false,
-						message: "Error uploading image",
-					});
-				}
-			} else {
+			const base64Image = image;
+			const base64Data = base64Image.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+			
+			try {
+				console.log("Uploading image to Cloudinary...");
+				const result = await cloudinary.uploader.upload(
+					`data:image/${base64Image.split(';')[0].split('/')[1]};base64,${base64Data}`,
+					{
+						folder: "profile_images",
+						resource_type: "auto"
+					}
+				);
+				console.log("Cloudinary upload response:", result);
+				updatedData.image = result.secure_url;
+				
+				// Create notification for profile picture update
+				await createNotification(
+					req.user._id,
+					'Profile Updated',
+					'Your profile picture has been updated successfully.',
+					'profile_update',
+					'/profile'
+				);
+			} catch (error) {
+				console.error("Error uploading image to Cloudinary:", error);
 				return res.status(400).json({
 					success: false,
-					message: "Invalid image format",
+					message: `Error uploading image: ${error.message}`,
+					error: error.message
 				});
 			}
 		}
 
-		const updatedUser = await User.findByIdAndUpdate(
-			req.user.id, 
-			updatedData, 
-			{ 
-				new: true,
-				runValidators: true 
-			}
-		);
+		try {
+			console.log("Updating user in database with data:", { ...updatedData, image: updatedData.image ? "Image URL present" : "No image" });
+			const updatedUser = await User.findByIdAndUpdate(
+				req.user.id, 
+				updatedData, 
+				{ 
+					new: true,
+					runValidators: true 
+				}
+			);
 
-		if (!updatedUser) {
-			return res.status(404).json({
+			if (!updatedUser) {
+				console.error("User not found:", req.user.id);
+				return res.status(404).json({
+					success: false,
+					message: "User not found",
+					userId: req.user.id
+				});
+			}
+
+			console.log("User updated successfully:", updatedUser._id);
+			
+			// Create notification for profile update
+			await createNotification(
+				req.user._id,
+				'Profile Updated',
+				'Your profile has been updated successfully.',
+				'profile_update',
+				'/profile'
+			);
+
+			res.status(200).json({
+				success: true,
+				user: updatedUser,
+			});
+		} catch (error) {
+			console.error("Error updating user in database:", error);
+			return res.status(500).json({
 				success: false,
-				message: "User not found",
+				message: `Error updating user: ${error.message}`,
+				error: error.message
 			});
 		}
-
-		res.status(200).json({
-			success: true,
-			user: updatedUser,
-		});
 	} catch (error) {
-		console.log("Error in updateProfile: ", error);
+		console.error("Error in updateProfile:", error);
 		res.status(500).json({
 			success: false,
 			message: error.message || "Internal server error",
+			error: error.message
 		});
 	}
 };

@@ -35,7 +35,7 @@ const Policy = () => {
           
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 mb-6 leading-relaxed">
-              At Miamour.me, our mission is to create a trusted space where adults ready for marriage can connect authentically and build meaningful relationships. We are committed to protecting your privacy and ensuring your personal information is handled with the utmost care, transparency, and respect. This Privacy Policy explains how we collect, use, share, and protect your data to help you find your lifelong partner.
+              At miamour.me, our mission is to create a trusted space where adults ready for marriage can connect authentically and build meaningful relationships. We are committed to protecting your privacy and ensuring your personal information is handled with the utmost care, transparency, and respect. This Privacy Policy explains how we collect, use, share, and protect your data to help you find your lifelong partner.
             </p>
 
             <div className="space-y-8">
@@ -68,7 +68,7 @@ const Policy = () => {
               <section className="bg-gradient-to-r from-indigo-50 to-pink-50 p-6 rounded-xl">
                 <h2 className="text-2xl font-semibold mb-4 text-indigo-700">3. Data Sharing</h2>
                 <p className="mb-4 text-gray-700">
-                  Trust is at the core of Miamour.me. We do not sell your personal information. We may share limited data with:
+                  Trust is at the core of miamour.me. We do not sell your personal information. We may share limited data with:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
                   <li>Trusted service providers for platform functionality, such as hosting or payment processing, under strict confidentiality agreements.</li>

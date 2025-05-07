@@ -125,9 +125,9 @@ const MarriagePlanning = () => {
             </div>
             <div className="space-y-6">
               {[
-                { icon: <Phone className="h-6 w-6 text-pink-600" />, title: "Phone", content: "+1 (800) 555-LOVE" },
-                { icon: <Mail className="h-6 w-6 text-pink-600" />, title: "Email", content: "wedding@miamour.com" },
-                { icon: <MapPin className="h-6 w-6 text-pink-600" />, title: "Address", content: "123 Wedding Lane, Suite 101\nLovetown, CA 90210" }
+                { icon: <Phone className="h-6 w-6 text-pink-600" />, title: "Phone", content: "+234 9044130171" },
+                { icon: <Mail className="h-6 w-6 text-pink-600" />, title: "Email", content: "info@miamour.me" },
+                { icon: <MapPin className="h-6 w-6 text-pink-600" />, title: "instagram", content: "Miamour.me & miamour_forever " }
               ].map((item, index) => (
                 <div key={index} className="flex items-start bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-pink-100">
                   <div className="p-2 bg-pink-100 rounded-lg mr-4">{item.icon}</div>

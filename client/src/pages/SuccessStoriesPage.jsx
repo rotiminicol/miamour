@@ -1,28 +1,26 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, Heart } from "lucide-react";
-import { Header } from "../components/Header";
-import Sidebar from "../components/Sidebar";
 
 const successStories = [
   {
     id: 1,
     names: "Sarah & Michael",
     story: "We met on miamour and instantly connected over our shared love for travel and adventure. After 6 months of dating, we're now planning our wedding!",
-    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    image: "/assets/test.png",
     date: "Married 2023"
   },
   {
     id: 2,
     names: "Emma & James",
     story: "Thanks to miamour's smart matching algorithm, we found each other despite living in different cities. Now we're happily married with two beautiful children.",
-    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    image: "/assets/test2.png",
     date: "Married 2022"
   },
   {
     id: 3,
     names: "David & Lisa",
     story: "We were both skeptical about online dating, but miamour's verification process made us feel safe. Now we're celebrating our first anniversary!",
-    image: "https://images.unsplash.com/photo-1522673607200-164d1b3ce551?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    image: "/assets/test3.png",
     date: "Married 2023"
   }
 ];
@@ -30,9 +28,9 @@ const successStories = [
 export default function SuccessStoriesPage() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
-      <Sidebar />
+  
       <div className="flex-grow flex flex-col">
-        <Header />
+      
         <main className="flex-grow overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
           <div className="container mx-auto px-4 py-6">
             <motion.button

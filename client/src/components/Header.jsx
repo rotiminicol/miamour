@@ -1,9 +1,17 @@
+
 import { useRef, useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNotificationStore } from "../store/useNotificationStore";
 import { Link } from "react-router-dom";
 import { User, LogOut, ChevronDown, Bell, ChevronRight, Settings, Heart, MessageCircle, Shield, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Unified glassmorphism/gradient style
+const glassBg = "bg-white/70 backdrop-blur-md border border-pink-100 shadow-xl";
+const gradientAccent = "bg-gradient-to-r from-pink-100 via-white to-purple-100";
+
+// New: Opaque dropdown background for clarity
+const dropdownBg = "bg-white border-2 border-pink-100 shadow-2xl";
 
 export const Header = () => {
   const { authUser, logout } = useAuthStore();
@@ -28,16 +36,12 @@ export const Header = () => {
         setNotificationDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Determine avatar based on user's profile image or gender
   const getAvatar = () => {
-    if (authUser?.image) {
-      return authUser.image;
-    }
+    if (authUser?.image) return authUser.image;
     const isFemale = authUser?.gender === "female";
     return isFemale ? "/assets/avatarwoman.png" : "/assets/avatarmale.png";
   };
@@ -46,125 +50,85 @@ export const Header = () => {
     if (!notification.read) {
       await markAsRead(notification._id);
     }
-    // Handle navigation based on notification type
     switch (notification.type) {
-      case 'profile_update':
-        window.location.href = '/profile';
-        break;
-      case 'new_match':
-        window.location.href = '/matches';
-        break;
-      case 'new_message':
-        window.location.href = '/messages';
-        break;
-      // Add more cases as needed
+      case 'profile_update': window.location.href = '/profile'; break;
+      case 'new_match': window.location.href = '/matches'; break;
+      case 'new_message': window.location.href = '/messages'; break;
     }
   };
 
   const menuItems = [
-    { 
-      icon: <User size={18} />, 
-      text: "My Profile", 
-      subtext: "View and edit profile", 
-      link: "/profile",
-      color: "text-blue-500"
+    {
+      icon: <User size={18} />, text: "My Profile", subtext: "View and edit profile", link: "/profile", color: "text-blue-500"
     },
-    { 
-      icon: <Heart size={18} />, 
-      text: "My Matches", 
-      subtext: "View your matches", 
-      link: "/matches",
-      color: "text-pink-500"
+    {
+      icon: <Heart size={18} />, text: "My Matches", subtext: "View your matches", link: "/matches", color: "text-pink-500"
     },
-    { 
-      icon: <MessageCircle size={18} />, 
-      text: "Messages", 
-      subtext: "View your conversations", 
-      link: "/messages",
-      color: "text-purple-500"
+    {
+      icon: <MessageCircle size={18} />, text: "Messages", subtext: "View your conversations", link: "/messages", color: "text-purple-500"
     },
-    { 
-      icon: <Bell size={18} />, 
-      text: "Notifications", 
-      subtext: "View all alerts", 
-      link: "/notifications",
-      color: "text-amber-500"
+    {
+      icon: <Bell size={18} />, text: "Notifications", subtext: "View all alerts", link: "/notifications", color: "text-amber-500"
     },
-    { 
-      icon: <Settings size={18} />, 
-      text: "Settings", 
-      subtext: "Manage your preferences", 
-      link: "/settings",
-      color: "text-gray-500"
+    {
+      icon: <Settings size={18} />, text: "Settings", subtext: "Manage your preferences", link: "/settings", color: "text-gray-500"
     },
-    { 
-      icon: <Shield size={18} />, 
-      text: "Privacy", 
-      subtext: "Manage your privacy", 
-      link: "/privacy",
-      color: "text-green-500"
+    {
+      icon: <Shield size={18} />, text: "Privacy", subtext: "Manage your privacy", link: "/privacy", color: "text-green-500"
     },
-    { 
-      icon: <LogOut size={18} />, 
-      text: "Logout", 
-      subtext: "Sign out of account", 
-      action: () => { logout(); setDropdownOpen(false); },
-      color: "text-red-500"
+    {
+      icon: <LogOut size={18} />, text: "Logout", subtext: "Sign out of account", action: () => { logout(); setDropdownOpen(false); }, color: "text-red-500"
     },
   ];
 
   return (
-    <header className="bg-white border-b border-pink-100 py-4 px-6 flex justify-between items-center shadow-sm">
+    <header className={`py-4 px-6 flex justify-between items-center ${glassBg} ${gradientAccent} relative z-20`}>
       <Link to="/homepage" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-        <img 
-          src="/assets/miLogo2.png" 
-          alt="miamour Logo" 
-          className="h-8 mr-2"
+        <motion.img
+          src="/assets/miLogo2.png"
+          alt="miamour Logo"
+          className="h-9 mr-2 drop-shadow"
+          whileHover={{ scale: 1.08, rotate: 8 }}
         />
-        <span className="text-2xl font-bold text-pink-600">miamour</span>
+        <span className="text-2xl font-bold text-pink-600 tracking-tight">miamour</span>
       </Link>
-      
       <div className="flex items-center space-x-4">
+        {/* Notification Bell */}
         <div className="relative" ref={notificationRef}>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
-            className="p-2 rounded-full hover:bg-pink-50 relative"
+            className="p-2 rounded-full hover:bg-pink-100/60 relative transition"
           >
-            <Bell size={20} className="text-pink-500" />
+            <Bell size={22} className="text-pink-500" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center shadow">
                 {unreadCount}
               </span>
             )}
           </motion.button>
-
           <AnimatePresence>
             {notificationDropdownOpen && (
               <motion.div
                 initial={{ opacity: 0, y: -10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-pink-100 overflow-hidden z-50"
+                className={`absolute right-0 mt-2 w-80 ${dropdownBg} rounded-xl overflow-hidden z-50`}
               >
-                <div className="p-4 border-b border-pink-50">
+                <div className="p-4 border-b border-pink-50 bg-gradient-to-r from-pink-50 to-purple-50">
                   <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">
-                      No notifications
-                    </div>
+                    <div className="p-4 text-center text-gray-500">No notifications</div>
                   ) : (
                     notifications.map((notification) => (
                       <motion.div
                         key={notification._id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`p-4 border-b border-pink-50 hover:bg-pink-50 cursor-pointer ${
-                          !notification.read ? 'bg-pink-50' : ''
-                        }`}
+                        className={`p-4 border-b border-pink-50 hover:bg-pink-50 cursor-pointer ${!notification.read ? 'bg-pink-50' : ''}`}
                         onClick={() => handleNotificationClick(notification)}
                       >
                         <div className="flex items-start justify-between">
@@ -176,10 +140,7 @@ export const Header = () => {
                             </p>
                           </div>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteNotification(notification._id);
-                            }}
+                            onClick={e => { e.stopPropagation(); deleteNotification(notification._id); }}
                             className="ml-2 text-gray-400 hover:text-gray-600"
                           >
                             <X size={16} />
@@ -193,7 +154,7 @@ export const Header = () => {
             )}
           </AnimatePresence>
         </div>
-        
+        {/* User Dropdown */}
         {authUser ? (
           <div className="relative" ref={dropdownRef}>
             <motion.button
@@ -205,7 +166,7 @@ export const Header = () => {
               <div className="relative">
                 <motion.img
                   src={getAvatar()}
-                  className="h-10 w-10 object-cover rounded-full border-2 border-pink-200"
+                  className="h-10 w-10 object-cover rounded-full border-2 border-pink-200 shadow"
                   alt="User avatar"
                   animate={{
                     scale: [1, 1.05, 1],
@@ -226,7 +187,6 @@ export const Header = () => {
                 <ChevronDown className="h-5 w-5 text-pink-600" />
               </motion.div>
             </motion.button>
-
             <AnimatePresence>
               {dropdownOpen && (
                 <motion.div
@@ -234,7 +194,7 @@ export const Header = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.98 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-2xl border-2 border-pink-200 overflow-hidden z-50"
+                  className={`absolute right-0 mt-3 w-80 ${dropdownBg} rounded-xl overflow-hidden z-50`}
                 >
                   <motion.div
                     initial={{ y: -5, opacity: 0 }}
@@ -254,7 +214,6 @@ export const Header = () => {
                       </div>
                     </div>
                   </motion.div>
-
                   <div className="py-2">
                     {menuItems.map((item, index) => (
                       <motion.div
@@ -299,7 +258,6 @@ export const Header = () => {
                       </motion.div>
                     ))}
                   </div>
-
                   <div className="border-t border-pink-50 px-6 py-4 bg-gradient-to-r from-pink-50 to-purple-50">
                     <div className="flex items-center justify-between">
                       <div>

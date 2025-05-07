@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
@@ -41,9 +42,9 @@ const SignupForm = ({ toggleForm }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors({ ...errors, [name]: null });
+      setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
 
@@ -84,7 +85,6 @@ const SignupForm = ({ toggleForm }) => {
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-pink-600">Create Your Account</h2>
         </div>
-
         {errors.general && (
           <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded">
             {errors.general}
@@ -109,10 +109,10 @@ const SignupForm = ({ toggleForm }) => {
                   errors.name ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="John Doe"
+                autoComplete="name"
               />
               {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
             </div>
-
             <div>
               <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
                 Age
@@ -128,6 +128,7 @@ const SignupForm = ({ toggleForm }) => {
                   errors.age ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="18+"
+                autoComplete="bday"
               />
               {errors.age && <p className="mt-1 text-xs text-red-500">{errors.age}</p>}
             </div>
@@ -147,6 +148,7 @@ const SignupForm = ({ toggleForm }) => {
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="your@email.com"
+              autoComplete="email"
             />
             {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
           </div>
@@ -166,12 +168,12 @@ const SignupForm = ({ toggleForm }) => {
                   errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="+1234567890"
+                autoComplete="tel"
               />
               {errors.phoneNumber && (
                 <p className="mt-1 text-xs text-red-500">{errors.phoneNumber}</p>
               )}
             </div>
-
             <div>
               <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
                 Country
@@ -214,11 +216,14 @@ const SignupForm = ({ toggleForm }) => {
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-2.5 text-gray-500 hover:text-pink-600"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
                 </button>
@@ -227,7 +232,6 @@ const SignupForm = ({ toggleForm }) => {
                 <p className="mt-1 text-xs text-red-500">{errors.password}</p>
               )}
             </div>
-
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
@@ -243,11 +247,14 @@ const SignupForm = ({ toggleForm }) => {
                     errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-2.5 text-gray-500 hover:text-pink-600"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  tabIndex={-1}
+                  aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                 >
                   {showConfirmPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
                 </button>
@@ -270,7 +277,7 @@ const SignupForm = ({ toggleForm }) => {
                     name="gender"
                     type="radio"
                     checked={formData.gender === gender}
-                    onChange={() => setFormData({ ...formData, gender })}
+                    onChange={() => setFormData((prev) => ({ ...prev, gender }))}
                     className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
                   />
                   <label
@@ -334,6 +341,7 @@ const SignupForm = ({ toggleForm }) => {
           <button
             onClick={toggleForm}
             className="text-pink-600 hover:text-pink-700 font-medium"
+            type="button"
           >
             Sign in
           </button>

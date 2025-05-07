@@ -1,18 +1,19 @@
-import {  Instagram, Facebook, Twitter } from 'lucide-react';
+
+import { Instagram, Facebook, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  
+
   return (
     <footer className="bg-secondary-800 text-white pt-16 pb-8">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="flex items-center mb-6">
-                <img 
-                src="/assets/miLogo2.png" 
-                alt="miamour Logo" 
+              <img
+                src="/assets/miLogo2.png"
+                alt="miamour Logo"
                 className="h-10 w-auto mr-2"
               />
               <span className="font-serif text-xl font-bold">
@@ -23,18 +24,36 @@ const Footer = () => {
               Where true love meets wedding dreams. Start your forever journey today.
             </p>
             <div className="flex space-x-4">
-              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a
+                href="https://www.instagram.com/miamour.me"
+                className="text-gray-300 hover:text-primary-400 transition-colors"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a
+                href="https://www.facebook.com/miamour.me"
+                className="text-gray-300 hover:text-primary-400 transition-colors"
+                aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="https://www.instagram.com/miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">
+              <a
+                href="https://twitter.com/miamour_me"
+                className="text-gray-300 hover:text-primary-400 transition-colors"
+                aria-label="Twitter"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-serif text-lg font-semibold mb-6">Quick Links</h4>
             <ul className="space-y-3">
@@ -55,7 +74,7 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-serif text-lg font-semibold mb-6">Resources</h4>
             <ul className="space-y-3">
@@ -76,29 +95,43 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-serif text-lg font-semibold mb-6">Contact</h4>
             <ul className="space-y-3">
-              <li className="text-gray-300">
-                
-              </li>
-              <li className="text-gray-300">
-                
+              <li>
+                <span className="text-gray-300 block">Lagos, Nigeria</span>
               </li>
               <li>
-                <a href="mailto:hello@miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">info@miamour.me</a>
+                <span className="text-gray-300 block">Mon - Fri: 9am - 6pm</span>
               </li>
               <li>
-                <a href="tel:+234 9044130171" className="text-gray-300 hover:text-primary-400 transition-colors"></a>
+                <a href="mailto:info@miamour.me" className="text-gray-300 hover:text-primary-400 transition-colors">info@miamour.me</a>
+              </li>
+              <li>
+                <a href="tel:+2349044130171" className="text-gray-300 hover:text-primary-400 transition-colors">+234 904 413 0171</a>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
-          <p>© {currentYear} miamour. All rights reserved. <Link to="/policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> | <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link></p>
-          <p className="mt-2">Developed by <a href="https://arigotechnologies.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">Arigo Technologies</a></p>
+          <p>
+            © {currentYear} miamour. All rights reserved.{' '}
+            <Link to="/policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link> |{' '}
+            <Link to="/terms" className="hover:text-primary-400 transition-colors">Terms of Service</Link>
+          </p>
+          <p className="mt-2">
+            Developed by{' '}
+            <a
+              href="https://arigotechnologies.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary-400 transition-colors"
+            >
+              Arigo Technologies
+            </a>
+          </p>
         </div>
       </div>
     </footer>

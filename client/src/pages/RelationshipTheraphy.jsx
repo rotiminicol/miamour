@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useScroll, useTransform } from 'framer-motion';
-import { Heart, MessageCircle, Users, Award, Star, X, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { Heart, MessageCircle, Users, Award, Star, X,  ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const RelationshipTherapy = () => {
   const navigate = useNavigate();
@@ -9,9 +10,9 @@ const RelationshipTherapy = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupContent, setPopupContent] = useState(null);
   const [screenSize, setScreenSize] = useState('desktop');
-  const [quizAnswers, setQuizAnswers] = useState({});
-  const [consultationForm, setConsultationForm] = useState({ name: '', email: '', date: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', date: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scheduleStep, setScheduleStep] = useState(1);
 
   const { scrollY } = useScroll();
   const heroParallax = useTransform(scrollY, [0, 300], [0, 100]);
@@ -26,34 +27,42 @@ const RelationshipTherapy = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleButtonClick = useCallback((content) => {
+  const handleButtonClick = (content) => {
     setPopupContent(content);
     setShowPopup(true);
-  }, []);
+    setScheduleStep(1);
+    setFormData({ name: '', email: '', date: '' });
+  };
 
   const scrollToTabContent = () => {
     const tabContent = document.getElementById('tab-content');
     if (tabContent) tabContent.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleQuizAnswer = (questionIndex, option) => {
-    setQuizAnswers(prev => ({ ...prev, [questionIndex]: option }));
-  };
-
-  const handleConsultationFormChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setConsultationForm(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleConsultationSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setShowPopup(false);
-      setConsultationForm({ name: '', email: '', date: '' });
-      handleButtonClick('Consultation Success');
-    }, 2000);
+    if (scheduleStep === 1) {
+      setScheduleStep(2);
+    } else {
+      setIsSubmitting(true);
+      try {
+        await axios.post('/api/notifications/send-consultation-email', formData);
+        setIsSubmitting(false);
+        setShowPopup(false);
+        setFormData({ name: '', email: '', date: '' });
+        setScheduleStep(1);
+        handleButtonClick('Consultation Success');
+      } catch (error) {
+        console.error('Error sending email:', error);
+        setIsSubmitting(false);
+        handleButtonClick('Consultation Error');
+      }
+    }
   };
 
   const testimonials = [
@@ -100,64 +109,107 @@ const RelationshipTherapy = () => {
     }
   ];
 
+  const therapyPlans = [
+    { name: "Starter", sessions: "4", priceNGN: 150000, priceUSD: 93.75, save: "15%" },
+    { name: "Essential", sessions: "8", priceNGN: 300000, priceUSD: 187.50, save: "25%", popular: true },
+    { name: "Premium", sessions: "12", priceNGN: 450000, priceUSD: 281.25, save: "35%" }
+  ];
+
   const popupConfigs = {
-    "Book a Free Consultation": {
-      title: "Book Your Free Consultation",
+    "Book a Consultation": {
+      title: "Book a Consultation",
       content: (
-        <form onSubmit={handleConsultationSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-            <input
-              type="text"
-              name="name"
-              value={consultationForm.name}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              placeholder="Enter your name"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={consultationForm.email}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
-            <input
-              type="date"
-              name="date"
-              value={consultationForm.date}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 flex items-center justify-center"
-          >
-            {isSubmitting ? (
-              <>
-                <svg className="animate-spin mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Scheduling...
-              </>
-            ) : (
-              'Schedule Consultation'
-            )}
-          </button>
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+          {scheduleStep === 1 ? (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+              >
+                Proceed to Payment
+              </button>
+            </>
+          ) : (
+            <>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Bank Transfer Details</h3>
+                <p className="text-gray-600 mb-4">Please make a bank transfer to confirm your consultation. Include your name and appointment date in the reference.</p>
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <p className="text-gray-800"><strong>Bank:</strong> Providus Bank</p>
+                  <p className="text-gray-800"><strong>Account Name:</strong> Arigo Energy Services Ltd</p>
+                  <p className="text-gray-800"><strong>Account Number:</strong> 5400881912</p>
+                  <p className="text-gray-800"><strong>Amount:</strong> ₦10,000 (~$6.25)</p>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">Note: Your consultation will be confirmed once payment is verified. Complete the transfer within 24 hours.</p>
+              </div>
+              <div className="flex justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={() => setScheduleStep(1)}
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
+                >
+                  {isSubmitting ? 'Scheduling...' : 'Confirm Booking'}
+                </button>
+              </div>
+            </>
+          )}
         </form>
+      )
+    },
+    "Consultation Error": {
+      title: "Error Scheduling Consultation",
+      content: (
+        <div className="text-center space-y-4">
+          <p className="text-gray-600">There was an error scheduling your consultation. Please try again later.</p>
+          <button
+            onClick={() => setShowPopup(false)}
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Close
+          </button>
+        </div>
       )
     },
     "View Therapy Plans": {
@@ -166,18 +218,14 @@ const RelationshipTherapy = () => {
         <div className="space-y-6">
           <p className="text-gray-600">Choose from our tailored therapy packages to meet your relationship goals.</p>
           <div className="grid grid-cols-1 gap-4">
-            {[
-              { name: "Starter", sessions: "4", price: "349", save: "15%" },
-              { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
-              { name: "Premium", sessions: "12", price: "899", save: "35%" }
-            ].map((plan, index) => (
+            {therapyPlans.map((plan, index) => (
               <div key={index} className={`bg-white/50 backdrop-blur-sm p-4 rounded-lg border border-pink-100 ${plan.popular ? 'shadow-lg' : ''}`}>
                 {plan.popular && (
                   <span className="bg-pink-100 text-pink-600 text-xs font-bold px-2 py-1 rounded-full">Most Popular</span>
                 )}
                 <h4 className="font-bold text-lg mt-2">{plan.name}</h4>
                 <p className="text-sm">{plan.sessions} sessions</p>
-                <p className="font-bold text-xl">${plan.price}</p>
+                <p className="font-bold text-xl">₦{plan.priceNGN.toLocaleString()} (~${plan.priceUSD})</p>
                 <p className="text-xs">Save {plan.save}</p>
                 <button
                   onClick={() => handleButtonClick(plan.popular ? 'Select Plan' : 'Learn More')}
@@ -212,7 +260,7 @@ const RelationshipTherapy = () => {
     "Assessment Form": {
       title: "Relationship Assessment",
       content: (
-        <form className="space-y-4">
+        <form onSubmit={() => handleButtonClick('Assessment Success')} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">How long have you been together?</label>
             <select
@@ -237,7 +285,6 @@ const RelationshipTherapy = () => {
           </div>
           <button
             type="submit"
-            onClick={() => handleButtonClick('Assessment Success')}
             className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
           >
             Submit Assessment
@@ -269,7 +316,7 @@ const RelationshipTherapy = () => {
           <p className="text-gray-600">Confirm your plan to start your journey to a stronger relationship.</p>
           <div className="bg-white/50 backdrop-blur-sm p-4 rounded-lg border border-pink-100">
             <h4 className="font-bold text-lg">Essential Plan</h4>
-            <p className="text-sm">8 sessions, $649, Save 25%</p>
+            <p className="text-sm">8 sessions, ₦300,000 (~$187.50), Save 25%</p>
             <button
               onClick={() => handleButtonClick('Plan Confirmation')}
               className="mt-2 bg-pink-600 text-white py-1 px-4 rounded-lg hover:bg-pink-700 text-sm"
@@ -328,59 +375,82 @@ const RelationshipTherapy = () => {
     "Schedule a Session": {
       title: "Schedule Your Therapy Session",
       content: (
-        <form onSubmit={handleConsultationSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-            <input
-              type="text"
-              name="name"
-              value={consultationForm.name}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              placeholder="Enter your name"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={consultationForm.email}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
-            <input
-              type="date"
-              name="date"
-              value={consultationForm.date}
-              onChange={handleConsultationFormChange}
-              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 flex items-center justify-center"
-          >
-            {isSubmitting ? (
-              <>
-                <svg className="animate-spin mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Scheduling...
-              </>
-            ) : (
-              'Schedule Session'
-            )}
-          </button>
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+          {scheduleStep === 1 ? (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+              >
+                Proceed to Payment
+              </button>
+            </>
+          ) : (
+            <>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Bank Transfer Details</h3>
+                <p className="text-gray-600 mb-4">Please make a bank transfer to confirm your session. Include your name and session date in the reference.</p>
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <p className="text-gray-800"><strong>Bank:</strong> Providus Bank</p>
+                  <p className="text-gray-800"><strong>Account Name:</strong> Arigo Energy Services Ltd</p>
+                  <p className="text-gray-800"><strong>Account Number:</strong> 5400881912</p>
+                  <p className="text-gray-800"><strong>Amount:</strong> ₦10,000 (~$6.25)</p>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">Note: Your session will be confirmed once payment is verified. Complete the transfer within 24 hours.</p>
+              </div>
+              <div className="flex justify-between pt-4">
+                <button
+                  type="button"
+                  onClick={() => setScheduleStep(1)}
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700"
+                >
+                  {isSubmitting ? 'Scheduling...' : 'Confirm Booking'}
+                </button>
+              </div>
+            </>
+          )}
         </form>
       )
     },
@@ -394,44 +464,10 @@ const RelationshipTherapy = () => {
             <p className="text-sm text-gray-600">We use Gottman Method, EFT, and personalized exercises.</p>
           </div>
           <button
-            onClick={() => handleButtonClick('Book a Free Consultation')}
+            onClick={() => handleButtonClick('Book a Consultation')}
             className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
           >
-            Book a Free Consultation
-          </button>
-        </div>
-      )
-    },
-    "Complete Quiz & Get Results": {
-      title: "Relationship Health Quiz",
-      content: (
-        <div className="space-y-4">
-          <p className="text-gray-600">Complete the quiz to receive insights about your relationship.</p>
-          <button
-            onClick={() => handleButtonClick('Quiz Results')}
-            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
-          >
-            View Quiz Results
-          </button>
-        </div>
-      )
-    },
-    "Quiz Results": {
-      title: "Your Quiz Results",
-      content: (
-        <div className="space-y-4">
-          <p className="text-gray-600">Based on your answers, here is a summary of your relationship health:</p>
-          <div className="bg-pink-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800">Strengths</h4>
-            <p className="text-sm text-gray-600">Strong communication and shared activities.</p>
-            <h4 className="font-semibold text-gray-800 mt-2">Areas to Improve</h4>
-            <p className="text-sm text-gray-600">Conflict resolution and emotional intimacy.</p>
-          </div>
-          <button
-            onClick={() => handleButtonClick('Book a Free Consultation')}
-            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
-          >
-            Discuss Results with a Therapist
+            Book a Consultation
           </button>
         </div>
       )
@@ -486,10 +522,10 @@ const RelationshipTherapy = () => {
             </p>
             <div className="flex justify-center gap-4">
               <button
-                onClick={() => handleButtonClick('Book a Free Consultation')}
+                onClick={() => handleButtonClick('Book a Consultation')}
                 className="bg-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-pink-700"
               >
-                Book a Free Consultation
+                Book a Consultation
               </button>
               <button
                 onClick={() => handleButtonClick('View Therapy Plans')}
@@ -505,7 +541,7 @@ const RelationshipTherapy = () => {
       <div className="container mx-auto px-4 py-16">
         <div style={{ transform: `translateY(${servicesParallax.get()}px)` }} className="flex justify-center mb-12">
           <div className="inline-flex rounded-lg bg-white/90 backdrop-blur-sm p-1 border border-pink-100">
-            {['about', 'services', 'testimonials', 'quiz'].map((tab) => (
+            {['about', 'services', 'testimonials'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -556,8 +592,7 @@ const RelationshipTherapy = () => {
                   <p className="text-gray-600 mb-6">Follow our simple process to begin your journey:</p>
                   <ol className="space-y-4">
                     {[
-                      "Complete our relationship assessment questionnaire",
-                      "Schedule your complimentary 30-minute consultation",
+                      "Schedule your consultation",
                       "Receive your personalized therapy plan",
                       "Begin your sessions with your matched therapist"
                     ].map((step, index) => (
@@ -570,10 +605,10 @@ const RelationshipTherapy = () => {
                     ))}
                   </ol>
                   <button
-                    onClick={() => handleButtonClick('Start Assessment')}
+                    onClick={() => handleButtonClick('Book a Consultation')}
                     className="mt-8 bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
                   >
-                    Start Assessment
+                    Book a Consultation
                   </button>
                 </div>
               </div>
@@ -603,11 +638,7 @@ const RelationshipTherapy = () => {
                 <h3 className="text-2xl font-serif font-bold text-gray-900 mb-4">Customized Therapy Packages</h3>
                 <p className="text-gray-600 mb-6">Choose from our tailored packages to meet your specific needs.</p>
                 <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    { name: "Starter", sessions: "4", price: "349", save: "15%" },
-                    { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
-                    { name: "Premium", sessions: "12", price: "899", save: "35%" }
-                  ].map((plan, index) => (
+                  {therapyPlans.map((plan, index) => (
                     <div
                       key={index}
                       className={`bg-white/90 backdrop-blur-sm p-4 rounded-lg border border-pink-100 ${plan.popular ? 'shadow-lg' : ''}`}
@@ -617,7 +648,7 @@ const RelationshipTherapy = () => {
                       )}
                       <h4 className="font-bold text-lg mt-2">{plan.name}</h4>
                       <p className="text-sm">{plan.sessions} sessions</p>
-                      <p className="font-bold text-2xl">${plan.price}</p>
+                      <p className="font-bold text-2xl">₦{plan.priceNGN.toLocaleString()} (~${plan.priceUSD})</p>
                       <p className="text-xs">Save {plan.save}</p>
                       <button
                         onClick={() => handleButtonClick(plan.popular ? 'Select Plan' : 'Learn More')}
@@ -665,77 +696,11 @@ const RelationshipTherapy = () => {
                 <h3 className="text-2xl font-serif font-bold text-gray-900 mb-6">Ready to Transform Your Relationship?</h3>
                 <p className="text-gray-600 mb-8">Join hundreds of couples who have strengthened their bond with us.</p>
                 <button
-                  onClick={() => handleButtonClick('Book a Free Consultation')}
+                  onClick={() => handleButtonClick('Book a Consultation')}
                   className="bg-pink-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-pink-700"
                 >
-                  Book a Free Consultation
+                  Book a Consultation
                 </button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'quiz' && (
-            <div>
-              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6 text-center">Relationship Health Quiz</h2>
-              <p className="text-gray-600 text-center mb-8">Answer these questions to gain insights into your relationship dynamics.</p>
-              <div className="max-w-2xl mx-auto">
-                <div className="space-y-8">
-                  {[
-                    {
-                      question: "How often do you and your partner have meaningful conversations?",
-                      options: ["Daily", "Several times a week", "About once a week", "Rarely"]
-                    },
-                    {
-                      question: "How do you typically resolve disagreements?",
-                      options: [
-                        "We discuss calmly until we reach a compromise",
-                        "One of us usually gives in to keep the peace",
-                        "We argue and then move on without resolution",
-                        "We avoid disagreements altogether"
-                      ]
-                    },
-                    {
-                      question: "When was the last time you tried something new together?",
-                      options: [
-                        "Within the last month",
-                        "Within the last 3 months",
-                        "Within the last year",
-                        "Can't remember"
-                      ]
-                    }
-                  ].map((question, index) => (
-                    <div key={index} className="bg-pink-50 p-6 rounded-lg">
-                      <h3 className="font-semibold text-gray-800 mb-4">{index + 1}. {question.question}</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {question.options.map((option, optionIndex) => (
-                          <button
-                            key={optionIndex}
-                            onClick={() => {
-                              handleQuizAnswer(index, option);
-                              handleButtonClick('Complete Quiz & Get Results');
-                            }}
-                            className={`bg-white py-2 px-4 rounded-md text-left transition-colors ${
-                              quizAnswers[index] === option ? 'bg-pink-100 text-pink-600' : 'hover:bg-pink-50'
-                            }`}
-                          >
-                            <span className="flex items-center">
-                              {option}
-                              <ChevronRight className="w-4 h-4 ml-2" />
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-10 flex justify-center">
-                  <button
-                    onClick={() => handleButtonClick('Complete Quiz & Get Results')}
-                    className="bg-pink-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-pink-700"
-                  >
-                    Complete Quiz & Get Results
-                  </button>
-                </div>
               </div>
             </div>
           )}
@@ -780,7 +745,7 @@ const RelationshipTherapy = () => {
           <button
             className="bg-pink-600 text-white w-14 h-14 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"
             aria-label="Get Started"
-            onClick={() => handleButtonClick('Book a Free Consultation')}
+            onClick={() => handleButtonClick('Book a Consultation')}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

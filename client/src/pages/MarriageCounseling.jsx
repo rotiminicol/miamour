@@ -32,9 +32,78 @@ const MarriageCounseling = () => {
   }, []);
 
   const counselors = [
-    { id: 1, name: "Dr. Sarah Johnson", specialties: ["Communication", "Intimacy"], rating: 4.9, reviews: 127, price: 150, availability: "Mon, Wed, Fri", bio: "Dr. Johnson helps couples rebuild trust and communication using cognitive-behavioral techniques.", category: "clinical" },
-    { id: 2, name: "Dr. Michael Chen", specialties: ["Trust Building", "Family Dynamics"], rating: 4.8, reviews: 98, price: 135, availability: "Tue, Thu, Sat", bio: "Dr. Chen focuses on cultural dynamics and mutual understanding in relationships.", category: "family" },
-    { id: 3, name: "Lisa Rodriguez, LMFT", specialties: ["Premarital Counseling", "Cultural Differences"], rating: 4.7, reviews: 85, price: 120, availability: "Mon-Fri", bio: "Lisa helps diverse couples build strong foundations before marriage.", category: "premarital" },
+    { 
+      id: 1, 
+      name: "Dr. Sarah Johnson", 
+      specialties: ["Communication", "Intimacy"], 
+      rating: 4.9, 
+      reviews: 127, 
+      priceNGN: 150000, 
+      priceUSD: 93.75, 
+      availability: "Mon, Wed, Fri", 
+      bio: "Dr. Johnson helps couples rebuild trust and communication using cognitive-behavioral techniques.", 
+      category: "clinical" 
+    },
+    { 
+      id: 2, 
+      name: "Dr. Michael Chen", 
+      specialties: ["Trust Building", "Family Dynamics"], 
+      rating: 4.8, 
+      reviews: 98, 
+      priceNGN: 135000, 
+      priceUSD: 84.38, 
+      availability: "Tue, Thu, Sat", 
+      bio: "Dr. Chen focuses on cultural dynamics and mutual understanding in relationships.", 
+      category: "family" 
+    },
+    { 
+      id: 3, 
+      name: "Lisa Rodriguez, LMFT", 
+      specialties: ["Premarital Counseling", "Cultural Differences"], 
+      rating: 4.7, 
+      reviews: 85, 
+      priceNGN: 100000, 
+      priceUSD: 62.50, 
+      availability: "Mon-Fri", 
+      bio: "Lisa helps diverse couples build strong foundations before marriage.", 
+      category: "premarital" 
+    },
+    { 
+      id: 4, 
+      name: "Dr. Aisha Bello", 
+      specialties: ["Conflict Resolution", "Emotional Intimacy"], 
+      rating: 4.6, 
+      reviews: 72, 
+      priceNGN: 120000, 
+      priceUSD: 75.00, 
+      availability: "Wed, Fri, Sat", 
+      bio: "Dr. Bello specializes in helping couples navigate conflicts with empathy and understanding.", 
+      category: "clinical" 
+    },
+    { 
+      id: 5, 
+      name: "Emeka Okoro, LPC", 
+      specialties: ["Financial Stress", "Co-Parenting"], 
+      rating: 4.8, 
+      reviews: 110, 
+      priceNGN: 175000, 
+      priceUSD: 109.38, 
+      availability: "Mon, Tue, Thu", 
+      bio: "Emeka supports couples in managing financial stress and effective co-parenting strategies.", 
+      category: "family" 
+    },
+    { 
+      id: 6, 
+      name: "Dr. Funmi Adebayo", 
+      specialties: ["Blended Families", "Spiritual Counseling"], 
+      rating: 4.9, 
+      reviews: 95, 
+      priceNGN: 200000, 
+      priceUSD: 125.00, 
+      availability: "Tue, Thu, Fri", 
+      bio: "Dr. Adebayo integrates spiritual and practical approaches for blended family dynamics.", 
+      category: "family" 
+    },
   ];
 
   const filteredCounselors = filter === 'all' ? counselors : counselors.filter(c => c.category === filter);
@@ -42,7 +111,7 @@ const MarriageCounseling = () => {
   const services = [
     { title: "Communication Coaching", description: "Learn to express needs and listen effectively.", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
     { title: "Relationship Rebuilding", description: "Restore trust and emotional intimacy.", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" },
-    { title: "Premarital Preparation", description: "Build a strong foundation before marriage.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 POW 0 012 2" },
+    { title: "Premarital Preparation", description: "Build a strong foundation before marriage.", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
   ];
 
   const benefits = [
@@ -69,10 +138,12 @@ const MarriageCounseling = () => {
       setBookingStep(2);
       const slots = generateTimeSlots(selectedCounselor.availability);
       setAvailableTimeSlots(slots);
+    } else if (bookingStep === 2) {
+      setBookingStep(3);
     } else {
       try {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        alert('Booking successful! We will contact you shortly to confirm your appointment.');
+        alert('Booking successful! Please complete the payment using the bank details provided. We will contact you shortly to confirm your appointment.');
         setBookingData({
           name: '',
           email: '',
@@ -201,7 +272,9 @@ const MarriageCounseling = () => {
                 <div className="p-6">
                   <div className="flex justify-between mb-4">
                     <h3 className="text-xl font-semibold text-gray-800">{counselor.name}</h3>
-                    <span className="bg-pink-50 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full">${counselor.price}/hr</span>
+                    <span className="bg-pink-50 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full">
+                      ₦{counselor.priceNGN.toLocaleString()}/hr (~${counselor.priceUSD})
+                    </span>
                   </div>
                   <div className="flex items-center mb-4">
                     <div className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1">
@@ -229,7 +302,7 @@ const MarriageCounseling = () => {
             className="bg-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-pink-700"
             onClick={() => setShowConsultationPopup(true)}
           >
-            Book Your Free Consultation
+            Book Your Consultation
           </button>
         </div>
       </div>
@@ -257,8 +330,8 @@ const MarriageCounseling = () => {
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-pink-600">${selectedCounselor.price}</div>
-                      <div className="text-gray-600">per session</div>
+                      <div className="text-2xl font-bold text-pink-600">₦{selectedCounselor.priceNGN.toLocaleString()}</div>
+                      <div className="text-gray-600">~${selectedCounselor.priceUSD} per session</div>
                     </div>
                   </div>
                 </div>
@@ -294,7 +367,7 @@ const MarriageCounseling = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    {bookingStep === 1 ? "Your Information" : "Select Time Slot"}
+                    {bookingStep === 1 ? "Your Information" : bookingStep === 2 ? "Select Time Slot" : "Payment Details"}
                   </h2>
                   <button
                     onClick={() => { setShowBookingForm(false); setBookingStep(1); }}
@@ -355,7 +428,7 @@ const MarriageCounseling = () => {
                         </div>
                       </div>
                     </>
-                  ) : (
+                  ) : bookingStep === 2 ? (
                     <>
                       <div className="space-y-4">
                         <div>
@@ -410,12 +483,28 @@ const MarriageCounseling = () => {
                         </div>
                       </div>
                     </>
+                  ) : (
+                    <>
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2">Bank Transfer Details</h3>
+                          <p className="text-gray-600 mb-4">Please make a bank transfer to the following account to confirm your booking. Include your name and appointment date in the transfer reference.</p>
+                          <div className="bg-pink-50 p-4 rounded-lg">
+                            <p className="text-gray-800"><strong>Bank:</strong> Providus Bank</p>
+                            <p className="text-gray-800"><strong>Account Name:</strong> Arigo Energy Services Ltd</p>
+                            <p className="text-gray-800"><strong>Account Number:</strong> 5400881912</p>
+                            <p className="text-gray-800"><strong>Amount:</strong> ₦{selectedCounselor.priceNGN.toLocaleString()} (~${selectedCounselor.priceUSD})</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">Note: Your appointment will be confirmed once we verify the payment. Please ensure the transfer is completed within 24 hours.</p>
+                      </div>
+                    </>
                   )}
                   <div className="flex justify-between pt-4">
-                    {bookingStep === 2 && (
+                    {bookingStep > 1 && (
                       <button
                         type="button"
-                        onClick={() => setBookingStep(1)}
+                        onClick={() => setBookingStep(bookingStep - 1)}
                         className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                       >
                         Back
@@ -424,10 +513,10 @@ const MarriageCounseling = () => {
                     <button
                       type="submit"
                       className={`px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors ${
-                        bookingStep === 2 ? "ml-auto" : "w-full"
+                        bookingStep === 1 || bookingStep === 2 ? "ml-auto" : "w-full"
                       }`}
                     >
-                      {bookingStep === 1 ? "Continue" : "Book Appointment"}
+                      {bookingStep === 1 ? "Continue" : bookingStep === 2 ? "Proceed to Payment" : "Confirm Booking"}
                     </button>
                   </div>
                 </form>
@@ -442,7 +531,7 @@ const MarriageCounseling = () => {
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Book Your Free Consultation</h2>
+                <h2 className="text-2xl font-bold text-gray-800">Book Your Consultation</h2>
                 <p className="text-gray-600 mt-1">Take the first step towards a stronger relationship</p>
               </div>
               <button
@@ -509,7 +598,7 @@ const MarriageCounseling = () => {
             aria-label="Book Consultation"
             onClick={() => setShowConsultationPopup(true)}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap=" ILL round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
           </button>
         </div>
       )}

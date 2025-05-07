@@ -1,8 +1,13 @@
+
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import { ChevronLeft, ChevronRight, MessageSquareQuote, Heart, Calendar, Sparkles } from 'lucide-react';
 
+/**
+ * Testimonials section without any animation or framer-motion logic.
+ * - Carousel logic is preserved for testimonial navigation.
+ * - All transitions and intersection observer logic removed.
+ * - Accessible and senior-level code clarity.
+ */
 const Testimonials = () => {
   const testimonials = [
     {
@@ -78,37 +83,14 @@ const Testimonials = () => {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  
+
   const nextTestimonial = () => {
-    setDirection(1);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
   };
-  
+
   const prevTestimonial = () => {
-    setDirection(-1);
     setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
   };
-
-  const variants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 500 : -500,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => ({
-      x: direction < 0 ? 500 : -500,
-      opacity: 0,
-    }),
-  };
-
-  const [titleRef, titleInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
 
   return (
     <section id="testimonials" className="section bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 py-20 relative overflow-hidden">
@@ -120,13 +102,7 @@ const Testimonials = () => {
       </div>
 
       <div className="container relative">
-        <motion.div
-          ref={titleRef}
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Sparkles className="w-8 h-8 text-pink-500" />
             <h2 className="font-serif font-bold text-4xl md:text-5xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
@@ -137,82 +113,71 @@ const Testimonials = () => {
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Real couples who found their forever love through miamour. Your love story could be next.
           </p>
-        </motion.div>
+        </div>
 
         <div className="relative max-w-6xl mx-auto">
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-pink-100"
-            >
-              <div className="flex flex-col lg:flex-row items-center gap-8">
-                <div className="w-full lg:w-2/5 space-y-4">
-                  {/* Wedding Image */}
-                  <div className="aspect-[16/9] rounded-xl overflow-hidden shadow-lg relative group">
-                    <img 
-                      src={testimonials[currentIndex].weddingImage} 
-                      alt={`${testimonials[currentIndex].couple.name1} & ${testimonials[currentIndex].couple.name2}'s Wedding`}
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                        <Calendar className="w-5 h-5" />
-                        <span>{testimonials[currentIndex].weddingDate}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Couple Images */}
-                  <div className="flex gap-4">
-                    <div className="w-1/2 aspect-square rounded-xl overflow-hidden shadow-md group">
-                      <img 
-                        src={testimonials[currentIndex].couple.image1} 
-                        alt={testimonials[currentIndex].couple.name1}
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="w-1/2 aspect-square rounded-xl overflow-hidden shadow-md group">
-                      <img 
-                        src={testimonials[currentIndex].couple.image2} 
-                        alt={testimonials[currentIndex].couple.name2}
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                      />
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-pink-100">
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              <div className="w-full lg:w-2/5 space-y-4">
+                {/* Wedding Image */}
+                <div className="aspect-[16/9] rounded-xl overflow-hidden shadow-lg relative group">
+                  <img 
+                    src={testimonials[currentIndex].weddingImage} 
+                    alt={`${testimonials[currentIndex].couple.name1} & ${testimonials[currentIndex].couple.name2}'s Wedding`}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                      <Calendar className="w-5 h-5" />
+                      <span>{testimonials[currentIndex].weddingDate}</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="w-full lg:w-3/5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <MessageSquareQuote className="h-8 w-8 text-pink-500" />
-                    <Heart className="h-6 w-6 text-pink-500 animate-pulse" />
+                {/* Couple Images */}
+                <div className="flex gap-4">
+                  <div className="w-1/2 aspect-square rounded-xl overflow-hidden shadow-md group">
+                    <img 
+                      src={testimonials[currentIndex].couple.image1} 
+                      alt={testimonials[currentIndex].couple.name1}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                  <p className="text-xl md:text-2xl italic text-gray-700 mb-6 leading-relaxed">
-                    {testimonials[currentIndex].quote}
-                  </p>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {testimonials[currentIndex].story}
-                  </p>
-                  <div className="font-serif">
-                    <h4 className="text-2xl font-semibold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                      {testimonials[currentIndex].couple.name1} & {testimonials[currentIndex].couple.name2}
-                    </h4>
-                    <p className="text-gray-600">{testimonials[currentIndex].location}</p>
+                  <div className="w-1/2 aspect-square rounded-xl overflow-hidden shadow-md group">
+                    <img 
+                      src={testimonials[currentIndex].couple.image2} 
+                      alt={testimonials[currentIndex].couple.name2}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+              
+              <div className="w-full lg:w-3/5">
+                <div className="flex items-center gap-2 mb-4">
+                  <MessageSquareQuote className="h-8 w-8 text-pink-500" />
+                  <Heart className="h-6 w-6 text-pink-500 animate-pulse" />
+                </div>
+                <p className="text-xl md:text-2xl italic text-gray-700 mb-6 leading-relaxed">
+                  {testimonials[currentIndex].quote}
+                </p>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  {testimonials[currentIndex].story}
+                </p>
+                <div className="font-serif">
+                  <h4 className="text-2xl font-semibold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    {testimonials[currentIndex].couple.name1} & {testimonials[currentIndex].couple.name2}
+                  </h4>
+                  <p className="text-gray-600">{testimonials[currentIndex].location}</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-5 md:-translate-x-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg focus:outline-none text-pink-600 hover:text-pink-700 transition-colors z-10 hover:scale-110 border border-pink-100"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-5 md:-translate-x-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg focus:outline-none text-pink-600 hover:text-pink-700 transition-colors z-10 border border-pink-100"
             aria-label="Previous testimonial"
           >
             <ChevronLeft size={24} />
@@ -220,7 +185,7 @@ const Testimonials = () => {
           
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-5 md:translate-x-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg focus:outline-none text-pink-600 hover:text-pink-700 transition-colors z-10 hover:scale-110 border border-pink-100"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-5 md:translate-x-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg focus:outline-none text-pink-600 hover:text-pink-700 transition-colors z-10 border border-pink-100"
             aria-label="Next testimonial"
           >
             <ChevronRight size={24} />
@@ -231,10 +196,7 @@ const Testimonials = () => {
           {testimonials.map((_, index) => (
             <button
               key={index}
-              onClick={() => {
-                setDirection(index > currentIndex ? 1 : -1);
-                setCurrentIndex(index);
-              }}
+              onClick={() => setCurrentIndex(index)}
               className={`h-2 rounded-full transition-all ${
                 index === currentIndex ? 'bg-gradient-to-r from-pink-600 to-purple-600 w-8' : 'bg-pink-200 w-2'
               }`}

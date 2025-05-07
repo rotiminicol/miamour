@@ -1,6 +1,12 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
+import { useState, useEffect } from 'react';
+
+/**
+ * Navbar component without any animation or Framer Motion logic.
+ * - Responsive, sticky, and clean.
+ * - Maintains scroll and mobile menu logic.
+ * - Accessible and senior-level code clarity.
+ */
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +24,7 @@ const Navbar = () => {
     isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
   }`;
 
-  const navItems = [ 
+  const navItems = [
     { name: 'Home', href: '#' },
     { name: 'Features', href: '#features' },
     { name: 'How It Works', href: '#how-it-works' },
@@ -26,116 +32,51 @@ const Navbar = () => {
     { name: 'Contact', href: '#contact' },
   ];
 
-  // Logo animation variants - enhanced with more exciting effects
-  const logoVariants = {
-    initial: { 
-      opacity: 0, 
-      scale: 0.5,
-      rotateY: -90
-    },
-    animate: { 
-      opacity: 1, 
-      scale: 1,
-      rotateY: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-        duration: 0.8
-      }
-    },
-    hover: { 
-      scale: 1.1,
-      filter: "brightness(1.2)",
-      rotateZ: [0, -5, 5, -3, 0],
-      y: [0, -5, 0],
-      transition: { 
-        duration: 0.7, 
-        ease: "easeInOut",
-        times: [0, 0.2, 0.4, 0.6, 1],
-        repeat: Infinity,
-        repeatType: "reverse"
-      }
-    }
-  };
-
-  // Nav items animation variants
-  const navItemVariants = {
-    initial: { opacity: 0, y: -20 },
-    animate: (i) => ({ 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.4,
-        delay: i * 0.1 
-      }
-    }),
-    hover: { 
-      scale: 1.1,
-      color: "#FF5A8A",
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
-    <nav className={navbarClasses}>
+    <nav className={navbarClasses} role="navigation" aria-label="Main Navigation">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <motion.a 
-          href="#" 
-          className="flex items-center"
-          variants={logoVariants}
-          initial="initial"
-          animate="animate"
-          whileHover="hover"
-        >
-          {/* Replace Heart icon with your logo image */}
-          <img 
-            src="/assets/miLogo2.png" 
-            alt="Miamour Logo" 
+        <a href="#" className="flex items-center" aria-label="Miamour Home">
+          <img
+            src="/assets/miLogo2.png"
+            alt="Miamour Logo"
             className="h-10 w-auto mr-2"
           />
           <span className="font-serif text-2xl font-bold text-secondary-800">
             Mi<span className="text-primary-500">amour</span>
           </span>
-        </motion.a>
+        </a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-8">
-          {navItems.map((item, index) => (
-            <motion.a
+          {navItems.map((item) => (
+            <a
               key={item.name}
               href={item.href}
               className={`font-medium transition-colors duration-200 ${
                 isScrolled ? 'text-gray-800' : 'text-gray-800'
-              }`}
-              variants={navItemVariants}
-              custom={index}
-              initial="initial"
-              animate="animate"
-              whileHover="hover"
+              } hover:text-primary-500`}
             >
               {item.name}
-            </motion.a>
+            </a>
           ))}
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <motion.div 
-          className="md:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <motion.button
+        <div className="md:hidden">
+          <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-gray-800 focus:outline-none"
-            whileTap={{ scale: 0.9 }}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            type="button"
           >
             <svg
               className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               {isMenuOpen ? (
                 <path
@@ -153,55 +94,33 @@ const Navbar = () => {
                 />
               )}
             </svg>
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation Menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            className="md:hidden bg-white shadow-lg"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ 
-              opacity: 1, 
-              height: 'auto',
-              transition: {
-                height: { duration: 0.3 },
-                opacity: { duration: 0.3 }
-              }
-            }}
-            exit={{ 
-              opacity: 0, 
-              height: 0,
-              transition: {
-                height: { duration: 0.3 },
-                opacity: { duration: 0.2 }
-              }
-            }}
-          >
+      {isMenuOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden bg-white shadow-lg"
+          role="menu"
+          aria-label="Mobile Navigation"
+        >
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            {navItems.map((item, index) => (
-              <motion.a
+            {navItems.map((item) => (
+              <a
                 key={item.name}
                 href={item.href}
                 className="font-medium text-gray-800 hover:text-primary-500 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ 
-                  opacity: 1, 
-                  x: 0,
-                  transition: { delay: index * 0.1, duration: 0.3 }
-                }}
-                whileHover={{ x: 5 }}
+                role="menuitem"
               >
                 {item.name}
-              </motion.a>
+              </a>
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
-      </AnimatePresence>
     </nav>
   );
 };

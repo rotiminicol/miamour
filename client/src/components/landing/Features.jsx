@@ -1,30 +1,23 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import { Heart, UserSearch, Calendar, Users, MessageCircleHeart } from 'lucide-react';
-
 import PropTypes from 'prop-types';
 
-const Feature = ({ icon, title, description, delay }) => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+/**
+ * Single feature card (static, no animation)
+ */
+const Feature = ({ icon, title, description }) => (
+  <div className="card p-8 flex flex-col items-center text-center bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+    <div className="mb-4 p-4 bg-primary-50 rounded-full">
+      {icon}
+    </div>
+    <h3 className="text-xl font-serif font-semibold mb-3">{title}</h3>
+    <p className="text-gray-600">{description}</p>
+  </div>
+);
 
-  return (
-    <motion.div
-      ref={ref}
-      className="card p-8 flex flex-col items-center text-center"
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay }}
-    >
-      <div className="mb-4 p-4 bg-primary-50 rounded-full">
-        {icon}
-      </div>
-      <h3 className="text-xl font-serif font-semibold mb-3">{title}</h3>
-      <p className="text-gray-600">{description}</p>
-    </motion.div>
-  );
+Feature.propTypes = {
+  icon: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
 };
 
 const Features = () => {
@@ -56,29 +49,17 @@ const Features = () => {
     },
   ];
 
-  const [titleRef, titleInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <section id="features" className="section bg-gray-50 py-20">
       <div className="container">
-        <motion.div
-          ref={titleRef}
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="text-center mb-16">
           <h2 className="font-serif font-bold text-4xl mb-4 text-secondary-800">
             Why Choose <span className="text-primary-500">Miamour</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Our platform offers more than just matches; we create meaningful connections that last a lifetime.
           </p>
-        </motion.div>
-
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <Feature
@@ -86,20 +67,12 @@ const Features = () => {
               icon={feature.icon}
               title={feature.title}
               description={feature.description}
-              delay={index * 0.1}
             />
           ))}
         </div>
       </div>
     </section>
   );
-};
-
-Feature.propTypes = {
-  icon: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  delay: PropTypes.number,
 };
 
 export default Features;

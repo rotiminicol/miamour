@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Calendar, MessageSquare, User, ChevronLeft } from "lucide-react";
-import { Header } from "../components/Header";
-import Sidebar from "../components/Sidebar";
+
 
 const blogPosts = [
   {
@@ -63,9 +62,9 @@ const blogPosts = [
 export default function BlogPage() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
-      <Sidebar />
+    
       <div className="flex-grow flex flex-col">
-        <Header />
+     
         <main className="flex-grow overflow-y-auto px-4 py-6 lg:px-6 lg:py-8">
           <div className="container mx-auto px-4 py-6">
             <motion.button

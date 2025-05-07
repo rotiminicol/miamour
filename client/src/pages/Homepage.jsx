@@ -116,7 +116,7 @@ const Homepage = () => {
         <Header />
 
         {/* Parallax geometric background */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <svg
             ref={parallaxRef1}
             width="100%" height="100%" viewBox="0 0 1440 600"
@@ -225,7 +225,7 @@ const Homepage = () => {
           )}
 
           {/* Our Services Section */}
-          <section className="py-20 bg-white">
+          <section className="pt-20 pb-12 bg-white">
             <div className="container mx-auto px-6">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-bold text-pink-600 mb-4">
@@ -266,7 +266,7 @@ const Homepage = () => {
           </section>
 
           {/* Featured Partners Section */}
-          <section className="py-20 bg-gradient-to-b from-pink-50 to-white">
+          <section className="pt-20 pb-0 bg-gradient-to-b from-pink-50 to-white">
             <div className="container mx-auto px-6">
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-bold text-pink-600 mb-4">

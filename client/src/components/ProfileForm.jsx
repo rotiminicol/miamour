@@ -1,7 +1,21 @@
+
 import { useState, useRef } from "react";
 import { User, Heart, ArrowRight, ArrowLeft, Check, FileText, X, Upload } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from 'prop-types';
+
+const RELIGION_OPTIONS = [
+  { value: "", label: "Select religion" },
+  { value: "christianity", label: "Christianity" },
+  { value: "islam", label: "Islam" },
+  { value: "hinduism", label: "Hinduism" },
+  { value: "buddhism", label: "Buddhism" },
+  { value: "judaism", label: "Judaism" },
+  { value: "traditional", label: "Traditional/Indigenous" },
+  { value: "spiritual", label: "Spiritual but not religious" },
+  { value: "none", label: "No religion" },
+  { value: "other", label: "Other" },
+];
 
 const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -431,16 +445,18 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Religion *</label>
-                      <input
-                        type="text"
+                      <select
                         name="religion"
                         value={formData.religion}
                         onChange={handleInputChange}
-                        placeholder="Your religious background"
                         className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.religion ? 'border-red-500' : 'border-gray-300'}`}
                         aria-invalid={errors.religion ? 'true' : 'false'}
                         aria-describedby={errors.religion ? 'religion-error' : undefined}
-                      />
+                      >
+                        {RELIGION_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
                       {errors.religion && <p id="religion-error" className="text-red-500 text-sm mt-1">{errors.religion}</p>}
                     </div>
                     <div>
@@ -619,16 +635,18 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Religious Preference *</label>
-                      <input
-                        type="text"
+                      <select
                         name="partnerReligionPreference"
                         value={formData.partnerReligionPreference}
                         onChange={handleInputChange}
-                        placeholder="Preferred religious background"
                         className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.partnerReligionPreference ? 'border-red-500' : 'border-gray-300'}`}
                         aria-invalid={errors.partnerReligionPreference ? 'true' : 'false'}
                         aria-describedby={errors.partnerReligionPreference ? 'partnerReligionPreference-error' : undefined}
-                      />
+                      >
+                        {RELIGION_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
                       {errors.partnerReligionPreference && <p id="partnerReligionPreference-error" className="text-red-500 text-sm mt-1">{errors.partnerReligionPreference}</p>}
                     </div>
                     <div>

@@ -1,55 +1,99 @@
-import { CreditCard, Shield, Globe, Heart, Sparkles, Banknote, ArrowLeft } from "lucide-react";
+
+import { CreditCard, Banknote, ArrowLeft, Check, Heart, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
+// You can import this from a shared constants file if you wish
+const plans = [
+  {
+    id: 'blossom',
+    title: 'Blossom Package',
+    price: '₦75,000',
+    priceUSD: '$20',
+    priceEUR: '€18',
+    period: '1 month',
+    features: [
+      'Exclusive matchmaking within your country',
+      'Access to live sessions',
+      'Basic profile verification',
+      'Standard customer support'
+    ],
+    icon: <Star className="w-6 h-6 text-pink-600" />,
+    color: 'from-pink-500 to-rose-500'
+  },
+  {
+    id: 'harmony',
+    title: 'Harmony Package',
+    price: '₦125,000',
+    priceUSD: '$33',
+    priceEUR: '€30',
+    period: '3 months',
+    features: [
+      'Exclusive matchmaking within and outside your country',
+      'Access to live sessions',
+      'Priority profile verification',
+      'Premium customer support',
+      'Advanced matching algorithms'
+    ],
+    icon: <Star className="w-6 h-6 text-purple-600" />,
+    color: 'from-purple-500 to-indigo-500'
+  },
+  {
+    id: 'forever',
+    title: 'My Forever Package',
+    price: '₦225,000',
+    priceUSD: '$66',
+    priceEUR: '€60',
+    period: '6 months',
+    features: [
+      'Personal matches',
+      'Private sessions',
+      'Access to high-profile members',
+      'Matches within and outside Nigeria',
+      'VIP customer support',
+      'Exclusive events access'
+    ],
+    icon: <Star className="w-6 h-6 text-amber-500" />,
+    color: 'from-amber-500 to-orange-500'
+  },
+  {
+    id: 'personalized',
+    title: 'Personalized Matching',
+    price: '₦475,000',
+    priceUSD: '$125',
+    priceEUR: '€115',
+    period: '1 year',
+    features: [
+      'Dedicated matchmaker',
+      'Customized matching strategy',
+      'Unlimited private sessions',
+      'Global elite network access',
+      '24/7 VIP support',
+      'Premium event invitations'
+    ],
+    icon: <Heart className="w-6 h-6 text-red-500" />,
+    color: 'from-red-500 to-pink-500'
+  }
+];
+
 const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
   const [paymentMethod, setPaymentMethod] = useState(null);
 
-  const getOptionDetails = () => {
-    switch (option) {
-      case "blossom":
-        return {
-          title: "Blossom Package",
-          price: "₦30,000 / $20 / £18",
-          icon: <Sparkles className="w-6 h-6" />,
-          features: [
-            "Exclusive matchmaking within your country",
-            "Access to live sessions",
-          ],
-        };
-      case "harmony":
-        return {
-          title: "Harmony Package",
-          price: "₦50,000 / $33 / €30",
-          icon: <Heart className="w-6 h-6" />,
-          features: [
-            "Exclusive matchmaking within and outside your country",
-            "Access to live sessions",
-          ],
-        };
-      case "forever":
-        return {
-          title: "My Forever Package",
-          price: "₦100,000 / $66 / €60",
-          icon: <Shield className="w-6 h-6" />,
-          features: [
-            "Personal matches & private sessions",
-            "Access to high profile members",
-            "Matches within and outside Nigeria",
-          ],
-        };
-      default:
-        return {
-          title: "Basic Package",
-          price: "Free",
-          icon: <Globe className="w-6 h-6" />,
-          features: ["Basic matchmaking features"],
-        };
-    }
-  };
+  // Find the selected plan by id
+  const plan = plans.find((p) => p.id === option);
 
-  const details = getOptionDetails();
+  // Fallback for unknown plan
+  const details = plan || {
+    title: "Basic Package",
+    price: "Free",
+    priceUSD: "",
+    priceEUR: "",
+    period: "",
+    features: ["Basic matchmaking features"],
+    icon: <Star className="w-6 h-6 text-gray-400" />,
+    color: "from-gray-200 to-gray-300"
+  };
 
   const handlePaymentMethodSelect = (method) => {
     setPaymentMethod(method);
@@ -78,26 +122,24 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
             <h3 className="text-lg font-semibold text-gray-800">
               {details.title}
             </h3>
-            <p className="text-pink-600 font-bold">{details.price}</p>
+            <p className="text-pink-600 font-bold">
+              {details.price}
+              {details.period && (
+                <span className="text-gray-500 font-normal"> / {details.period}</span>
+              )}
+            </p>
+            {(details.priceUSD || details.priceEUR) && (
+              <p className="text-sm text-gray-500 mt-1">
+                {details.priceUSD} {details.priceUSD && details.priceEUR ? "/" : ""} {details.priceEUR}
+              </p>
+            )}
           </div>
         </div>
 
         <div className="space-y-2 mb-4">
           {details.features.map((feature, index) => (
             <div key={index} className="flex items-start">
-              <svg
-                className="w-4 h-4 text-pink-500 mt-1 mr-2 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
+              <Check className="w-4 h-4 text-pink-500 mt-1 mr-2 flex-shrink-0" />
               <p className="text-gray-600 text-sm">{feature}</p>
             </div>
           ))}
@@ -252,7 +294,7 @@ const PaymentConfirmationComponent = ({ option, onConfirm, onCancel }) => {
 };
 
 PaymentConfirmationComponent.propTypes = {
-  option: PropTypes.oneOf(["blossom", "harmony", "forever"]).isRequired,
+  option: PropTypes.oneOf(plans.map(p => p.id)).isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };

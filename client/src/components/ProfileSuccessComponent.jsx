@@ -1,11 +1,13 @@
+
 import { Check, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ProfileSuccessComponent = () => {
   const navigate = useNavigate();
   const controls = useAnimation();
+  const [activating, setActivating] = useState(false);
 
   // Trigger checkmark animation on mount
   useEffect(() => {
@@ -18,10 +20,27 @@ const ProfileSuccessComponent = () => {
   // Navigate to dashboard after 5 minutes (300,000ms), matching GettingStarted
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/dashboard");
+      handleContinue();
     }, 300000);
     return () => clearTimeout(timer);
-  }, [navigate]);
+    // eslint-disable-next-line
+  }, []);
+
+  // Backend call to activate match card
+  const handleContinue = async () => {
+    setActivating(true);
+    try {
+      await fetch('/api/match-card/activate', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      // Optionally show error, but still navigate
+    }
+    setActivating(false);
+    navigate("/dashboard");
+  };
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8 relative">
@@ -81,7 +100,7 @@ const ProfileSuccessComponent = () => {
             Your profile has been created successfully.
           </p>
           <p className="text-gray-600 mb-2 text-lg font-medium">
-            Were now finding your perfect match!
+            We are now finding your perfect match!
           </p>
           <div className="flex justify-center">
             <motion.div
@@ -95,10 +114,11 @@ const ProfileSuccessComponent = () => {
           </div>
           {/* Continue to Dashboard Button */}
           <button
-            onClick={() => navigate("/")}
-            className="mt-6 px-6 py-3 bg-emerald-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition"
+            onClick={handleContinue}
+            className="mt-6 px-6 py-3 bg-emerald-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition disabled:opacity-60"
+            disabled={activating}
           >
-            Continue to Dashboard
+            {activating ? "Activating..." : "Continue to Dashboard"}
           </button>
         </div>
       </motion.div>

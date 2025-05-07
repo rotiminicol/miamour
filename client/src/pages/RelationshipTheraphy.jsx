@@ -1,40 +1,59 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Heart, MessageCircle, Users, Award, Sparkles, X, Star, ChevronRight, ArrowLeft } from 'lucide-react';
-import { Header } from "../components/Header";
-import { motion, AnimatePresence } from 'framer-motion';
+import { useScroll, useTransform } from 'framer-motion';
+import { Heart, MessageCircle, Users, Award, Star, X, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const RelationshipTherapy = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('about');
-  const [isAnimating, setIsAnimating] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupContent, setPopupContent] = useState(null);
-  const [hoveredService, setHoveredService] = useState(null);
+  const [screenSize, setScreenSize] = useState('desktop');
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [consultationForm, setConsultationForm] = useState({ name: '', email: '', date: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleBack = () => {
-    navigate(-1);
-  };
+  const { scrollY } = useScroll();
+  const heroParallax = useTransform(scrollY, [0, 300], [0, 100]);
+  const servicesParallax = useTransform(scrollY, [300, 600], [0, 50]);
+  const tabContentParallax = useTransform(scrollY, [600, 900], [0, 50]);
+  const ctaParallax = useTransform(scrollY, [900, 1200], [0, 50]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 1500);
-    }, 6000);
-    return () => clearInterval(interval);
+    const handleResize = () => setScreenSize(window.innerWidth < 768 ? 'mobile' : 'desktop');
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleButtonClick = useCallback((e, content) => {
-    e.preventDefault();
+  const handleButtonClick = useCallback((content) => {
     setPopupContent(content);
     setShowPopup(true);
   }, []);
 
   const scrollToTabContent = () => {
     const tabContent = document.getElementById('tab-content');
-    if (tabContent) {
-      tabContent.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (tabContent) tabContent.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleQuizAnswer = (questionIndex, option) => {
+    setQuizAnswers(prev => ({ ...prev, [questionIndex]: option }));
+  };
+
+  const handleConsultationFormChange = (e) => {
+    const { name, value } = e.target;
+    setConsultationForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleConsultationSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setShowPopup(false);
+      setConsultationForm({ name: '', email: '', date: '' });
+      handleButtonClick('Consultation Success');
+    }, 2000);
   };
 
   const testimonials = [
@@ -62,675 +81,714 @@ const RelationshipTherapy = () => {
     {
       title: "Communication Coaching",
       description: "Learn effective ways to express needs and listen actively.",
-      icon: <MessageCircle className="h-8 w-8 text-pink-500" />,
-      gradient: "from-pink-500 to-rose-500"
+      icon: <MessageCircle className="h-8 w-8 text-pink-600" />
     },
     {
       title: "Conflict Resolution",
       description: "Develop healthy strategies for resolving disagreements.",
-      icon: <Users className="h-8 w-8 text-purple-500" />,
-      gradient: "from-purple-500 to-indigo-500"
+      icon: <Users className="h-8 w-8 text-pink-600" />
     },
     {
       title: "Intimacy Building",
       description: "Reconnect emotionally and physically with your partner.",
-      icon: <Heart className="h-8 w-8 text-red-500" />,
-      gradient: "from-red-500 to-pink-500"
+      icon: <Heart className="h-8 w-8 text-pink-600" />
     },
     {
       title: "Relationship Assessment",
       description: "Identify strengths and growth areas in your relationship.",
-      icon: <Award className="h-8 w-8 text-blue-500" />,
-      gradient: "from-blue-500 to-indigo-500"
+      icon: <Award className="h-8 w-8 text-pink-600" />
     }
   ];
 
   const popupConfigs = {
     "Book a Free Consultation": {
       title: "Book Your Free Consultation",
-      message: "Schedule a complimentary 30-minute session with one of our expert therapists to discuss your relationship goals.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      content: (
+        <form onSubmit={handleConsultationSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+            <input
+              type="text"
+              name="name"
+              value={consultationForm.name}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={consultationForm.email}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+            <input
+              type="date"
+              name="date"
+              value={consultationForm.date}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 flex items-center justify-center"
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="animate-spin mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Scheduling...
+              </>
+            ) : (
+              'Schedule Consultation'
+            )}
+          </button>
+        </form>
+      )
     },
     "View Therapy Plans": {
       title: "Explore Our Therapy Plans",
-      message: "Discover our customized therapy packages tailored to your needs, available exclusively through our mobile app.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      content: (
+        <div className="space-y-6">
+          <p className="text-gray-600">Choose from our tailored therapy packages to meet your relationship goals.</p>
+          <div className="grid grid-cols-1 gap-4">
+            {[
+              { name: "Starter", sessions: "4", price: "349", save: "15%" },
+              { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
+              { name: "Premium", sessions: "12", price: "899", save: "35%" }
+            ].map((plan, index) => (
+              <div key={index} className={`bg-white/50 backdrop-blur-sm p-4 rounded-lg border border-pink-100 ${plan.popular ? 'shadow-lg' : ''}`}>
+                {plan.popular && (
+                  <span className="bg-pink-100 text-pink-600 text-xs font-bold px-2 py-1 rounded-full">Most Popular</span>
+                )}
+                <h4 className="font-bold text-lg mt-2">{plan.name}</h4>
+                <p className="text-sm">{plan.sessions} sessions</p>
+                <p className="font-bold text-xl">${plan.price}</p>
+                <p className="text-xs">Save {plan.save}</p>
+                <button
+                  onClick={() => handleButtonClick(plan.popular ? 'Select Plan' : 'Learn More')}
+                  className="mt-2 bg-pink-600 text-white py-1 px-4 rounded-lg hover:bg-pink-700 text-sm"
+                >
+                  {plan.popular ? 'Select Plan' : 'Learn More'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
     },
     "Start Assessment": {
       title: "Begin Your Relationship Assessment",
-      message: "Take the first step by completing our relationship assessment questionnaire in the app to receive personalized insights.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Complete our online assessment to receive personalized insights about your relationship.</p>
+          <div className="bg-pink-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800">Assessment Preview</h4>
+            <p className="text-sm text-gray-600">Answer questions about communication, intimacy, and goals.</p>
+          </div>
+          <button
+            onClick={() => handleButtonClick('Assessment Form')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Start Assessment Now
+          </button>
+        </div>
+      )
+    },
+    "Assessment Form": {
+      title: "Relationship Assessment",
+      content: (
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">How long have you been together?</label>
+            <select
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              required
+            >
+              <option value="">Select duration</option>
+              <option value="less_than_1">Less than 1 year</option>
+              <option value="1_3">1-3 years</option>
+              <option value="3_5">3-5 years</option>
+              <option value="5_plus">5+ years</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Primary goal for therapy</label>
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              placeholder="e.g., Improve communication"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            onClick={() => handleButtonClick('Assessment Success')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Submit Assessment
+          </button>
+        </form>
+      )
+    },
+    "Assessment Success": {
+      title: "Assessment Completed!",
+      content: (
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="h-8 w-8 text-pink-600" />
+          </div>
+          <p className="text-gray-600">Your assessment has been submitted! You will receive personalized insights via email within 24 hours.</p>
+          <button
+            onClick={() => setShowPopup(false)}
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Close
+          </button>
+        </div>
+      )
     },
     "Select Plan": {
       title: "Select Your Therapy Plan",
-      message: "Choose from our tailored therapy packages and start your journey to a stronger relationship via our app.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Confirm your plan to start your journey to a stronger relationship.</p>
+          <div className="bg-white/50 backdrop-blur-sm p-4 rounded-lg border border-pink-100">
+            <h4 className="font-bold text-lg">Essential Plan</h4>
+            <p className="text-sm">8 sessions, $649, Save 25%</p>
+            <button
+              onClick={() => handleButtonClick('Plan Confirmation')}
+              className="mt-2 bg-pink-600 text-white py-1 px-4 rounded-lg hover:bg-pink-700 text-sm"
+            >
+              Confirm Selection
+            </button>
+          </div>
+        </div>
+      )
+    },
+    "Plan Confirmation": {
+      title: "Plan Confirmed!",
+      content: (
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="h-8 w-8 text-pink-600" />
+          </div>
+          <p className="text-gray-600">Your Essential Plan has been confirmed. Check your email for next steps.</p>
+          <button
+            onClick={() => setShowPopup(false)}
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Close
+          </button>
+        </div>
+      )
     },
     "Learn More": {
-      title: "Learn More About Our Plans",
-      message: "Get detailed information about our therapy packages and how they can benefit your relationship in our app.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      title: "Learn About Our Therapy Plans",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Explore the benefits of our tailored therapy packages.</p>
+          <div className="space-y-2">
+            <div className="flex items-start">
+              <CheckCircle2 className="h-5 w-5 text-pink-600 mr-2 mt-1" />
+              <p className="text-gray-600">Personalized sessions with certified therapists</p>
+            </div>
+            <div className="flex items-start">
+              <CheckCircle2 className="h-5 w-5 text-pink-600 mr-2 mt-1" />
+              <p className="text-gray-600">Flexible scheduling for virtual or in-person</p>
+            </div>
+            <div className="flex items-start">
+              <CheckCircle2 className="h-5 w-5 text-pink-600 mr-2 mt-1" />
+              <p className="text-gray-600">Ongoing support and resources</p>
+            </div>
+          </div>
+          <button
+            onClick={() => handleButtonClick('View Therapy Plans')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            View All Plans
+          </button>
+        </div>
+      )
     },
     "Schedule a Session": {
       title: "Schedule Your Therapy Session",
-      message: "Book your therapy session with our expert therapists through our mobile app for a convenient and personalized experience.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      content: (
+        <form onSubmit={handleConsultationSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+            <input
+              type="text"
+              name="name"
+              value={consultationForm.name}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={consultationForm.email}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+            <input
+              type="date"
+              name="date"
+              value={consultationForm.date}
+              onChange={handleConsultationFormChange}
+              className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:ring-2 focus:ring-pink-400"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 flex items-center justify-center"
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="animate-spin mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Scheduling...
+              </>
+            ) : (
+              'Schedule Session'
+            )}
+          </button>
+        </form>
+      )
     },
     "Learn More About Our Approach": {
-      title: "Discover Our Therapy Approach",
-      message: "Explore our evidence-based techniques and personalized therapy methods by downloading our app.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      title: "Our Therapy Approach",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Discover our evidence-based techniques for relationship healing.</p>
+          <div className="bg-pink-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800">Key Methods</h4>
+            <p className="text-sm text-gray-600">We use Gottman Method, EFT, and personalized exercises.</p>
+          </div>
+          <button
+            onClick={() => handleButtonClick('Book a Free Consultation')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Book a Free Consultation
+          </button>
+        </div>
+      )
     },
     "Complete Quiz & Get Results": {
-      title: "Complete the Relationship Quiz",
-      message: "Finish the relationship health quiz and view your personalized results by downloading our app.",
-      buttons: [
-        {
-          text: "Get Started",
-          className: "bg-black text-white px-5 py-2 rounded-lg flex items-center",
-        }
-      ]
+      title: "Relationship Health Quiz",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Complete the quiz to receive insights about your relationship.</p>
+          <button
+            onClick={() => handleButtonClick('Quiz Results')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            View Quiz Results
+          </button>
+        </div>
+      )
+    },
+    "Quiz Results": {
+      title: "Your Quiz Results",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-600">Based on your answers, here is a summary of your relationship health:</p>
+          <div className="bg-pink-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-800">Strengths</h4>
+            <p className="text-sm text-gray-600">Strong communication and shared activities.</p>
+            <h4 className="font-semibold text-gray-800 mt-2">Areas to Improve</h4>
+            <p className="text-sm text-gray-600">Conflict resolution and emotional intimacy.</p>
+          </div>
+          <button
+            onClick={() => handleButtonClick('Book a Free Consultation')}
+            className="w-full bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Discuss Results with a Therapist
+          </button>
+        </div>
+      )
+    },
+    "Consultation Success": {
+      title: "Consultation Scheduled!",
+      content: (
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="h-8 w-8 text-pink-600" />
+          </div>
+          <p className="text-gray-600">Your consultation has been scheduled! Check your email for confirmation.</p>
+          <button
+            onClick={() => setShowPopup(false)}
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+          >
+            Close
+          </button>
+        </div>
+      )
     }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
   };
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 py-12 px-4 sm:px-6 lg:px-8" style={{ scrollBehavior: 'smooth' }}>
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          onClick={handleBack}
-          className="flex items-center text-gray-600 hover:text-pink-500 mb-6 transition-colors duration-200"
+    <div className="min-h-screen bg-white">
+      <div className="fixed top-6 left-6 z-50">
+        <button
+          onClick={() => navigate(-1)}
+          className="group flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-pink-100 hover:bg-pink-50 transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          <span>Back</span>
-        </motion.button>
+          <ChevronLeft className="h-5 w-5 text-pink-600 group-hover:text-pink-700" />
+          <span className="text-sm font-medium text-pink-600 group-hover:text-pink-700">Back</span>
+        </button>
+      </div>
 
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {isAnimating && Array.from({ length: 10 }).map((_, i) => (
-            <motion.div 
-              key={i}
-              className="absolute text-pink-400 opacity-70"
-              initial={{ y: "100vh", x: `${Math.random() * 100}%` }}
-              animate={{ 
-                y: "-10vh",
-                x: `${Math.random() * 100}%`,
-                rotate: Math.random() * 360
-              }}
-              transition={{
-                duration: Math.random() * 2 + 1.5,
-                ease: "easeOut",
-                delay: Math.random() * 1.5
-              }}
-              style={{
-                fontSize: `${Math.random() * 15 + 8}px`,
-                willChange: 'transform, opacity'
-              }}
-            >
-              ❤️
-            </motion.div>
-          ))}
-        </div>
-
-        <AnimatePresence>
-          {showPopup && popupContent && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl relative"
-                style={{ willChange: 'transform, opacity' }}
-              >
-                <button 
-                  onClick={() => setShowPopup(false)}
-                  className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-                <div className="text-center py-4">
-                  <motion.div 
-                    className="mb-6 text-pink-500"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <Heart className="h-16 w-16 mx-auto" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                    {popupConfigs[popupContent].title}
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    {popupConfigs[popupContent].message}
-                  </p>
-                  <div className="flex justify-center space-x-4">
-                    {popupConfigs[popupContent].buttons.map((button, index) => (
-                      <motion.button 
-                        key={index}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={button.className}
-                        style={{ willChange: 'transform' }}
-                      >
-                        {button.text}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16 relative"
-          >
-            <div className="relative inline-block">
-              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                Relationship Therapy
-                <motion.span 
-                  className="absolute -top-4 -right-8"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                  <Sparkles className="h-8 w-8 text-yellow-400" />
-                </motion.span>
-              </h1>
-            </div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Strengthen your bond, reignite your passion, and build a lasting partnership with our expert guidance
+      <div className="relative bg-gradient-to-br from-pink-50 to-white text-gray-800 overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'><path d='M30 0C13.431 0 0 13.431 0 30s13.431 30 30 30 30-13.431 30-30S46.569 0 30 0zm0 54C16.745 54 6 43.255 6 30S16.745 6 30 6s24 10.745 24 24-10.745 24-24 24zm0-48C14.327 6 6 14.327 6 30s8.327 24 24 24 24-8.327 24-24S45.673 6 30 6z' fill='%23EC4899' fill-opacity='0.3' fill-rule='evenodd'/></svg>")`,
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="container mx-auto px-4 pt-24 pb-16 text-center">
+          <div style={{ transform: `translateY(${heroParallax.get()}px)` }} className="max-w-4xl mx-auto">
+            <Heart className="h-16 w-16 text-pink-600 mx-auto mb-4" />
+            <h1 className="text-4xl md:text-6xl font-serif font-bold text-gray-900">
+              Relationship <span className="text-pink-600">Therapy</span>
+            </h1>
+            <p className="text-lg md:text-xl mt-4 mb-12 text-gray-600 max-w-2xl mx-auto">
+              Strengthen your bond and rediscover connection with our expert-guided therapy.
             </p>
-            <div className="mt-8 flex justify-center space-x-4">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => handleButtonClick(e, "Book a Free Consultation")}
-                className="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-medium py-3 px-6 rounded-full shadow-lg transform transition focus:outline-none"
-                style={{ willChange: 'transform' }}
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => handleButtonClick('Book a Free Consultation')}
+                className="bg-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-pink-700"
               >
                 Book a Free Consultation
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => handleButtonClick(e, "View Therapy Plans")}
-                className="bg-white hover:bg-gray-100 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-200 transform transition focus:outline-none"
-                style={{ willChange: 'transform' }}
+              </button>
+              <button
+                onClick={() => handleButtonClick('View Therapy Plans')}
+                className="bg-white text-pink-600 border border-pink-100 py-3 px-6 rounded-lg font-semibold hover:bg-pink-50"
               >
                 View Therapy Plans
-              </motion.button>
+              </button>
             </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex justify-center mb-12"
-          >
-            <div className="inline-flex rounded-lg bg-white/50 backdrop-blur-sm p-1 shadow-lg">
-              {['about', 'services', 'testimonials', 'quiz'].map((tab) => (
-                <motion.button
-                  key={tab}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    scrollToTabContent();
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 font-medium rounded-md transition-all duration-300 ${
-                    activeTab === tab 
-                      ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-md' 
-                      : 'text-gray-700 hover:text-pink-500'
-                  }`}
-                  style={{ willChange: 'transform' }}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div 
-            id="tab-content"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-10 transition-all duration-500 transform hover:shadow-2xl"
-            style={{ willChange: 'transform, box-shadow' }}
-          >
-            {activeTab === 'about' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="animate-fadeIn"
-              >
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6">
-                  Our Approach to Relationship Healing
-                </h2>
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <p className="text-gray-600 mb-4">
-                      Our relationship therapy program is designed to help couples at any stage of their relationship journey. 
-                      Whether youre newly dating, engaged, married for decades, or somewhere in between, our personalized approach 
-                      addresses your specific needs.
-                    </p>
-                    <p className="text-gray-600 mb-4">
-                      We focus on evidence-based techniques that foster healthy communication, emotional intimacy, and mutual understanding. 
-                      Our certified therapists create a safe, judgment-free space for you and your partner to explore challenges and rediscover connection.
-                    </p>
-                    <div className="mt-8">
-                      <h3 className="text-xl font-semibold text-pink-600 mb-3">Why Choose Our Therapy?</h3>
-                      <motion.ul variants={containerVariants} initial="hidden" animate="visible" className="space-y-2">
-                        {[
-                          "Personalized approach for your unique relationship",
-                          "Flexible scheduling with virtual and in-person options",
-                          "Practical exercises you can implement immediately",
-                          "Ongoing support between sessions"
-                        ].map((item, index) => (
-                          <motion.li 
-                            key={index}
-                            variants={itemVariants}
-                            className="flex items-start"
-                          >
-                            <span className="text-pink-500 mr-2">✓</span>
-                            <span className="text-gray-700">{item}</span>
-                          </motion.li>
-                        ))}
-                      </motion.ul>
-                    </div>
-                  </div>
-                  <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-6 relative overflow-hidden">
-                    <div className="absolute -right-4 -top-4 w-32 h-32 bg-pink-200 rounded-full opacity-50"></div>
-                    <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-purple-200 rounded-full opacity-50"></div>
-                    <h3 className="text-xl font-semibold text-pink-600 mb-4 relative z-10">Get Started Today</h3>
-                    <p className="text-gray-700 mb-6 relative z-10">
-                      Begin your journey toward a healthier, happier relationship with our simple process:
-                    </p>
-                    <motion.ol variants={containerVariants} initial="hidden" animate="visible" className="space-y-4 relative z-10">
-                      {[
-                        "Complete our relationship assessment questionnaire",
-                        "Schedule your complimentary 30-minute consultation",
-                        "Receive your personalized therapy plan",
-                        "Begin your sessions with your matched therapist"
-                      ].map((step, index) => (
-                        <motion.li 
-                          key={index}
-                          variants={itemVariants}
-                          className="flex"
-                        >
-                          <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">
-                            {index + 1}
-                          </span>
-                          <p className="text-gray-700">{step}</p>
-                        </motion.li>
-                      ))}
-                    </motion.ol>
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => handleButtonClick(e, "Start Assessment")}
-                      className="mt-8 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-2 px-4 rounded-lg transition transform focus:outline-none relative z-10"
-                      style={{ willChange: 'transform' }}
-                    >
-                      Start Assessment
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'services' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="animate-fadeIn"
-              >
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-10 text-center">
-                  Our Therapy Services
-                </h2>
-                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-2 gap-8">
-                  {services.map((service, index) => (
-                    <motion.div 
-                      key={index}
-                      variants={itemVariants}
-                      whileHover={{ y: -5 }}
-                      onHoverStart={() => setHoveredService(index)}
-                      onHoverEnd={() => setHoveredService(null)}
-                      className={`bg-white p-6 rounded-xl border border-pink-100 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden group`}
-                      style={{ willChange: 'transform, box-shadow' }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                           style={{ backgroundImage: `linear-gradient(to right, ${service.gradient})` }}></div>
-                      <div className="flex items-start relative z-10">
-                        <div className={`bg-gradient-to-r ${service.gradient} p-3 rounded-lg mr-4 text-white`}>
-                          {service.icon}
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold text-gray-800 mb-2">{service.title}</h3>
-                          <p className="text-gray-600">{service.description}</p>
-                        </div>
-                      </div>
-                      <motion.div 
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-purple-500"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: hoveredService === index ? 1 : 0 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ willChange: 'transform' }}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-                
-                <div className="mt-12 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-xl p-8 text-white text-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-white opacity-10"></div>
-                  <div className="relative z-10">
-                    <h3 className="text-2xl font-bold mb-4">Customized Therapy Packages</h3>
-                    <p className="mb-6">
-                      We offer tailored therapy packages to meet your specific needs and goals. From short-term intervention to ongoing support.
-                    </p>
-                    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-3 gap-4 mt-8">
-                      {[
-                        { name: "Starter", sessions: "4", price: "349", save: "15%" },
-                        { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
-                        { name: "Premium", sessions: "12", price: "899", save: "35%" }
-                      ].map((plan, index) => (
-                        <motion.div 
-                          key={index}
-                          variants={itemVariants}
-                          className={`bg-white/20 p-4 rounded-lg backdrop-filter backdrop-blur-sm ${plan.popular ? 'transform scale-105' : ''}`}
-                          style={{ willChange: 'transform' }}
-                        >
-                          {plan.popular && (
-                            <div className="absolute -top-3 left-0 right-0 flex justify-center">
-                              <span className="bg-yellow-400 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full">
-                                MOST POPULAR
-                              </span>
-                            </div>
-                          )}
-                          <h4 className="font-bold text-lg mb-2">{plan.name}</h4>
-                          <p className="text-sm mb-3">{plan.sessions} sessions</p>
-                          <p className="font-bold text-2xl mb-1">${plan.price}</p>
-                          <p className="text-xs mb-4">Save {plan.save}</p>
-                          <motion.button 
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={(e) => handleButtonClick(e, plan.popular ? "Select Plan" : "Learn More")}
-                            className="bg-white text-pink-500 py-1 px-4 rounded-full text-sm font-medium hover:bg-pink-100 transition"
-                            style={{ willChange: 'transform' }}
-                          >
-                            {plan.popular ? 'Select Plan' : 'Learn More'}
-                          </motion.button>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'testimonials' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="animate-fadeIn"
-              >
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-10 text-center">
-                  Success Stories
-                </h2>
-                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid md:grid-cols-3 gap-6">
-                  {testimonials.map((testimonial, index) => (
-                    <motion.div 
-                      key={index}
-                      variants={itemVariants}
-                      whileHover={{ y: -5 }}
-                      className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
-                      style={{ willChange: 'transform, box-shadow' }}
-                    >
-                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink-100 to-purple-100 rounded-bl-full opacity-50"></div>
-                      <div className="flex items-center mb-4">
-                        <img 
-                          src={testimonial.image} 
-                          alt={testimonial.name}
-                          className="w-12 h-12 rounded-full object-cover mr-4"
-                        />
-                        <div>
-                          <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-                          <p className="text-gray-500 text-sm">{testimonial.years}</p>
-                        </div>
-                      </div>
-                      <div className="text-pink-500 mb-4">
-                        {Array(5).fill(0).map((_, i) => (
-                          <Star key={i} className="inline-block w-5 h-5 fill-current" />
-                        ))}
-                      </div>
-                      <p className="text-gray-700 mb-4 italic">{testimonial.text}</p>
-                      <motion.div 
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-purple-500"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                        style={{ willChange: 'transform' }}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-                
-                <motion.div 
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="mt-12 p-8 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl text-center relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-white opacity-50"></div>
-                  <div className="relative z-10">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Ready to Transform Your Relationship?</h3>
-                    <p className="text-gray-600 max-w-3xl mx-auto mb-8">
-                      Join hundreds of couples who have rekindled their love and built stronger connections through our therapy programs.
-                    </p>
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => handleButtonClick(e, "Book a Free Consultation")}
-                      className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition focus:outline-none"
-                      style={{ willChange: 'transform' }}
-                    >
-                      Book a Free Consultation
-                    </motion.button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-
-            {activeTab === 'quiz' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="animate-fadeIn"
-              >
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center">
-                  Relationship Health Quiz
-                </h2>
-                <p className="text-gray-600 text-center max-w-3xl mx-auto mb-8">
-                  Discover insights about your relationship dynamics with our quick assessment. Answer honestly for the most accurate results.
-                </p>
-                
-                <div className="max-w-2xl mx-auto">
-                  <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
-                    {[
-                      {
-                        question: "How often do you and your partner have meaningful conversations?",
-                        options: ["Daily", "Several times a week", "About once a week", "Rarely"]
-                      },
-                      {
-                        question: "How do you typically resolve disagreements?",
-                        options: [
-                          "We discuss calmly until we reach a compromise",
-                          "One of us usually gives in to keep the peace",
-                          "We argue and then move on without resolution",
-                          "We avoid disagreements altogether"
-                        ]
-                      },
-                      {
-                        question: "When was the last time you tried something new together?",
-                        options: [
-                          "Within the last month",
-                          "Within the last 3 months",
-                          "Within the last year",
-                          "Can't remember"
-                        ]
-                      }
-                    ].map((question, index) => (
-                      <motion.div 
-                        key={index}
-                        variants={itemVariants}
-                        className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg"
-                      >
-                        <h3 className="font-semibold text-gray-800 mb-4">{index + 1}. {question.question}</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {question.options.map((option, optionIndex) => (
-                            <motion.button 
-                              key={optionIndex}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={(e) => handleButtonClick(e, "Complete Quiz & Get Results")}
-                              className="bg-white hover:bg-pink-100 text-gray-700 py-2 px-4 rounded-md text-left transition group"
-                              style={{ willChange: 'transform' }}
-                            >
-                              <span className="flex items-center">
-                                {option}
-                                <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </span>
-                            </motion.button>
-                          ))}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                  
-                  <motion.div 
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="mt-10 flex justify-center"
-                  >
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => handleButtonClick(e, "Complete Quiz & Get Results")}
-                      className="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-3 px-8 rounded-full shadow-lg transform transition focus:outline-none"
-                      style={{ willChange: 'transform' }}
-                    >
-                      Complete Quiz & Get Results
-                    </motion.button>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-          
-          <motion.div 
-            variants={itemVariants}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-16 text-center"
-          >
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Ready to take the first step?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              Our relationship experts are ready to help you build the connection you deserve.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => handleButtonClick(e, "Schedule a Session")}
-                className="group relative bg-gradient-to-r from-pink-500 to-purple-500 text-white font-medium py-3 px-6 rounded-full shadow-lg overflow-hidden"
-                style={{ willChange: 'transform' }}
-              >
-                <span className="relative z-10">Schedule a Session</span>
-                <span className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-20"></span>
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => handleButtonClick(e, "Learn More About Our Approach")}
-                className="group relative bg-transparent hover:bg-pink-50 text-pink-500 font-medium py-3 px-6 rounded-full shadow-lg border border-pink-300 overflow-hidden"
-                style={{ willChange: 'transform' }}
-              >
-                <span className="relative z-10">Learn More About Our Approach</span>
-                <span className="absolute inset-0 bg-pink-100 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out opacity-50"></span>
-              </motion.button>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
-    </>
+
+      <div className="container mx-auto px-4 py-16">
+        <div style={{ transform: `translateY(${servicesParallax.get()}px)` }} className="flex justify-center mb-12">
+          <div className="inline-flex rounded-lg bg-white/90 backdrop-blur-sm p-1 border border-pink-100">
+            {['about', 'services', 'testimonials', 'quiz'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  scrollToTabContent();
+                }}
+                className={`px-4 py-2 font-medium rounded-md transition-colors ${
+                  activeTab === tab ? 'bg-pink-600 text-white' : 'text-gray-700 hover:text-pink-600'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div id="tab-content" style={{ transform: `translateY(${tabContentParallax.get()}px)` }} className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-10 border border-pink-100">
+          {activeTab === 'about' && (
+            <div>
+              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6">Our Approach to Relationship Healing</h2>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <p className="text-gray-600 mb-4">
+                    Our relationship therapy program is tailored to couples at any stage, offering personalized guidance to address your unique needs.
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    Using evidence-based techniques, our certified therapists create a safe space to foster communication, intimacy, and understanding.
+                  </p>
+                  <div className="mt-8">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Why Choose Our Therapy?</h3>
+                    <ul className="space-y-2">
+                      {[
+                        "Personalized approach for your unique relationship",
+                        "Flexible scheduling with virtual and in-person options",
+                        "Practical exercises you can implement immediately",
+                        "Ongoing support between sessions"
+                      ].map((item, index) => (
+                        <li key={index} className="flex items-start">
+                          <CheckCircle2 className="h-5 w-5 text-pink-600 mr-2 mt-1" />
+                          <span className="text-gray-600">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div className="bg-pink-50 rounded-xl p-6">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Get Started Today</h3>
+                  <p className="text-gray-600 mb-6">Follow our simple process to begin your journey:</p>
+                  <ol className="space-y-4">
+                    {[
+                      "Complete our relationship assessment questionnaire",
+                      "Schedule your complimentary 30-minute consultation",
+                      "Receive your personalized therapy plan",
+                      "Begin your sessions with your matched therapist"
+                    ].map((step, index) => (
+                      <li key={index} className="flex">
+                        <span className="bg-pink-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0">
+                          {index + 1}
+                        </span>
+                        <p className="text-gray-600">{step}</p>
+                      </li>
+                    ))}
+                  </ol>
+                  <button
+                    onClick={() => handleButtonClick('Start Assessment')}
+                    className="mt-8 bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700"
+                  >
+                    Start Assessment
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'services' && (
+            <div>
+              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-10 text-center">Our Therapy Services</h2>
+              <div className="grid md:grid-cols-2 gap-8">
+                {services.map((service, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl border border-pink-100 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex items-start">
+                      <div className="p-3 bg-pink-100 rounded-lg mr-4">{service.icon}</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">{service.title}</h3>
+                        <p className="text-gray-600">{service.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-12 bg-pink-50 rounded-xl p-8 text-center">
+                <h3 className="text-2xl font-serif font-bold text-gray-900 mb-4">Customized Therapy Packages</h3>
+                <p className="text-gray-600 mb-6">Choose from our tailored packages to meet your specific needs.</p>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {[
+                    { name: "Starter", sessions: "4", price: "349", save: "15%" },
+                    { name: "Essential", sessions: "8", price: "649", save: "25%", popular: true },
+                    { name: "Premium", sessions: "12", price: "899", save: "35%" }
+                  ].map((plan, index) => (
+                    <div
+                      key={index}
+                      className={`bg-white/90 backdrop-blur-sm p-4 rounded-lg border border-pink-100 ${plan.popular ? 'shadow-lg' : ''}`}
+                    >
+                      {plan.popular && (
+                        <span className="bg-pink-100 text-pink-600 text-xs font-bold px-2 py-1 rounded-full">Most Popular</span>
+                      )}
+                      <h4 className="font-bold text-lg mt-2">{plan.name}</h4>
+                      <p className="text-sm">{plan.sessions} sessions</p>
+                      <p className="font-bold text-2xl">${plan.price}</p>
+                      <p className="text-xs">Save {plan.save}</p>
+                      <button
+                        onClick={() => handleButtonClick(plan.popular ? 'Select Plan' : 'Learn More')}
+                        className="mt-4 bg-pink-600 text-white py-1 px-4 rounded-lg hover:bg-pink-700 text-sm"
+                      >
+                        {plan.popular ? 'Select Plan' : 'Learn More'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'testimonials' && (
+            <div>
+              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-10 text-center">Success Stories</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                {testimonials.map((testimonial, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl border border-pink-100 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover mr-4"
+                      />
+                      <div>
+                        <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
+                        <p className="text-gray-600 text-sm">{testimonial.years}</p>
+                      </div>
+                    </div>
+                    <div className="text-pink-600 mb-4">
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star key={i} className="inline-block w-5 h-5 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 italic">{testimonial.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-12 p-8 bg-pink-50 rounded-xl text-center">
+                <h3 className="text-2xl font-serif font-bold text-gray-900 mb-6">Ready to Transform Your Relationship?</h3>
+                <p className="text-gray-600 mb-8">Join hundreds of couples who have strengthened their bond with us.</p>
+                <button
+                  onClick={() => handleButtonClick('Book a Free Consultation')}
+                  className="bg-pink-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-pink-700"
+                >
+                  Book a Free Consultation
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'quiz' && (
+            <div>
+              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6 text-center">Relationship Health Quiz</h2>
+              <p className="text-gray-600 text-center mb-8">Answer these questions to gain insights into your relationship dynamics.</p>
+              <div className="max-w-2xl mx-auto">
+                <div className="space-y-8">
+                  {[
+                    {
+                      question: "How often do you and your partner have meaningful conversations?",
+                      options: ["Daily", "Several times a week", "About once a week", "Rarely"]
+                    },
+                    {
+                      question: "How do you typically resolve disagreements?",
+                      options: [
+                        "We discuss calmly until we reach a compromise",
+                        "One of us usually gives in to keep the peace",
+                        "We argue and then move on without resolution",
+                        "We avoid disagreements altogether"
+                      ]
+                    },
+                    {
+                      question: "When was the last time you tried something new together?",
+                      options: [
+                        "Within the last month",
+                        "Within the last 3 months",
+                        "Within the last year",
+                        "Can't remember"
+                      ]
+                    }
+                  ].map((question, index) => (
+                    <div key={index} className="bg-pink-50 p-6 rounded-lg">
+                      <h3 className="font-semibold text-gray-800 mb-4">{index + 1}. {question.question}</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {question.options.map((option, optionIndex) => (
+                          <button
+                            key={optionIndex}
+                            onClick={() => {
+                              handleQuizAnswer(index, option);
+                              handleButtonClick('Complete Quiz & Get Results');
+                            }}
+                            className={`bg-white py-2 px-4 rounded-md text-left transition-colors ${
+                              quizAnswers[index] === option ? 'bg-pink-100 text-pink-600' : 'hover:bg-pink-50'
+                            }`}
+                          >
+                            <span className="flex items-center">
+                              {option}
+                              <ChevronRight className="w-4 h-4 ml-2" />
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-10 flex justify-center">
+                  <button
+                    onClick={() => handleButtonClick('Complete Quiz & Get Results')}
+                    className="bg-pink-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-pink-700"
+                  >
+                    Complete Quiz & Get Results
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div style={{ transform: `translateY(${ctaParallax.get()}px)` }} className="mt-16 text-center">
+          <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">Ready to Take the First Step?</h2>
+          <p className="text-gray-600 mb-8">Our experts are here to help you build a stronger connection.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <button
+              onClick={() => handleButtonClick('Schedule a Session')}
+              className="bg-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-pink-700"
+            >
+              Schedule a Session
+            </button>
+            <button
+              onClick={() => handleButtonClick('Learn More About Our Approach')}
+              className="bg-white text-pink-600 border border-pink-100 py-3 px-6 rounded-lg font-semibold hover:bg-pink-50"
+            >
+              Learn More About Our Approach
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showPopup && popupContent && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={() => setShowPopup(false)}>
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl max-w-md w-full p-6 border border-pink-100" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-serif font-bold text-gray-800">{popupConfigs[popupContent].title}</h3>
+              <button onClick={() => setShowPopup(false)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            {popupConfigs[popupContent].content}
+          </div>
+        </div>
+      )}
+
+      {screenSize === 'mobile' && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <button
+            className="bg-pink-600 text-white w-14 h-14 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"
+            aria-label="Get Started"
+            onClick={() => handleButtonClick('Book a Free Consultation')}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

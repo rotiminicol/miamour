@@ -1,7 +1,18 @@
-import { useState } from 'react';
+
+import { useState, useRef } from 'react';
 import { Download, FileText, Sparkles, CheckCircle, Clock, AlertCircle, ChevronLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from "../components/Header";
+
+// Sleek BackButton component
+const BackButton = () => (
+  <button
+    onClick={() => window.history.back()}
+    className="fixed top-8 left-8 z-30 flex items-center bg-white/90 border border-pink-100 shadow-lg rounded-full px-4 py-2 text-pink-600 font-semibold hover:bg-pink-50 transition-colors"
+    aria-label="Go back"
+  >
+    <ChevronLeft className="h-5 w-5 mr-1" />
+    Back
+  </button>
+);
 
 const InvoicesPage = () => {
   const [invoices] = useState([
@@ -66,7 +77,6 @@ const InvoicesPage = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Error downloading invoice:', error);
       alert('Failed to download invoice. Please try again later.');
     }
   };
@@ -84,146 +94,109 @@ const InvoicesPage = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Error downloading all invoices:', error);
       alert('Failed to download invoices. Please try again later.');
     }
   };
 
+  // Parallax effect using scroll
+  const parallaxRef = useRef(null);
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    if (parallaxRef.current) {
+      parallaxRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
+    }
+  };
+  // Attach scroll event
+  if (typeof window !== "undefined") {
+    window.onscroll = handleScroll;
+  }
+
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <div className="container mx-auto px-4 py-6">
-        <motion.button
-          whileHover={{ x: -3 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => window.history.back()}
-          className="flex items-center text-gray-600 hover:text-[#FF1493] mb-6 transition-colors"
+    <div className="min-h-screen relative bg-gradient-to-br from-pink-50 via-white to-purple-50 overflow-x-hidden">
+      {/* Parallax geometric background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <svg
+          ref={parallaxRef}
+          width="100%" height="100%" viewBox="0 0 1440 600"
+          className="absolute top-0 left-0"
+          style={{ transition: 'transform 0.2s linear' }}
         >
-          <ChevronLeft className="h-5 w-5 mr-1" />
-          Back
-        </motion.button>
+          <circle cx="1200" cy="100" r="180" fill="#f0f4ff" opacity="0.7" />
+          <rect x="100" y="400" width="300" height="120" rx="60" fill="#ffe4f0" opacity="0.5" />
+          <ellipse cx="400" cy="120" rx="120" ry="60" fill="#f7faff" opacity="0.7" />
+          <rect x="900" y="350" width="220" height="80" rx="40" fill="#ffd6ec" opacity="0.4" />
+        </svg>
+        {/* Pink splash */}
+        <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
       </div>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-white py-12 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute -top-40 -right-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-            animate={{
-              scale: [1, 1.2, 1],
-              x: [0, 30, 0],
-              y: [0, -30, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-            animate={{
-              scale: [1, 1.2, 1],
-              x: [0, -30, 0],
-              y: [0, 30, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
+
+      {/* Sleek Back Button */}
+      <BackButton />
+
+      <div className="max-w-4xl mx-auto px-4 py-20 relative z-10">
+        <div className="text-center mb-12">
+          <div className="mb-6 flex justify-center">
+            <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-100 shadow">
+              <Sparkles className="h-10 w-10 text-pink-500" />
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+            Your Invoices
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            View and download your payment invoices. Keep track of your subscription history.
+          </p>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 relative">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="mb-6"
+        <div className="bg-white rounded-2xl shadow-2xl border border-pink-100 p-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <h2 className="text-2xl font-bold text-gray-800">Invoice History</h2>
+            <button
+              onClick={handleDownloadAll}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <Sparkles className="h-12 w-12 text-pink-500 mx-auto" />
-            </motion.div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-              Your Invoices
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              View and download your payment invoices. Keep track of your subscription history.
-            </p>
-          </motion.div>
+              Download All
+            </button>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-white/80 backdrop-blur-sm shadow-xl rounded-2xl p-6 md:p-10 border border-pink-100"
-          >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-800">Invoice History</h2>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleDownloadAll}
-                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+          <div className="space-y-4">
+            {invoices.map((invoice) => (
+              <div
+                key={invoice.id}
+                className="bg-white border border-pink-100 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-pink-300 transition-all duration-300"
               >
-                Download All
-              </motion.button>
-            </div>
-
-            <div className="space-y-4">
-              <AnimatePresence>
-                {invoices.map((invoice, index) => (
-                  <motion.div
-                    key={invoice.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ 
-                      scale: 1.02,
-                      boxShadow: "0 8px 30px rgba(236, 72, 153, 0.15)"
-                    }}
-                    className="bg-white/50 backdrop-blur-sm border border-pink-100 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-pink-200 transition-all duration-300"
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl">
+                    <FileText className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-800">Invoice #{invoice.id}</p>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span>Issued: {invoice.date}</span>
+                      <span>•</span>
+                      <span>Due: {invoice.dueDate}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    {getStatusIcon(invoice.status)}
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(invoice.status)}`}>
+                      {invoice.status}
+                    </span>
+                  </div>
+                  <span className="text-xl font-semibold text-gray-800">{invoice.amount}</span>
+                  <button
+                    onClick={() => handleDownload(invoice.invoiceFile)}
+                    className="p-2 bg-pink-50 rounded-lg text-pink-600 hover:bg-pink-100 transition-colors"
                   >
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl">
-                        <FileText className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-800">Invoice #{invoice.id}</p>
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                          <span>Issued: {invoice.date}</span>
-                          <span>•</span>
-                          <span>Due: {invoice.dueDate}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-6">
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(invoice.status)}
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(invoice.status)}`}>
-                          {invoice.status}
-                        </span>
-                      </div>
-                      <span className="text-xl font-semibold text-gray-800">{invoice.amount}</span>
-                      <motion.button 
-                        onClick={() => handleDownload(invoice.invoiceFile)}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 bg-pink-50 rounded-lg text-pink-600 hover:bg-pink-100 transition-colors"
-                      >
-                        <Download className="h-5 w-5" />
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </motion.div>
+                    <Download className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,260 +1,170 @@
-import { useState } from 'react';
-import { Header } from "../components/Header";
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Heart, Calendar, FileText, Phone, Mail, MapPin, X } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
-import BackButton from '../components/BackButton';
+import { useState, useEffect } from 'react';
+import { useScroll, useTransform } from 'framer-motion';
+import { Sparkles, Calendar, Heart, FileText, Phone, Mail, MapPin, X, ChevronLeft } from 'lucide-react';
 
 const MarriagePlanning = () => {
   const [showContactPopup, setShowContactPopup] = useState(false);
-  
+  const [screenSize, setScreenSize] = useState('desktop');
+
+  const { scrollY } = useScroll();
+  const heroParallax = useTransform(scrollY, [0, 300], [0, 100]);
+  const servicesParallax = useTransform(scrollY, [300, 600], [0, 50]);
+  const ctaParallax = useTransform(scrollY, [600, 900], [0, 50]);
+
+  useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth < 768 ? 'mobile' : 'desktop');
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const services = [
     {
       title: "Venue Selection & Church Arrangements",
       description: "Find the perfect venue, from churches to banquet halls, with full coordination of ceremonial needs and officiants.",
       icon: Calendar,
-      gradient: "from-pink-500 to-rose-500"
     },
     {
       title: "Event Planning & Coordination",
       description: "We manage catering, decor, entertainment, and timelines for a stress-free, perfectly orchestrated wedding.",
       icon: Heart,
-      gradient: "from-purple-500 to-pink-500"
     },
     {
       title: "Legal Certificates & Documentation",
       description: "Assistance with marriage licenses and legal documents to ensure everything is ready for your big day.",
       icon: FileText,
-      gradient: "from-indigo-500 to-purple-500"
     }
   ];
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  const ContactPopup = () => (
-    <motion.div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full shadow-2xl border border-pink-100 relative"
-      >
-        <motion.button
-          onClick={() => setShowContactPopup(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <X className="w-6 h-6" />
-        </motion.button>
-
-        <div className="flex items-center justify-center mb-6">
-          <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            Contact miamour
-          </h3>
-          <Sparkles className="h-6 w-6 text-pink-500 ml-2" />
-        </div>
-
-        <div className="space-y-6">
-          <motion.div 
-            className="flex items-start bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-pink-100"
-            whileHover={{ scale: 1.02, boxShadow: "0 4px 20px rgba(236, 72, 153, 0.1)" }}
-          >
-            <div className="p-2 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg mr-4">
-              <Phone className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="font-medium text-gray-800">Phone</p>
-              <p className="text-gray-600">+1 (800) 555-LOVE</p>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="flex items-start bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-pink-100"
-            whileHover={{ scale: 1.02, boxShadow: "0 4px 20px rgba(236, 72, 153, 0.1)" }}
-          >
-            <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-4">
-              <Mail className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="font-medium text-gray-800">Email</p>
-              <p className="text-gray-600">wedding@miamour.com</p>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="flex items-start bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-pink-100"
-            whileHover={{ scale: 1.02, boxShadow: "0 4px 20px rgba(236, 72, 153, 0.1)" }}
-          >
-            <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg mr-4">
-              <MapPin className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="font-medium text-gray-800">Address</p>
-              <p className="text-gray-600">123 Wedding Lane, Suite 101<br />Lovetown, CA 90210</p>
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-      <Sidebar />
-      <div className="flex-grow flex flex-col">
-        <Header />
-        <main className="flex-grow overflow-y-auto px-6 py-8 lg:px-8 lg:py-10">
-          <BackButton />
-          <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
-            {/* Decorative Background Elements */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-0 left-0 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-              <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-              <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
-
-            <div className="relative bg-gradient-to-r from-pink-500 to-purple-600 text-white overflow-hidden">
-              <motion.div 
-                className="absolute inset-0 opacity-20" 
-                animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }} 
-                transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }} 
-                style={{ 
-                  backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%23ffffff\' fill-opacity=\'0.3\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")', 
-                  backgroundAttachment: 'fixed',
-                  backgroundSize: '100px 100px'
-                }} 
-              />
-              <div className="container mx-auto px-4 py-16 text-center relative">
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  transition={{ duration: 0.8 }}
-                  className="relative z-10"
-                >
-                  <div className="flex items-center justify-center mb-6">
-                    <Sparkles className="h-6 w-6 text-pink-200 mr-2" />
-                    <h1 className="text-4xl md:text-5xl font-bold">
-                      Plan Your Dream Wedding with <span className="text-pink-200">miamour</span>
-                    </h1>
-                    <Sparkles className="h-6 w-6 text-pink-200 ml-2" />
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-
-            <div className="container mx-auto px-4 py-12 relative">
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                whileInView={{ opacity: 1 }} 
-                transition={{ duration: 0.8 }} 
-                viewport={{ once: true }} 
-                className="mb-12"
-              >
-                <div className="flex items-center justify-center mb-8">
-                  <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                    Our Wedding Planning Services
-                  </h2>
-                  <Sparkles className="h-6 w-6 text-pink-500 ml-2" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {services.map((service, index) => (
-                    <motion.div 
-                      key={index} 
-                      variants={itemVariants}
-                      whileHover={{ y: -5, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.15)" }}
-                      className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-pink-100 relative overflow-hidden group"
-                    >
-                      <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.gradient} rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity`} />
-                      <div className="relative z-10">
-                        <div className={`p-3 bg-gradient-to-r ${service.gradient} rounded-xl inline-block mb-4`}>
-                          <service.icon className="w-6 h-6 text-white" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-4 text-gray-800">{service.title}</h3>
-                        <p className="text-gray-600">{service.description}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                whileInView={{ opacity: 1 }} 
-                transition={{ duration: 0.8 }} 
-                viewport={{ once: true }} 
-                className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%23ffffff\' fill-opacity=\'0.3\' fill-rule=\'evenodd\'/%3E%3C/svg%3E')] bg-repeat opacity-20" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-center mb-6">
-                    <Sparkles className="h-6 w-6 text-pink-200 mr-2" />
-                    <h2 className="text-3xl font-bold text-white">Ready to Start Planning?</h2>
-                    <Sparkles className="h-6 w-6 text-pink-200 ml-2" />
-                  </div>
-                  <motion.button 
-                    onClick={() => setShowContactPopup(true)}
-                    className="inline-block bg-white text-pink-600 font-semibold py-4 px-8 rounded-xl shadow-lg hover:bg-pink-50 transition-all duration-300"
-                    whileHover={{ scale: 1.05, boxShadow: "0 8px 30px rgba(236, 72, 153, 0.3)" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Get in Touch
-                  </motion.button>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </main>
+    <div className="min-h-screen bg-white">
+      <div className="fixed top-6 left-6 z-50">
+        <button
+          onClick={() => window.history.back()}
+          className="group flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-pink-100 hover:bg-pink-50 transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5 text-pink-600 group-hover:text-pink-700" />
+          <span className="text-sm font-medium text-pink-600 group-hover:text-pink-700">Back</span>
+        </button>
       </div>
 
-      <AnimatePresence>
-        {showContactPopup && <ContactPopup />}
-      </AnimatePresence>
+      <div className="relative bg-gradient-to-br from-pink-50 to-white text-gray-800 overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'><path d='M30 0C13.431 0 0 13.431 0 30s13.431 30 30 30 30-13.431 30-30S46.569 0 30 0zm0 54C16.745 54 6 43.255 6 30S16.745 6 30 6s24 10.745 24 24-10.745 24-24 24zm0-48C14.327 6 6 14.327 6 30s8.327 24 24 24 24-8.327 24-24S45.673 6 30 6z' fill='%23EC4899' fill-opacity='0.3' fill-rule='evenodd'/></svg>")`,
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="container mx-auto px-4 pt-24 pb-16 text-center">
+          <div style={{ transform: `translateY(${heroParallax.get()}px)` }} className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center mb-6">
+              <Sparkles className="h-6 w-6 text-pink-600 mr-2" />
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-gray-900">
+                Plan Your <span className="text-pink-600">Dream Wedding</span>
+              </h1>
+              <Sparkles className="h-6 w-6 text-pink-600 ml-2" />
+            </div>
+            <p className="text-lg md:text-xl mb-12 text-gray-600 max-w-2xl mx-auto">
+              Let miamour create an unforgettable wedding experience tailored to your vision.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-16">
+        <div style={{ transform: `translateY(${servicesParallax.get()}px)` }} className="mb-20">
+          <div className="flex items-center justify-center mb-8">
+            <Sparkles className="h-6 w-6 text-pink-600 mr-2" />
+            <h2 className="text-3xl font-serif font-bold text-gray-900">Our Wedding Planning Services</h2>
+            <Sparkles className="h-6 w-6 text-pink-600 ml-2" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <div
+                key={index}
+                className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-pink-100 hover:shadow-lg transition-shadow"
+              >
+                <div className="p-3 bg-pink-100 rounded-xl inline-block mb-4">
+                  <service.icon className="w-6 h-6 text-pink-600" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">{service.title}</h3>
+                <p className="text-gray-600">{service.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ transform: `translateY(${ctaParallax.get()}px)` }} className="bg-pink-50 rounded-2xl p-8 text-center max-w-4xl mx-auto mb-12">
+          <div className="flex items-center justify-center mb-6">
+            <Sparkles className="h-6 w-6 text-pink-600 mr-2" />
+            <h2 className="text-3xl font-serif font-bold text-gray-900">Ready to Start Planning?</h2>
+            <Sparkles className="h-6 w-6 text-pink-600 ml-2" />
+          </div>
+          <button
+            onClick={() => setShowContactPopup(true)}
+            className="bg-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-pink-700 transition-colors"
+          >
+            Get in Touch
+          </button>
+        </div>
+      </div>
+
+      {showContactPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowContactPopup(false)}>
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl max-w-md w-full p-6 border border-pink-100" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center">
+                <Sparkles className="h-6 w-6 text-pink-600 mr-2" />
+                <h3 className="text-2xl font-bold text-gray-800">Contact miamour</h3>
+                <Sparkles className="h-6 w-6 text-pink-600 ml-2" />
+              </div>
+              <button onClick={() => setShowContactPopup(false)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="space-y-6">
+              {[
+                { icon: <Phone className="h-6 w-6 text-pink-600" />, title: "Phone", content: "+1 (800) 555-LOVE" },
+                { icon: <Mail className="h-6 w-6 text-pink-600" />, title: "Email", content: "wedding@miamour.com" },
+                { icon: <MapPin className="h-6 w-6 text-pink-600" />, title: "Address", content: "123 Wedding Lane, Suite 101\nLovetown, CA 90210" }
+              ].map((item, index) => (
+                <div key={index} className="flex items-start bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-pink-100">
+                  <div className="p-2 bg-pink-100 rounded-lg mr-4">{item.icon}</div>
+                  <div>
+                    <p className="font-medium text-gray-800">{item.title}</p>
+                    <p className="text-gray-600 whitespace-pre-line">
+                      {item.title === "Phone" ? (
+                        <a href={`tel:${item.content}`} className="hover:text-pink-600 transition-colors">{item.content}</a>
+                      ) : item.title === "Email" ? (
+                        <a href={`mailto:${item.content}`} className="hover:text-pink-600 transition-colors">{item.content}</a>
+                      ) : (
+                        item.content
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {screenSize === 'mobile' && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <button
+            className="bg-pink-600 text-white w-14 h-14 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"
+            aria-label="Contact Us"
+            onClick={() => setShowContactPopup(true)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-
-// Inline CSS for parallax effect
-const styles = `
-  html, body {
-    scroll-behavior: smooth;
-  }
-  .parallax-hero {
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-  .parallax-section {
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-`;
-
-// Inject styles into the document
-const styleSheet = document.createElement("style");
-styleSheet.innerText = styles;
-document.head.appendChild(styleSheet);
 
 export default MarriagePlanning;

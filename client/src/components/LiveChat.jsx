@@ -34,7 +34,7 @@ const LiveChat = ({ onClose }) => {
     } else if (lowerCaseMessage.includes('return') || lowerCaseMessage.includes('refund')) {
       return "We have a 30-day return policy. If you're not satisfied with your purchase, you can return it for a full refund within 30 days of delivery.";
     } else if (lowerCaseMessage.includes('contact') || lowerCaseMessage.includes('email')) {
-      return "You can reach our customer service team at info@miamour.me or call us at +234 9044130171.";
+      return "You can reach our customer service team at info@miamour.me or call us at +234 9112568963.";
     } else {
       return "Thank you for your message. One of our representatives will get back to you shortly. Is there anything else I can help you with?";
     }

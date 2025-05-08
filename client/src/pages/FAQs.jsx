@@ -32,7 +32,7 @@ const FAQs = () => {
     { 
       id: 3,
       question: "How can I get support with my matchmaking journey?", 
-      answer: "Our dedicated support team is available through multiple channels: email at support@miamour.com, live chat on our website, or by phone at +234 9044130171 during business hours (Monday-Friday, 9am-5pm WAT). We also offer personalized matchmaking consultations to help guide your journey to finding love.",
+      answer: "Our dedicated support team is available through multiple channels: email at support@miamour.com, live chat on our website, or by phone at +234 9112568963 during business hours (Monday-Friday, 9am-5pm WAT). We also offer personalized matchmaking consultations to help guide your journey to finding love.",
       tags: ["support", "contact", "help"]
     },
     { 
@@ -322,8 +322,8 @@ const FAQs = () => {
                 <Phone className="w-6 h-6 text-pink-600 mr-4" />
                 <div>
                   <p className="text-sm text-gray-600">Call us at</p>
-                  <a href="tel:+2345551234567" className="text-pink-600 font-medium hover:text-pink-700">
-                    +234 9044130171
+                  <a href="tel:+234 9112568963" className="text-pink-600 font-medium hover:text-pink-700">
+                    +234 9112568963
                   </a>
                 </div>
               </div>

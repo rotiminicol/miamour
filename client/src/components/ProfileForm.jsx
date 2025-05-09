@@ -17,15 +17,15 @@ const RELIGION_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
-const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
+const ProfileForm = ({ onSubmit, initialData = {}, signupData = {}, isSidebarOpen = true, onProfileComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: initialData.name || "",
-    age: initialData.age || "",
-    gender: initialData.gender || "",
-    location: initialData.location || "",
-    email: initialData.email || "",
-    phone: initialData.phone || "",
+    name: initialData.name || signupData.name || "",
+    age: initialData.age || signupData.age || "",
+    gender: initialData.gender || signupData.gender || "",
+    location: initialData.location || signupData.location || "",
+    email: initialData.email || signupData.email || "",
+    phone: initialData.phone || signupData.phone || "",
     pictures: initialData.pictures || [],
     profession: initialData.profession || "",
     education: initialData.education || "",
@@ -55,6 +55,19 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
   const validateField = (name, value) => {
     if (!value && ['name', 'age', 'gender', 'location', 'email', 'profession', 'education', 'religion', 'relationshipStatus', 'hasChildren', 'partnerAgeRange', 'partnerReligionPreference', 'marriageTimeframe'].includes(name)) {
       return `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
+    }
+    
+    // Additional validation for email format
+    if (name === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
+      return 'Invalid email format';
+    }
+    
+    // Additional validation for age (must be a number between 18-100)
+    if (name === 'age' && value) {
+      const ageNum = parseInt(value);
+      if (isNaN(ageNum) || ageNum < 18 || ageNum > 100) {
+        return 'Age must be between 18 and 100';
+      }
     }
     if (name === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
       return 'Invalid email format';
@@ -138,7 +151,11 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isStepComplete(3)) {
-      onSubmit(formData);
+      await onSubmit(formData);
+      // If onProfileComplete callback exists, call it
+      if (onProfileComplete) {
+        onProfileComplete();
+      }
     }
   };
 
@@ -775,6 +792,14 @@ const ProfileForm = ({ onSubmit, initialData = {}, isSidebarOpen = true }) => {
 
 ProfileForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  signupData: PropTypes.shape({
+    name: PropTypes.string,
+    age: PropTypes.string,
+    gender: PropTypes.string,
+    location: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string
+  }),
   initialData: PropTypes.shape({
     name: PropTypes.string,
     age: PropTypes.string,
@@ -803,11 +828,19 @@ ProfileForm.propTypes = {
     marriageTimeframe: PropTypes.string,
     acceptPartnerWithChildren: PropTypes.string
   }),
-  isSidebarOpen: PropTypes.bool
+  isSidebarOpen: PropTypes.bool,
+  onProfileComplete: PropTypes.func
 };
 
 ProfileForm.defaultProps = {
   initialData: {},
+  signupData: {},
+  isSidebarOpen: true
+};
+
+ProfileForm.defaultProps = {
+  initialData: {},
+  signupData: {},
   isSidebarOpen: true
 };
 

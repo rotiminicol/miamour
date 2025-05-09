@@ -64,7 +64,7 @@ function App() {
       <AnimatePresence mode="wait">
         <Routes>
           {/* Default route */}
-          <Route path="/" element={authUser ? <Navigate to="/dashboard" /> : <LandingPage />} />
+          <Route path="/" element={authUser ? <Navigate to="/homepage" /> : <LandingPage />} />
 
           <Route path="/getting-started" element={<GettingStarted />} />
           <Route path="/profile-submitted" element={<ProfileSuccessComponent />} />

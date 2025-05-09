@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const ProfileSuccessComponent = () => {
+function ProfileSuccessComponent() {
   const navigate = useNavigate();
   const controls = useAnimation();
   const [activating, setActivating] = useState(false);
@@ -26,22 +26,9 @@ const ProfileSuccessComponent = () => {
     // eslint-disable-next-line
   }, []);
 
-  // Backend call to activate match card
-  const handleContinue = async () => {
-    setActivating(true);
-    try {
-      await fetch('/api/match-card/activate', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      // Optionally show error, but still navigate
-    }
-    setActivating(false);
-    navigate("/dashboard");
-  };
-
+  const handleContinue = () => {
+    navigate("/");
+  }
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8 relative">
       {/* Animated floating particles (from GettingStarted) */}
@@ -162,6 +149,6 @@ const ProfileSuccessComponent = () => {
       </AnimatePresence>
     </div>
   );
-};
+}
 
 export default ProfileSuccessComponent;

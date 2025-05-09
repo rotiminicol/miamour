@@ -8,6 +8,7 @@ import {
   Activity, Award, Settings, Shield,
   BookOpen, Star, Info, Phone, Bell, ChevronRight
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import AnalyticsSection from '../components/AnalyticsSection';
 import { Header } from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -289,7 +290,31 @@ const Dashboard = () => {
               <Shield size={20} className="text-pink-500" />
               Analytics
             </h2>
-            <AnalyticsSection />
+            <div className="bg-white/80 backdrop-blur-md border border-pink-100 rounded-xl p-6">
+              <h3 className="text-xl font-semibold flex items-center gap-2 mb-4">
+                <Shield className="w-5 h-5 text-pink-500" />
+                User Activity Overview
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[
+                  { name: 'Jan', users: 4000, matches: 2400 },
+                  { name: 'Feb', users: 3000, matches: 1398 },
+                  { name: 'Mar', users: 2000, matches: 9800 },
+                  { name: 'Apr', users: 2780, matches: 3908 },
+                  { name: 'May', users: 1890, matches: 4800 },
+                  { name: 'Jun', users: 2390, matches: 3800 },
+                  { name: 'Jul', users: 3490, matches: 4300 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="users" fill="#ff69b4" name="Active Users" />
+                  <Bar dataKey="matches" fill="#8b008b" name="Matches Made" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* User Management Section */}

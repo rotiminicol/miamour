@@ -169,6 +169,11 @@ const SignupForm = ({ toggleForm }) => {
                 }`}
                 placeholder="+1234567890"
                 autoComplete="tel"
+              /><ProfileForm 
+                onSubmit={handleSubmit}
+                signupData={userSignupData}
+                initialData={profileData}
+                isSidebarOpen={isSidebarOpen}
               />
               {errors.phoneNumber && (
                 <p className="mt-1 text-xs text-red-500">{errors.phoneNumber}</p>

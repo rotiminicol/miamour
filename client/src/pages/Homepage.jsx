@@ -29,10 +29,33 @@ const Homepage = () => {
 
   // Fetch user profile and match card status when component mounts
   useEffect(() => {
-    checkAuth();
-    fetchMatchCard();
+    const fetchAndWatchMatchCard = async () => {
+      await checkAuth();
+      await fetchMatchCard();
+
+      // Watch for URL changes to refresh match card status
+      const handleLocationChange = async () => {
+        await fetchMatchCard();
+      };
+
+      window.addEventListener('hashchange', handleLocationChange);
+      window.addEventListener('popstate', handleLocationChange);
+
+      return () => {
+        window.removeEventListener('hashchange', handleLocationChange);
+        window.removeEventListener('popstate', handleLocationChange);
+      };
+    };
+
+    fetchAndWatchMatchCard();
     // eslint-disable-next-line
-  }, []);
+  }, [fetchMatchCard, checkAuth]);
+
+  // Handle match card activation success
+  const handleMatchCardActivation = () => {
+    // Set match card status to active
+    useMatchStore.setState({ matchCard: { status: 'active' } });
+  };
 
   // Categories data
   const categories = {
@@ -156,13 +179,9 @@ const Homepage = () => {
                 {heroContent.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                {loading ? (
-                  <div className="bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg">
-                    Loading...
-                  </div>
-                ) : matchCard && matchCard.status === 'active' ? (
+                {matchCard?.status === 'active' ? (
                   <button
-                    aria-label="Track awaiting match"
+                    aria-label="Awaiting Match"
                     className="bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-700 transition-all"
                     onClick={handleAwaitingMatchClick}
                   >
@@ -172,7 +191,10 @@ const Homepage = () => {
                   <button
                     aria-label="Start matching"
                     className="bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-700 transition-all"
-                    onClick={() => navigate('/getting-started', { state: { userData: authUser } })}
+                    onClick={() => {
+                      handleMatchCardActivation();
+                      navigate('/getting-started');
+                    }}
                   >
                     Start Matching
                   </button>

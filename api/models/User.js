@@ -1,95 +1,92 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema(
-  {
+const userSchema = new mongoose.Schema({
     name: {
-      type: String,
-      required: true,
+        type: String,
+        required: true,
+        trim: true,
     },
     email: {
-      type: String,
-      required: true,
-      unique: true,
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
     },
     password: {
-      type: String,
-      required: true,
+        type: String,
+        required: true,
+        minlength: 6,
     },
     age: {
-      type: Number,
-      required: true,
+        type: Number,
+        required: true,
+        min: 18,
     },
     gender: {
-      type: String,
-      required: true,
-      enum: ["male", "female", "non-binary", "other"],
+        type: String,
+        enum: ['male', 'female', 'other'],
+        required: true,
     },
-    genderPreference: {
-      type: String,
-      required: true,
-      enum: ["male", "female", "both"],
-    },
-    bio: { type: String, default: "" },
-    image: { type: String, default: "" },
-    relationshipStatus: {
-      type: String,
-      enum: ["single", "married", "divorced", "widowed"],
-      default: "single"
-    },
-    maritalHistory: {
-      type: String,
-      enum: ["yes", "no"],
-      default: "no"
-    },
-    numberOfChildren: {
-      type: Number,
-      default: 0
-    },
-    nationality: {
-      type: String,
-      default: ""
-    },
-    hobbies: [{
-      type: String
+    matches: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     }],
-    likes: [
-      {
+    events: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    dislikes: [
-      {
+        ref: 'Event',
+    }],
+    messages: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    matches: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-  },
-  { timestamps: true }
-);
-
-userSchema.pre("save", async function (next) {
-  // MAKE SURE TO ADD THIS IF CHECK!!! 👇 I forgot to add this in the tutorial
-  // only hash if password is modified.
-  if (!this.isModified("password")) {
-    return next();
-  }
-
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+        ref: 'Message',
+    }],
+    preferences: {
+        minAge: {
+            type: Number,
+            default: 18,
+        },
+        maxAge: {
+            type: Number,
+            default: 99,
+        },
+        gender: {
+            type: [String],
+            default: ['male', 'female', 'other'],
+        },
+    },
+    lastActive: {
+        type: Date,
+        default: Date.now,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
+}, {
+    timestamps: true,
 });
 
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// Middleware to update lastActive timestamp on each save
+userSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+// Password hashing middleware
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
+
+// Method to compare passwords
+userSchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
-
-export default User;
+export default mongoose.model('User', userSchema);

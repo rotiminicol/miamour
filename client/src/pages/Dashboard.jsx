@@ -8,6 +8,7 @@ import {
   Activity, Award, Settings, Shield,
   BookOpen, Star, Info, Phone, Bell, ChevronRight
 } from 'lucide-react';
+import AnalyticsSection from '../components/AnalyticsSection';
 import { Header } from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { useAuthStore } from '../store/useAuthStore';
@@ -280,6 +281,15 @@ const Dashboard = () => {
                 to="/resources"
               />
             </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div className="mb-8 sm:mb-14">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+              <Shield size={20} className="text-pink-500" />
+              Analytics
+            </h2>
+            <AnalyticsSection />
           </div>
 
           {/* User Management Section */}

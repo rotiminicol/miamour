@@ -3,6 +3,22 @@ import User from "../models/User.js";
 import { createNotification } from './notificationController.js';
 import asyncHandler from 'express-async-handler';
 
+export const getAdminUsers = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select('-password')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users',
+      error: error.message
+    });
+  }
+});
+
 export const updateProfile = async (req, res) => {
 	try {
 		console.log("Received update profile request for user:", req.user.id);

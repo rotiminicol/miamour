@@ -331,7 +331,7 @@ const CeremonyPlanningPage = () => {
             </div>
             <div className="space-y-6">
               {[
-                { icon: <Phone className="h-6 w-6 text-pink-500" />, title: "Phone", content: "+234 9044130171" },
+                { icon: <Phone className="h-6 w-6 text-pink-500" />, title: "Phone", content: "+234 9112568963" },
                 { icon: <Mail className="h-6 w-6 text-pink-500" />, title: "Email", content: "info@miamour.me" },
                 { 
                   icon: <Clock className="h-6 w-6 text-pink-500" />, 

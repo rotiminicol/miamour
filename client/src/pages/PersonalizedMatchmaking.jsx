@@ -306,7 +306,7 @@ const PersonalizedMatchmaking = () => {
               Welcome to <span className="text-pink-600">VIP Matchmaking</span>!
             </h2>
             <p className="text-gray-600 mb-8 text-lg">
-              Our elite matchmakers are now crafting your perfect matches. You will receive your exclusive matches within 24 hours.
+              Our elite matchmakers are now crafting your perfect matches. You will receive your exclusive matches within 30-60 working days.
             </p>
             <button
               onClick={() => {

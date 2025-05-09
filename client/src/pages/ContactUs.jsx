@@ -62,11 +62,11 @@ const ContactUsPage = () => {
     },
     {
       method: "Phone",
-      detail: "+234 9044130171",
+      detail: "+234 9112568963",
       description: "Available Monday-Friday, 9am-5pm WAT.",
       icon: <PhoneIcon className="w-6 h-6" />,
       action: "Call Now",
-      handler: () => window.location.href = "tel:+2349044130171"
+      handler: () => window.location.href = "tel:+2349112568963"
     }
   ];
 

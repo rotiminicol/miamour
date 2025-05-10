@@ -14,7 +14,8 @@ const MarriageCounseling = () => {
     phone: '',
     date: '',
     time: '',
-    message: ''
+    message: '',
+    packageId: null
   });
   const [bookingStep, setBookingStep] = useState(1);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
@@ -30,6 +31,57 @@ const MarriageCounseling = () => {
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const packages = [
+    {
+      id: 1,
+      name: "Strong Foundation",
+      description: "Pre-marital or relationship building",
+      sessions: 5,
+      priceNGN: 300000,
+      priceUSD: 187.50,
+      duration: "5 sessions",
+      features: [
+        "Comprehensive pre-marital assessment",
+        "Communication skills development",
+        "Conflict resolution strategies",
+        "Financial planning guidance",
+        "Family planning discussion"
+      ]
+    },
+    {
+      id: 2,
+      name: "Reconnect Package",
+      description: "For couples needing to rebuild trust",
+      sessions: 5,
+      priceNGN: 400000,
+      priceUSD: 250.00,
+      duration: "5 sessions",
+      features: [
+        "Trust rebuilding exercises",
+        "Intimacy restoration",
+        "Boundary setting",
+        "Emotional healing",
+        "Rebuilding connection"
+      ]
+    },
+    {
+      id: 3,
+      name: "Better Together",
+      description: "Strengthen communication and connection",
+      sessions: 5,
+      priceNGN: 350000,
+      priceUSD: 218.75,
+      duration: "5 sessions",
+      features: [
+        "Advanced communication techniques",
+        "Conflict resolution",
+        "Emotional intelligence",
+        "Connection building",
+        "Relationship growth"
+      ]
+    }
+  ];
 
   const counselors = [
     { 
@@ -143,14 +195,27 @@ const MarriageCounseling = () => {
     } else {
       try {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        alert('Booking successful! Please complete the payment using the bank details provided. We will contact you shortly to confirm your appointment.');
+        const selectedPackage = packages.find(p => p.id === bookingData.packageId);
+        
+        alert(`Booking successful! Please complete the payment using the bank details provided. We will contact you shortly to confirm your appointment.
+        
+        Package: ${selectedPackage.name}
+        Total Amount: ₦${selectedPackage.priceNGN.toLocaleString()} (~${selectedPackage.priceUSD})
+        Sessions: ${selectedPackage.sessions}
+        
+        Bank Details:
+        Bank: Providus Bank
+        Account Name: Arigo Energy Services Ltd
+        Account Number: 5400881912`);
+
         setBookingData({
           name: '',
           email: '',
           phone: '',
           date: '',
           time: '',
-          message: ''
+          message: '',
+          packageId: null
         });
         setBookingStep(1);
         setShowBookingForm(false);
@@ -382,6 +447,25 @@ const MarriageCounseling = () => {
                     <>
                       <div className="space-y-4">
                         <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Select Package</label>
+                          <div className="relative">
+                            <select
+                              name="packageId"
+                              value={bookingData.packageId}
+                              onChange={handleInputChange}
+                              required
+                              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            >
+                              <option value="">Select a package</option>
+                              {packages.map((pkg) => (
+                                <option key={pkg.id} value={pkg.id}>
+                                  {pkg.name} - ₦{pkg.priceNGN.toLocaleString()} (~${pkg.priceUSD})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -490,10 +574,12 @@ const MarriageCounseling = () => {
                           <h3 className="text-lg font-semibold text-gray-800 mb-2">Bank Transfer Details</h3>
                           <p className="text-gray-600 mb-4">Please make a bank transfer to the following account to confirm your booking. Include your name and appointment date in the transfer reference.</p>
                           <div className="bg-pink-50 p-4 rounded-lg">
+                            <p className="text-gray-800"><strong>Package:</strong> {packages.find(p => p.id === bookingData.packageId)?.name}</p>
+                            <p className="text-gray-800"><strong>Sessions:</strong> {packages.find(p => p.id === bookingData.packageId)?.sessions}</p>
+                            <p className="text-gray-800"><strong>Amount:</strong> ₦{packages.find(p => p.id === bookingData.packageId)?.priceNGN.toLocaleString()} (~${packages.find(p => p.id === bookingData.packageId)?.priceUSD})</p>
                             <p className="text-gray-800"><strong>Bank:</strong> Providus Bank</p>
                             <p className="text-gray-800"><strong>Account Name:</strong> Arigo Energy Services Ltd</p>
                             <p className="text-gray-800"><strong>Account Number:</strong> 5400881912</p>
-                            <p className="text-gray-800"><strong>Amount:</strong> ₦{selectedCounselor.priceNGN.toLocaleString()} (~${selectedCounselor.priceUSD})</p>
                           </div>
                         </div>
                         <p className="text-sm text-gray-600">Note: Your appointment will be confirmed once we verify the payment. Please ensure the transfer is completed within 24 hours.</p>

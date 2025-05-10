@@ -1,10 +1,11 @@
-
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAuthStore } from '../store/useAuthStore';
 import { FaEye, FaEyeSlash, FaHeart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm = ({ toggleForm }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -40,9 +41,49 @@ const SignupForm = ({ toggleForm }) => {
     'Mexico',
   ];
 
+  const countryCodes = {
+    'United States': '+1',
+    'Canada': '+1',
+    'United Kingdom': '+44',
+    'Australia': '+61',
+    'Nigeria': '+234',
+    'Ghana': '+233',
+    'South Africa': '+27',
+    'Kenya': '+254',
+    'India': '+91',
+    'China': '+86',
+    'Japan': '+81',
+    'Germany': '+49',
+    'France': '+33',
+    'Brazil': '+55',
+    'Mexico': '+52',
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'country') {
+      const selectedCountryCode = countryCodes[value] || '';
+      setFormData((prev) => {
+        const currentPhone = prev.phoneNumber.replace(/^\+\d+/, '').trim(); // Remove existing country code
+        const newPhoneNumber = selectedCountryCode ? `${selectedCountryCode} ${currentPhone}` : currentPhone;
+        return { ...prev, country: value, phoneNumber: newPhoneNumber };
+      });
+    } else if (name === 'phoneNumber') {
+      const selectedCountryCode = countryCodes[formData.country] || '';
+      // Prevent modifying the country code part if the user is editing the number
+      if (selectedCountryCode && !value.startsWith(selectedCountryCode)) {
+        setFormData((prev) => ({
+          ...prev,
+          phoneNumber: `${selectedCountryCode} ${value.replace(selectedCountryCode, '').trim()}`,
+        }));
+      } else {
+        setFormData((prev) => ({ ...prev, phoneNumber: value }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
@@ -76,7 +117,14 @@ const SignupForm = ({ toggleForm }) => {
       return;
     }
 
-    signup(formData);
+    signup(formData).then((response) => {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('signupSuccess', { detail: formData }));
+      }
+      navigate('/profile', { state: { userData: formData } });
+    }).catch((error) => {
+      setErrors({ general: error.response?.data?.message || 'Something went wrong' });
+    });
   };
 
   return (
@@ -167,13 +215,8 @@ const SignupForm = ({ toggleForm }) => {
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500 ${
                   errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="+1234567890"
+                placeholder={formData.country ? `${countryCodes[formData.country]} 1234567890` : '+1234567890'}
                 autoComplete="tel"
-              /><ProfileForm 
-                onSubmit={handleSubmit}
-                signupData={userSignupData}
-                initialData={profileData}
-                isSidebarOpen={isSidebarOpen}
               />
               {errors.phoneNumber && (
                 <p className="mt-1 text-xs text-red-500">{errors.phoneNumber}</p>
@@ -341,7 +384,7 @@ const SignupForm = ({ toggleForm }) => {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="aat-6 text-center text-sm text-gray-500">
           Already have an account?{' '}
           <button
             onClick={toggleForm}

@@ -110,9 +110,77 @@ const RelationshipTherapy = () => {
   ];
 
   const therapyPlans = [
-    { name: "Starter", sessions: "4", priceNGN: 150000, priceUSD: 93.75, save: "15%" },
-    { name: "Essential", sessions: "8", priceNGN: 300000, priceUSD: 187.50, save: "25%", popular: true },
-    { name: "Premium", sessions: "12", priceNGN: 450000, priceUSD: 281.25, save: "35%" }
+    {
+      name: "Reset Package",
+      description: "For those needing a fresh start",
+      sessions: 5,
+      priceNGN: 250000,
+      priceUSD: 156.25,
+      save: "15%",
+      features: [
+        "Comprehensive assessment",
+        "New perspective techniques",
+        "Goal setting",
+        "Action plan development"
+      ]
+    },
+    {
+      name: "Healing Plan",
+      description: "Deep emotional work and recovery",
+      sessions: 5,
+      priceNGN: 350000,
+      priceUSD: 218.75,
+      save: "25%",
+      popular: true,
+      features: [
+        "Emotional healing",
+        "Trauma recovery",
+        "Mind-body connection",
+        "Resilience building"
+      ]
+    },
+    {
+      name: "Mindful Living",
+      description: "Focus on stress and anxiety reduction",
+      sessions: 5,
+      priceNGN: 250000,
+      priceUSD: 156.25,
+      save: "15%",
+      features: [
+        "Mindfulness practices",
+        "Stress management",
+        "Relaxation techniques",
+        "Coping strategies"
+      ]
+    },
+    {
+      name: "Inner Peace",
+      description: "Managing depression and finding balance",
+      sessions: 5,
+      priceNGN: 400000,
+      priceUSD: 250.00,
+      save: "35%",
+      features: [
+        "Depression management",
+        "Mood regulation",
+        "Mindfulness training",
+        "Life balance"
+      ]
+    },
+    {
+      name: "Confidence Package",
+      description: "Self-esteem and personal growth",
+      sessions: 5,
+      priceNGN: 300000,
+      priceUSD: 187.50,
+      save: "20%",
+      features: [
+        "Self-esteem building",
+        "Personal growth",
+        "Boundary setting",
+        "Empowerment techniques"
+      ]
+    }
   ];
 
   const popupConfigs = {

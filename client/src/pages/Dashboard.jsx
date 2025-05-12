@@ -214,10 +214,10 @@ const Dashboard = () => {
                 to="/marriage-counseling"
               />
               <NavigationCard
-                title="Relationship Therapy"
+                title="Therapy Session"
                 icon={<MessageCircle size={20} />}
                 description="Expert support for relationships"
-                to="/relationship-therapy"
+                to="/therapy"
               />
             </div>
           </div>

@@ -61,7 +61,7 @@ const Homepage = () => {
   const categories = {
     services: [
       { icon: <Heart size={24} className="text-pink-500" />, text: 'Marriage Counseling', to: '/marriage-counseling', description: 'Build a lasting partnership.' },
-      { icon: <Users size={24} className="text-pink-400" />, text: 'Relationship Therapy', to: '/relationship-therapy', description: 'Strengthen your bond.' },
+      { icon: <Users size={24} className="text-pink-400" />, text: 'Therapy Session', to: '/therapy', description: 'Strengthen your bond.' },
       { icon: <MessageCircle size={24} className="text-pink-400" />, text: 'miamour App', to: '/dating-app', description: 'Connect with matches.' },
       { icon: <Calendar size={24} className="text-pink-300" />, text: 'Schedule', to: '/schedule', description: 'Book your sessions.' },
       { icon: <Sparkles size={24} className="text-pink-500" />, text: 'Ceremony Planning', to: '/ceremony-planning', description: 'Plan your dream event.' },

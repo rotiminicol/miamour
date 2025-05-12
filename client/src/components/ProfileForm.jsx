@@ -1,847 +1,561 @@
+import { useRef, useState, useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore";
+import { useUserStore } from "../store/useUserStore";
+import { useScroll, useTransform } from "framer-motion";
+import { Camera, Save, X, CheckCircle2, AlertCircle, Edit2, User, Heart, Users, ChevronLeft } from 'lucide-react';
 
-import { useState, useRef } from "react";
-import { User, Heart, ArrowRight, ArrowLeft, Check, FileText, X, Upload } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import PropTypes from 'prop-types';
-
-const RELIGION_OPTIONS = [
-  { value: "", label: "Select religion" },
-  { value: "christianity", label: "Christianity" },
-  { value: "islam", label: "Islam" },
-  { value: "hinduism", label: "Hinduism" },
-  { value: "buddhism", label: "Buddhism" },
-  { value: "judaism", label: "Judaism" },
-  { value: "traditional", label: "Traditional/Indigenous" },
-  { value: "spiritual", label: "Spiritual but not religious" },
-  { value: "none", label: "No religion" },
-  { value: "other", label: "Other" },
-];
-
-const ProfileForm = ({ onSubmit, initialData = {}, signupData = {}, isSidebarOpen = true, onProfileComplete }) => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: initialData.name || signupData.name || "",
-    age: initialData.age || signupData.age || "",
-    gender: initialData.gender || signupData.gender || "",
-    location: initialData.location || signupData.location || "",
-    email: initialData.email || signupData.email || "",
-    phone: initialData.phone || signupData.phone || "",
-    pictures: initialData.pictures || [],
-    profession: initialData.profession || "",
-    education: initialData.education || "",
-    religion: initialData.religion || "",
-    familyBackground: initialData.familyBackground || "",
-    hobbies: initialData.hobbies || "",
-    relationshipStatus: initialData.relationshipStatus || "",
-    previousMarriages: initialData.previousMarriages || "",
-    divorceDetails: initialData.divorceDetails || "",
-    hasChildren: initialData.hasChildren || "",
-    numberOfChildren: initialData.numberOfChildren || "",
-    childrenAges: initialData.childrenAges || "",
-    livingArrangement: initialData.livingArrangement || "",
-    partnerAgeRange: initialData.partnerAgeRange || "",
-    partnerLocationPreference: initialData.partnerLocationPreference || "",
-    partnerReligionPreference: initialData.partnerReligionPreference || "",
-    partnerEducationPreference: initialData.partnerEducationPreference || "",
-    dealBreakers: initialData.dealBreakers || "",
-    marriageTimeframe: initialData.marriageTimeframe || "",
-    acceptPartnerWithChildren: initialData.acceptPartnerWithChildren || ""
-  });
-
-  const [uploading, setUploading] = useState(false);
-  const [errors, setErrors] = useState({});
+const ProfilePage = () => {
+  const { authUser } = useAuthStore();
+  const [name, setName] = useState(authUser.name || "");
+  const [bio, setBio] = useState(authUser.bio || "");
+  const [age, setAge] = useState(authUser.age || "");
+  const [gender, setGender] = useState(authUser.gender || "");
+  const [relationshipStatus, setRelationshipStatus] = useState(authUser.relationshipStatus || "");
+  const [maritalHistory, setMaritalHistory] = useState(authUser.maritalHistory || "");
+  const [numberOfChildren, setNumberOfChildren] = useState(authUser.numberOfChildren || 0);
+  const [nationality, setNationality] = useState(authUser.nationality || "");
+  const [hobbies, setHobbies] = useState(authUser.hobbies || []);
+  const [image, setImage] = useState(authUser.image || null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [tempImage, setTempImage] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
   const fileInputRef = useRef(null);
+  const containerRef = useRef(null);
+  const { updateProfile } = useUserStore();
 
-  const validateField = (name, value) => {
-    if (!value && ['name', 'age', 'gender', 'location', 'email', 'profession', 'education', 'religion', 'relationshipStatus', 'hasChildren', 'partnerAgeRange', 'partnerReligionPreference', 'marriageTimeframe'].includes(name)) {
-      return `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
-    }
-    
-    // Additional validation for email format
-    if (name === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
-      return 'Invalid email format';
-    }
-    
-    // Additional validation for age (must be a number between 18-100)
-    if (name === 'age' && value) {
-      const ageNum = parseInt(value);
-      if (isNaN(ageNum) || ageNum < 18 || ageNum > 100) {
-        return 'Age must be between 18 and 100';
-      }
-    }
-    if (name === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
-      return 'Invalid email format';
-    }
-    if (name === 'pictures' && value.length < 5) {
-      return `Please upload at least 5 photos (currently ${value.length})`;
-    }
-    return '';
-  };
+  // Parallax scrolling
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const profileParallax = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const infoParallax = useTransform(scrollYProgress, [0, 1], [0, 30]);
+  const hobbiesParallax = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
-  };
-
-  const handleImageUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + formData.pictures.length > 10) {
-      setErrors(prev => ({ ...prev, pictures: 'You can upload a maximum of 10 photos' }));
-      return;
+  // Reset messages after 5 seconds
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+        setSuccessMessage("");
+        setShowSuccessToast(false);
+        setShowErrorToast(false);
+      }, 5000);
+      return () => clearTimeout(timer);
     }
-
-    setUploading(true);
-    try {
-      const newPictures = files.map(file => ({
-        url: URL.createObjectURL(file),
-        file,
-        isPrimary: false
-      }));
-      
-      const updatedPictures = [...formData.pictures, ...newPictures];
-      setFormData(prev => ({ ...prev, pictures: updatedPictures }));
-      setErrors(prev => ({ ...prev, pictures: validateField('pictures', updatedPictures) }));
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      setErrors(prev => ({ ...prev, pictures: 'Error uploading images. Please try again.' }));
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeImage = (index) => {
-    const newPictures = [...formData.pictures];
-    const removed = newPictures.splice(index, 1);
-    
-    if (removed[0]?.url?.startsWith('blob:')) {
-      URL.revokeObjectURL(removed[0].url);
-    }
-    
-    setFormData(prev => ({ ...prev, pictures: newPictures }));
-    setErrors(prev => ({ ...prev, pictures: validateField('pictures', newPictures) }));
-  };
-
-  const setPrimaryImage = (index) => {
-    setFormData(prev => {
-      const newPictures = prev.pictures.map((pic, i) => ({
-        ...pic,
-        isPrimary: i === index
-      }));
-      return { ...prev, pictures: newPictures };
-    });
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleNextStep = () => {
-    if (isStepComplete(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 3));
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handlePrevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-    window.scrollTo(0, 0);
-  };
+  }, [errorMessage, successMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isStepComplete(3)) {
-      await onSubmit(formData);
-      // If onProfileComplete callback exists, call it
-      if (onProfileComplete) {
-        onProfileComplete();
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsSaving(true);
+
+    if (!name || !bio || !age || !gender || !relationshipStatus || !nationality) {
+      setErrorMessage("Please fill all required fields.");
+      setShowErrorToast(true);
+      setIsSaving(false);
+      return;
+    }
+    try {
+      await updateProfile({
+        name,
+        bio,
+        age,
+        gender,
+        relationshipStatus,
+        maritalHistory,
+        numberOfChildren,
+        nationality,
+        hobbies,
+        image: tempImage || image,
+      });
+
+      setSuccessMessage("Profile updated successfully!");
+      setShowSuccessToast(true);
+      if (tempImage) {
+        setImage(tempImage);
+        setTempImage(null);
       }
+      setIsEditModalOpen(false);
+    } catch (error) {
+      setErrorMessage("Failed to update profile. Please try again.");
+      setShowErrorToast(true);
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const isStepComplete = (step) => {
-    if (step === 1) {
-      return !validateField('name', formData.name) &&
-             !validateField('age', formData.age) &&
-             !validateField('gender', formData.gender) &&
-             !validateField('location', formData.location) &&
-             !validateField('email', formData.email) &&
-             !validateField('pictures', formData.pictures);
-    } else if (step === 2) {
-      return !validateField('profession', formData.profession) &&
-             !validateField('education', formData.education) &&
-             !validateField('religion', formData.religion) &&
-             !validateField('relationshipStatus', formData.relationshipStatus) &&
-             !validateField('hasChildren', formData.hasChildren);
-    } else if (step === 3) {
-      return !validateField('partnerAgeRange', formData.partnerAgeRange) &&
-             !validateField('partnerReligionPreference', formData.partnerReligionPreference) &&
-             !validateField('marriageTimeframe', formData.marriageTimeframe);
+  const handleImageSelection = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage("Image size should be less than 5MB.");
+      setShowErrorToast(true);
+      return;
     }
-    return false;
+
+    const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      setErrorMessage("Please select a valid image file (JPEG, PNG, GIF, or WEBP).");
+      setShowErrorToast(true);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const base64String = canvas.toDataURL(file.type, 0.7);
+        setTempImage(base64String);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   };
 
-  const fadeVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.3 } }
+  const handleSaveImage = async () => {
+    if (!tempImage) return;
+    setIsSaving(true);
+
+    try {
+      await updateProfile({
+        name,
+        bio,
+        age,
+        gender,
+        relationshipStatus,
+        maritalHistory,
+        numberOfChildren,
+        nationality,
+        hobbies,
+        image: tempImage,
+      });
+      setSuccessMessage("Profile picture updated successfully!");
+      setShowSuccessToast(true);
+      setImage(tempImage);
+      setTempImage(null);
+    } catch (error) {
+      let errorMessage = "Failed to update profile picture. Please try again.";
+      if (error.response) {
+        errorMessage = error.response.data?.message || errorMessage;
+      } else if (error.request) {
+        errorMessage = "No response from server. Please check your internet connection.";
+      } else {
+        errorMessage = error.message;
+      }
+      setErrorMessage(errorMessage);
+      setShowErrorToast(true);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setTempImage(null);
+    setIsEditModalOpen(false);
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between shadow-sm">
-        <div className="flex items-center">
-          <Heart className="h-8 w-8 text-rose-500 mr-2" />
-          <h1 className="text-xl font-bold text-gray-800">Create Your Matrimony Profile</h1>
-        </div>
-        <div className="text-sm text-gray-500">Step {currentStep} of 3</div>
-      </header>
+    <div className="min-h-screen bg-white relative">
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'><path d='M30 0C13.431 0 0 13.431 0 30s13.431 30 30 30 30-13.431 30-30S46.569 0 30 0zm0 54C16.745 54 6 43.255 6 30S16.745 6 30 6s24 10.745 24 24-10.745 24-24 24zm0-48C14.327 6 6 14.327 6 30s8.327 24 24 24 24-8.327 24-24S45.673 6 30 6z' fill='%23EC4899' fill-opacity='0.3' fill-rule='evenodd'/></svg>")`,
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      <div className="fixed top-6 left-6 z-50">
+        <button
+          onClick={() => window.history.back()}
+          className="group flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-pink-100 hover:bg-pink-50 transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5 text-pink-600 group-hover:text-pink-700" />
+          <span className="text-sm font-medium text-pink-600 group-hover:text-pink-700">Back</span>
+        </button>
+      </div>
 
-      <div className="flex-grow flex justify-center py-8">
-        <div className={`w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isSidebarOpen ? 'lg:pl-64' : ''}`}>
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              {[1, 2, 3].map((step) => (
-                <div key={step} className="flex flex-col items-center">
-                  <div 
-                    className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md ${
-                      step === currentStep 
-                        ? "bg-rose-500 text-white" 
-                        : step < currentStep 
-                          ? "bg-green-500 text-white" 
-                          : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {step < currentStep ? <Check size={18} /> : step}
-                  </div>
-                  <p className="text-sm font-medium mt-2 text-gray-700">
-                    {step === 1 ? "Basic Info" : step === 2 ? "Personal Details" : "Preferences"}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-              <motion.div 
-                className="h-full bg-rose-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${((currentStep - 1) / 2) * 100}%` }}
-                transition={{ duration: 0.5 }}
-              />
+      <div className="container mx-auto px-4 py-16" ref={containerRef}>
+        {/* Toast Notifications */}
+        {showSuccessToast && (
+          <div className="fixed top-6 right-6 z-50">
+            <div className="bg-white/90 backdrop-blur-sm border border-pink-100 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-pink-600" />
+              <span className="text-gray-700">{successMessage}</span>
             </div>
           </div>
+        )}
+        {showErrorToast && (
+          <div className="fixed top-6 right-6 z-50">
+            <div className="bg-white/90 backdrop-blur-sm border border-pink-100 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              <span className="text-gray-700">{errorMessage}</span>
+            </div>
+          </div>
+        )}
 
-          <motion.form 
-            onSubmit={handleSubmit} 
-            className="bg-white rounded-2xl shadow-lg p-6 sm:p-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+        {/* Profile Section */}
+        <div className="flex-grow flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+          <div 
+            style={{ transform: `translateY(${profileParallax.get()}px)` }}
+            className="w-full max-w-4xl bg-white/90 backdrop-blur-sm rounded-2xl border border-pink-100 shadow-xl p-8"
           >
-            <AnimatePresence mode="wait">
-              {currentStep === 1 && (
-                <motion.div 
-                  key="step1"
-                  variants={fadeVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="space-y-6"
-                >
-                  <h2 className="text-2xl font-semibold flex items-center text-gray-800">
-                    <User className="mr-3 text-rose-500" size={24} />
-                    Basic Information
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Your full name"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.name ? 'true' : 'false'}
-                        aria-describedby={errors.name ? 'name-error' : undefined}
-                      />
-                      {errors.name && <p id="name-error" className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Age *</label>
-                      <input
-                        type="text"
-                        name="age"
-                        value={formData.age}
-                        onChange={handleInputChange}
-                        placeholder="Your age"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.age ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.age ? 'true' : 'false'}
-                        aria-describedby={errors.age ? 'age-error' : undefined}
-                      />
-                      {errors.age && <p id="age-error" className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-                      <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.gender ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.gender ? 'true' : 'false'}
-                        aria-describedby={errors.gender ? 'gender-error' : undefined}
-                      >
-                        <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                      {errors.gender && <p id="gender-error" className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Location *</label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        placeholder="City, Country"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.location ? 'true' : 'false'}
-                        aria-describedby={errors.location ? 'location-error' : undefined}
-                      />
-                      {errors.location && <p id="location-error" className="text-red-500 text-sm mt-1">{errors.location}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="Your email address"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.email ? 'true' : 'false'}
-                        aria-describedby={errors.email ? 'email-error' : undefined}
-                      />
-                      {errors.email && <p id="email-error" className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="Your phone number"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                      />
-                    </div>
+            {/* Profile Picture */}
+            <div className="flex flex-col items-center relative">
+              <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-pink-600 shadow-lg mx-auto mb-6">
+                {tempImage || image ? (
+                  <img
+                    src={tempImage || image}
+                    alt="Profile Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-pink-50 flex items-center justify-center">
+                    <User className="w-16 h-16 text-pink-400" />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Photos * (Minimum 5, Maximum 10)
-                      <span className="text-xs text-gray-500 ml-2">
-                        {formData.pictures.length}/10 uploaded
-                      </span>
-                    </label>
-                    {errors.pictures && <p className="text-red-500 text-sm mb-2">{errors.pictures}</p>}
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageUpload}
-                      multiple
-                      accept="image/*"
-                      className="hidden"
-                      aria-describedby="pictures-error"
-                    />
-                    <div className="flex flex-wrap gap-3 mb-4">
-                      {formData.pictures.map((picture, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={picture.url}
-                            alt={`Profile ${index + 1}`}
-                            className={`w-24 h-24 object-cover rounded-lg border-2 ${picture.isPrimary ? 'border-rose-500' : 'border-gray-200'}`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                            aria-label={`Remove photo ${index + 1}`}
-                          >
-                            <X size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setPrimaryImage(index)}
-                            className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs px-2 py-1 rounded ${
-                              picture.isPrimary 
-                                ? 'bg-rose-500 text-white' 
-                                : 'bg-white text-gray-700 opacity-0 group-hover:opacity-100'
-                            } transition-opacity`}
-                            aria-label={picture.isPrimary ? 'Primary photo' : 'Set as primary photo'}
-                          >
-                            {picture.isPrimary ? 'Primary' : 'Set Primary'}
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    <motion.button
-                      type="button"
-                      onClick={triggerFileInput}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      disabled={formData.pictures.length >= 10 || uploading}
-                      className={`w-full p-3 rounded-lg flex items-center justify-center gap-2 ${
-                        uploading 
-                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                          : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                      }`}
-                      aria-label="Upload photos"
-                    >
-                      {uploading ? 'Uploading...' : (
-                        <>
-                          <Upload size={16} />
-                          {formData.pictures.length === 0 ? 'Upload Photos' : 'Add More Photos'}
-                        </>
-                      )}
-                    </motion.button>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Upload clear, high-quality photos. At least one should clearly show your face.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-
-              {currentStep === 2 && (
-                <motion.div 
-                  key="step2"
-                  variants={fadeVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="space-y-6"
+                )}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current.click()}
+                  className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity"
                 >
-                  <h2 className="text-2xl font-semibold flex items-center text-gray-800">
-                    <FileText className="mr-3 text-rose-500" size={24} />
-                    Personal Details
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Profession *</label>
-                      <input
-                        type="text"
-                        name="profession"
-                        value={formData.profession}
-                        onChange={handleInputChange}
-                        placeholder="Your occupation"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.profession ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.profession ? 'true' : 'false'}
-                        aria-describedby={errors.profession ? 'profession-error' : undefined}
-                      />
-                      {errors.profession && <p id="profession-error" className="text-red-500 text-sm mt-1">{errors.profession}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Education *</label>
-                      <select
-                        name="education"
-                        value={formData.education}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.education ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.education ? 'true' : 'false'}
-                        aria-describedby={errors.education ? 'education-error' : undefined}
-                      >
-                        <option value="">Select education level</option>
-                        <option value="highSchool">High School</option>
-                        <option value="bachelors">Bachelors Degree</option>
-                        <option value="masters">Masters Degree</option>
-                        <option value="phd">PhD or Doctorate</option>
-                        <option value="other">Other</option>
-                      </select>
-                      {errors.education && <p id="education-error" className="text-red-500 text-sm mt-1">{errors.education}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Religion *</label>
-                      <select
-                        name="religion"
-                        value={formData.religion}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.religion ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.religion ? 'true' : 'false'}
-                        aria-describedby={errors.religion ? 'religion-error' : undefined}
-                      >
-                        {RELIGION_OPTIONS.map(opt => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
-                      {errors.religion && <p id="religion-error" className="text-red-500 text-sm mt-1">{errors.religion}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Relationship Status *</label>
-                      <select
-                        name="relationshipStatus"
-                        value={formData.relationshipStatus}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.relationshipStatus ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.relationshipStatus ? 'true' : 'false'}
-                        aria-describedby={errors.relationshipStatus ? 'relationshipStatus-error' : undefined}
-                      >
-                        <option value="">Select status</option>
-                        <option value="single">Single (Never Married)</option>
-                        <option value="divorced">Divorced</option>
-                        <option value="widowed">Widowed</option>
-                        <option value="separated">Separated</option>
-                      </select>
-                      {errors.relationshipStatus && <p id="relationshipStatus-error" className="text-red-500 text-sm mt-1">{errors.relationshipStatus}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Previous Marriages</label>
-                      <select
-                        name="previousMarriages"
-                        value={formData.previousMarriages}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                      >
-                        <option value="">Select option</option>
-                        <option value="0">None</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3+">3 or more</option>
-                      </select>
-                    </div>
-                    {(formData.relationshipStatus === "divorced" || formData.relationshipStatus === "separated") && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Divorce/Separation Details</label>
-                        <textarea
-                          name="divorceDetails"
-                          value={formData.divorceDetails}
-                          onChange={handleInputChange}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                          placeholder="How long ago? Any specific circumstances?"
-                          rows="3"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Do You Have Children? *</label>
-                      <select
-                        name="hasChildren"
-                        value={formData.hasChildren}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.hasChildren ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.hasChildren ? 'true' : 'false'}
-                        aria-describedby={errors.hasChildren ? 'hasChildren-error' : undefined}
-                      >
-                        <option value="">Select option</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                      {errors.hasChildren && <p id="hasChildren-error" className="text-red-500 text-sm mt-1">{errors.hasChildren}</p>}
-                    </div>
-                    {formData.hasChildren === "yes" && (
+                  <Camera className="w-8 h-8 text-white" />
+                </button>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageSelection}
+              />
+              {tempImage && (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSaveImage}
+                    disabled={isSaving}
+                    className="px-4 py-2 bg-pink-600 text-white rounded-full hover:bg-pink-700 shadow-md flex items-center space-x-2"
+                  >
+                    {isSaving ? (
                       <>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Number of Children</label>
-                          <select
-                            name="numberOfChildren"
-                            value={formData.numberOfChildren}
-                            onChange={handleInputChange}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                          >
-                            <option value="">Select number</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5+">5 or more</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Childrens Ages</label>
-                          <input
-                            type="text"
-                            name="childrenAges"
-                            value={formData.childrenAges}
-                            onChange={handleInputChange}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                            placeholder="e.g., 5, 8, 12"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Living Arrangement</label>
-                          <select
-                            name="livingArrangement"
-                            value={formData.livingArrangement}
-                            onChange={handleInputChange}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                          >
-                            <option value="">Select arrangement</option>
-                            <option value="fullTime">Live with me full-time</option>
-                            <option value="partTime">Live with me part-time</option>
-                            <option value="visitOnly">Visit occasionally</option>
-                            <option value="adult">Adult children (independent)</option>
-                            <option value="other">Other arrangement</option>
-                          </select>
-                        </div>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        <span>Save Image</span>
                       </>
                     )}
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Family Background</label>
-                      <textarea
-                        name="familyBackground"
-                        value={formData.familyBackground}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[100px]"
-                        placeholder="Brief description of your family"
-                        rows="4"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Hobbies & Interests</label>
-                      <textarea
-                        name="hobbies"
-                        value={formData.hobbies}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[100px]"
-                        placeholder="What do you enjoy doing in your free time?"
-                        rows="4"
-                      />
-                    </div>
-                  </div>
-                </motion.div>
+                  </button>
+                  <button
+                    onClick={() => setTempImage(null)}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 shadow-md flex items-center space-x-2"
+                  >
+                    <X className="w-5 h-5" />
+                    <span>Cancel</span>
+                  </button>
+                </div>
               )}
-
-              {currentStep === 3 && (
-                <motion.div 
-                  key="step3"
-                  variants={fadeVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="space-y-6"
-                >
-                  <h2 className="text-2xl font-semibold flex items-center text-gray-800">
-                    <Heart className="mr-3 text-rose-500" size={24} />
-                    Marriage Preferences
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Age Range *</label>
-                      <input
-                        type="text"
-                        name="partnerAgeRange"
-                        value={formData.partnerAgeRange}
-                        onChange={handleInputChange}
-                        placeholder="e.g., 25-35"
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.partnerAgeRange ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.partnerAgeRange ? 'true' : 'false'}
-                        aria-describedby={errors.partnerAgeRange ? 'partnerAgeRange-error' : undefined}
-                      />
-                      {errors.partnerAgeRange && <p id="partnerAgeRange-error" className="text-red-500 text-sm mt-1">{errors.partnerAgeRange}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Location Preference</label>
-                      <input
-                        type="text"
-                        name="partnerLocationPreference"
-                        value={formData.partnerLocationPreference}
-                        onChange={handleInputChange}
-                        placeholder="Preferred location for partner"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Religious Preference *</label>
-                      <select
-                        name="partnerReligionPreference"
-                        value={formData.partnerReligionPreference}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.partnerReligionPreference ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.partnerReligionPreference ? 'true' : 'false'}
-                        aria-describedby={errors.partnerReligionPreference ? 'partnerReligionPreference-error' : undefined}
-                      >
-                        {RELIGION_OPTIONS.map(opt => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
-                      {errors.partnerReligionPreference && <p id="partnerReligionPreference-error" className="text-red-500 text-sm mt-1">{errors.partnerReligionPreference}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Education Preference</label>
-                      <select
-                        name="partnerEducationPreference"
-                        value={formData.partnerEducationPreference}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                      >
-                        <option value="">Select preference</option>
-                        <option value="highSchool">High School or higher</option>
-                        <option value="bachelors">Bachelors Degree or higher</option>
-                        <option value="masters">Masters Degree or higher</option>
-                        <option value="phd">PhD or Doctorate</option>
-                        <option value="noPreference">No Preference</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Accept Partner with Children?</label>
-                      <select
-                        name="acceptPartnerWithChildren"
-                        value={formData.acceptPartnerWithChildren}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                      >
-                        <option value="">Select preference</option>
-                        <option value="yes">Yes, I accept partners with children</option>
-                        <option value="no">No, I prefer partners without children</option>
-                        <option value="maybe">Depends on the situation</option>
-                      </select>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Deal Breakers</label>
-                      <textarea
-                        name="dealBreakers"
-                        value={formData.dealBreakers}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[100px]"
-                        placeholder="Any absolute requirements or deal breakers"
-                        rows="4"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Marriage Timeframe *</label>
-                      <select
-                        name="marriageTimeframe"
-                        value={formData.marriageTimeframe}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 ${errors.marriageTimeframe ? 'border-red-500' : 'border-gray-300'}`}
-                        aria-invalid={errors.marriageTimeframe ? 'true' : 'false'}
-                        aria-describedby={errors.marriageTimeframe ? 'marriageTimeframe-error' : undefined}
-                      >
-                        <option value="">Select timeframe</option>
-                        <option value="0-6months">Within 6 months</option>
-                        <option value="6-12months">6-12 months</option>
-                        <option value="1-2years">1-2 years</option>
-                        <option value="2+years">More than 2 years</option>
-                      </select>
-                      {errors.marriageTimeframe && <p id="marriageTimeframe-error" className="text-red-500 text-sm mt-1">{errors.marriageTimeframe}</p>}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="flex flex-col sm:flex-row justify-between mt-8 gap-4">
-              {currentStep > 1 && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  type="button"
-                  onClick={handlePrevStep}
-                  className="w-full sm:w-auto px-6 py-3 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-300"
-                  aria-label="Go to previous step"
-                >
-                  <ArrowLeft size={16} className="mr-2" /> Back
-                </motion.button>
-              )}
-              {currentStep < 3 ? (
-                <motion.button
-                  whileHover={isStepComplete(currentStep) ? { scale: 1.05 } : {}}
-                  whileTap={isStepComplete(currentStep) ? { scale: 0.95 } : {}}
-                  type="button"
-                  onClick={handleNextStep}
-                  disabled={!isStepComplete(currentStep)}
-                  className={`w-full sm:w-auto px-6 py-3 rounded-lg flex items-center justify-center ${
-                    isStepComplete(currentStep) 
-                      ? "bg-rose-500 text-white hover:bg-rose-600" 
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  } focus:outline-none focus:ring-2 focus:ring-rose-300`}
-                  aria-label="Go to next step"
-                >
-                  Next <ArrowRight size={16} className="ml-2" />
-                </motion.button>
-              ) : (
-                <motion.button
-                  whileHover={isStepComplete(currentStep) ? { scale: 1.05 } : {}}
-                  whileTap={isStepComplete(currentStep) ? { scale: 0.95 } : {}}
-                  type="submit"
-                  disabled={!isStepComplete(3)}
-                  className={`w-full sm:w-auto px-6 py-3 rounded-lg flex items-center justify-center ${
-                    isStepComplete(currentStep) 
-                      ? "bg-rose-500 text-white hover:bg-rose-600" 
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  } focus:outline-none focus:ring-2 focus:ring-rose-300`}
-                  aria-label="Submit profile"
-                >
-                  Submit Profile <Check size={16} className="ml-2" />
-                </motion.button>
-              )}
+              <h1 className="mt-6 text-3xl font-serif font-bold text-gray-900">
+                {name}
+              </h1>
+              <p className="text-gray-600 mt-2 text-center max-w-md">{bio}</p>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="mt-6 px-6 py-3 bg-pink-600 text-white rounded-full hover:bg-pink-700 shadow-md flex items-center space-x-2"
+              >
+                <Edit2 className="w-5 h-5" />
+                <span>Edit Profile</span>
+              </button>
             </div>
 
-            <div className="text-sm text-gray-500 mt-6 text-center p-4 bg-gray-50 rounded-lg">
-              <p>
-                Our matchmaking experts will review your profile within 24 hours.
-                <br />Fields marked with * are required.
-              </p>
+            {/* Display User Information */}
+            <div 
+              style={{ transform: `translateY(${infoParallax.get()}px)` }}
+              className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl border border-pink-100">
+                <h3 className="text-xl font-serif font-semibold text-gray-900 mb-4 flex items-center">
+                  <User className="w-5 h-5 mr-2 text-pink-600" />
+                  Personal Information
+                </h3>
+                <div className="space-y-3 text-gray-700">
+                  <p className="flex items-center"><span className="font-medium w-32">Age:</span> {age}</p>
+                  <p className="flex items-center"><span className="font-medium w-32">Gender:</span> {gender}</p>
+                  <p className="flex items-center"><span className="font-medium w-32">Nationality:</span> {nationality}</p>
+                </div>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl border border-pink-100">
+                <h3 className="text-xl font-serif font-semibold text-gray-900 mb-4 flex items-center">
+                  <Heart className="w-5 h-5 mr-2 text-pink-600" />
+                  Relationship Status
+                </h3>
+                <div className="space-y-3 text-gray-700">
+                  <p className="flex items-center"><span className="font-medium w-32">Status:</span> {relationshipStatus}</p>
+                  <p className="flex items-center"><span className="font-medium w-32">Marital History:</span> {maritalHistory}</p>
+                  <p className="flex items-center"><span className="font-medium w-32">Children:</span> {numberOfChildren}</p>
+                </div>
+              </div>
+
+              <div 
+                style={{ transform: `translateY(${hobbiesParallax.get()}px)` }}
+                className="md:col-span-2 bg-white/90 backdrop-blur-sm p-6 rounded-xl border border-pink-100"
+              >
+                <h3 className="text-xl font-serif font-semibold text-gray-900 mb-4 flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-pink-600" />
+                  Interests & Hobbies
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {hobbies.map((hobby, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-pink-50 rounded-full text-sm text-gray-700 border border-pink-100"
+                    >
+                      {hobby}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-          </motion.form>
+          </div>
         </div>
+
+        {/* Edit Profile Modal */}
+        {isEditModalOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={handleCancel}
+          >
+            <div 
+              className="bg-white/90 backdrop-blur-sm rounded-2xl w-full max-w-2xl p-8 overflow-y-auto max-h-[90vh]"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-serif font-bold text-gray-900">
+                  Edit Profile
+                </h2>
+                <button
+                  onClick={handleCancel}
+                  className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name */}
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    />
+                  </div>
+
+                  {/* Age */}
+                  <div>
+                    <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
+                      Age <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="age"
+                      name="age"
+                      type="number"
+                      min="18"
+                      max="100"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    />
+                  </div>
+
+                  {/* Gender */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="non-binary">Non-binary</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Relationship Status */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Relationship Status <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={relationshipStatus}
+                      onChange={(e) => setRelationshipStatus(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="single">Single</option>
+                      <option value="married">Married</option>
+                      <option value="divorced">Divorced</option>
+                      <option value="widowed">Widowed</option>
+                    </select>
+                  </div>
+
+                  {/* Marital History */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Have you been married before? <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={maritalHistory}
+                      onChange={(e) => setMaritalHistory(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+
+                  {/* Number of Children */}
+                  <div>
+                    <label htmlFor="numberOfChildren" className="block text-sm font-medium text-gray-700 mb-2">
+                      Number of Children
+                    </label>
+                    <input
+                      id="numberOfChildren"
+                      name="numberOfChildren"
+                      type="number"
+                      min="0"
+                      value={numberOfChildren}
+                      onChange={(e) => setNumberOfChildren(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    />
+                  </div>
+
+                  {/* Nationality */}
+                  <div>
+                    <label htmlFor="nationality" className="block text-sm font-medium text-gray-700 mb-2">
+                      Nationality <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="nationality"
+                      name="nationality"
+                      type="text"
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      required
+                    />
+                  </div>
+
+                  {/* Hobbies */}
+                  <div>
+                    <label htmlFor="hobbies" className="block text-sm font-medium text-gray-700 mb-2">
+                      Hobbies
+                    </label>
+                    <input
+                      id="hobbies"
+                      name="hobbies"
+                      type="text"
+                      value={hobbies.join(", ")}
+                      onChange={(e) => setHobbies(e.target.value.split(", "))}
+                      className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                      placeholder="e.g., Reading, Traveling, Cooking"
+                    />
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    rows={3}
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    className="w-full px-4 py-2 border border-pink-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    required
+                  />
+                </div>
+
+                {/* Save Button */}
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="w-full py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 shadow-lg flex items-center justify-center space-x-2"
+                >
+                  {isSaving ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-ProfileForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  signupData: PropTypes.shape({
-    name: PropTypes.string,
-    age: PropTypes.string,
-    gender: PropTypes.string,
-    location: PropTypes.string,
-    email: PropTypes.string,
-    phone: PropTypes.string
-  }),
-  initialData: PropTypes.shape({
-    name: PropTypes.string,
-    age: PropTypes.string,
-    gender: PropTypes.string,
-    location: PropTypes.string,
-    email: PropTypes.string,
-    phone: PropTypes.string,
-    pictures: PropTypes.array,
-    profession: PropTypes.string,
-    education: PropTypes.string,
-    religion: PropTypes.string,
-    familyBackground: PropTypes.string,
-    hobbies: PropTypes.string,
-    relationshipStatus: PropTypes.string,
-    previousMarriages: PropTypes.string,
-    divorceDetails: PropTypes.string,
-    hasChildren: PropTypes.string,
-    numberOfChildren: PropTypes.string,
-    childrenAges: PropTypes.string,
-    livingArrangement: PropTypes.string,
-    partnerAgeRange: PropTypes.string,
-    partnerLocationPreference: PropTypes.string,
-    partnerReligionPreference: PropTypes.string,
-    partnerEducationPreference: PropTypes.string,
-    dealBreakers: PropTypes.string,
-    marriageTimeframe: PropTypes.string,
-    acceptPartnerWithChildren: PropTypes.string
-  }),
-  isSidebarOpen: PropTypes.bool,
-  onProfileComplete: PropTypes.func
-};
-
-ProfileForm.defaultProps = {
-  initialData: {},
-  signupData: {},
-  isSidebarOpen: true
-};
-
-ProfileForm.defaultProps = {
-  initialData: {},
-  signupData: {},
-  isSidebarOpen: true
-};
-
-export default ProfileForm;
+export default ProfilePage;

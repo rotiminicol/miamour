@@ -46,7 +46,6 @@ import IjeuwaAuthFlow from './components/IjeuwaAuthFlow';
 import Policy from "./components/Policy";
 import Terms from "./components/Terms";
 import LiveChat from "./components/LiveChat";
-import RelationshipTherapy from "./pages/RelationshipTherapy";
 import Therapy from "./pages/Therapy";
 
 function App() {
@@ -103,7 +102,6 @@ function App() {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/ceremony-planning" element={<CeremonyPlanningPage />} />
-              <Route path="/relationship-therapy" element={<RelationshipTherapy />} />
               <Route path="/marriage-planning" element={<MarriagePlanningPage />} />
               <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/faqs" element={<FAQs />} />

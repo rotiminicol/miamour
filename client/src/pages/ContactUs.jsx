@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { MailIcon, PhoneIcon, MessageSquareIcon, ArrowLeft } from 'lucide-react';
+import { MailIcon, PhoneIcon, MessageSquareIcon, ArrowLeft, Send, User, Bot } from 'lucide-react';
 
 const ContactUsPage = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +11,10 @@ const ContactUsPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showLiveChat, setShowLiveChat] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
   
   // Refs for parallax elements
   const heroBgRef = useRef(null);
@@ -40,6 +44,11 @@ const ContactUsPage = () => {
     }
   }, [scrollPosition]);
 
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
   const contactMethods = [
     {
       method: "Email",
@@ -58,7 +67,23 @@ const ContactUsPage = () => {
       description: "Get instant help from our support team.",
       icon: <MessageSquareIcon className="w-6 h-6" />,
       action: "Start Chat",
-      handler: () => setShowLiveChat(true)
+      handler: () => {
+        setShowLiveChat(true);
+        // Add welcome message when chat opens
+        if (chatMessages.length === 0) {
+          setTimeout(() => {
+            setChatMessages(prev => [
+              ...prev,
+              {
+                id: Date.now(),
+                text: "Hello! How can we help you today?",
+                sender: 'bot',
+                timestamp: new Date()
+              }
+            ]);
+          }, 500);
+        }
+      }
     },
     {
       method: "Phone",
@@ -91,6 +116,48 @@ const ContactUsPage = () => {
       });
       setShowConfirmation(false);
     }, 3000);
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    // Add user message
+    const userMessage = {
+      id: Date.now(),
+      text: newMessage,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, userMessage]);
+    setNewMessage('');
+    setIsTyping(true);
+
+    // Simulate bot response after a delay
+    setTimeout(() => {
+      const responses = [
+        "I understand your concern. Let me check that for you.",
+        "Thanks for reaching out! One of our agents will respond shortly.",
+        "That's a great question! Here's what I can tell you...",
+        "I'll need to check with our team about that. Can you provide more details?",
+        "We appreciate your feedback! Is there anything else we can help with?"
+      ];
+      
+      const botMessage = {
+        id: Date.now() + 1,
+        text: responses[Math.floor(Math.random() * responses.length)],
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      
+      setChatMessages(prev => [...prev, botMessage]);
+      setIsTyping(false);
+    }, 1500 + Math.random() * 2000);
+  };
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -221,21 +288,99 @@ const ContactUsPage = () => {
         </div>
       </div>
       
-      {/* LiveChat component would go here */}
+      {/* Live Chat Component */}
       {showLiveChat && (
-        <div className="fixed bottom-6 right-6 w-96 h-128 bg-white shadow-xl rounded-2xl border border-pink-200 z-50">
+        <div className="fixed bottom-6 right-6 w-96 h-[32rem] bg-white shadow-xl rounded-2xl border border-pink-200 z-50 flex flex-col">
           <div className="p-4 bg-pink-600 text-white rounded-t-2xl flex justify-between items-center">
-            <h3 className="font-medium">Live Chat Support</h3>
-            <button onClick={() => setShowLiveChat(false)} className="text-white hover:text-pink-200">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <h3 className="font-medium">Live Chat Support</h3>
+            </div>
+            <button 
+              onClick={() => setShowLiveChat(false)} 
+              className="text-white hover:text-pink-200"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
           </div>
-          <div className="p-4">
-            <p className="text-center text-gray-500">Chat component would go here</p>
+          
+          {/* Chat Messages */}
+          <div className="flex-1 p-4 overflow-y-auto">
+            {chatMessages.length === 0 ? (
+              <div className="h-full flex items-center justify-center text-gray-400">
+                <p>Starting chat...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {chatMessages.map((message) => (
+                  <div 
+                    key={message.id} 
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div 
+                      className={`max-w-xs md:max-w-md rounded-lg p-3 ${message.sender === 'user' 
+                        ? 'bg-pink-600 text-white rounded-br-none' 
+                        : 'bg-pink-100 text-gray-800 rounded-bl-none'}`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        {message.sender === 'user' ? (
+                          <User className="w-4 h-4" />
+                        ) : (
+                          <Bot className="w-4 h-4" />
+                        )}
+                        <span className="text-xs opacity-80">
+                          {formatTime(message.timestamp)}
+                        </span>
+                      </div>
+                      <p>{message.text}</p>
+                    </div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-pink-100 text-gray-800 rounded-lg rounded-bl-none p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Bot className="w-4 h-4" />
+                        <span className="text-xs opacity-80">typing...</span>
+                      </div>
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
           </div>
+          
+          {/* Message Input */}
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-pink-100">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 p-3 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all"
+              />
+              <button 
+                type="submit" 
+                className="p-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                disabled={!newMessage.trim()}
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Press Enter to send. Our team typically responds within 2 minutes.
+            </p>
+          </form>
         </div>
       )}
     </div>

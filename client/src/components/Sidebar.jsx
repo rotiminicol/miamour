@@ -45,7 +45,8 @@ export const Sidebar = () => {
       { icon: <Home size={18} className="text-amber-500" />, text: 'Ceremony Planning', to: '/ceremony-planning' },
       { icon: <Home size={18} className="text-amber-500" />, text: 'Marriage Planning', to: '/marriage-planning' },
       { icon: <Users size={18} className="text-purple-500" />, text: 'Relationship Therapy', to: '/relationship-therapy' },
-      { icon: <Sparkles size={18} className="text-pink-400" />, text: 'Personalized Matchmaking', to: '/personalized-matchmaking' }
+      { icon: <Sparkles size={18} className="text-pink-400" />, text: 'Personalized Matchmaking', to: '/personalized-matchmaking' },
+      { icon: <Users size={18} className="text-blue-500" />, text: 'Therapy Sessions', to: '/therapy' }
     ],
     billing: [
       { icon: <CreditCard size={18} className="text-green-500" />, text: 'Payment Methods', to: '/billing-process' },

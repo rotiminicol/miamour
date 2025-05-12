@@ -18,7 +18,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import SchedulePage from "./pages/SchedulePage";
 import CeremonyPlanningPage from "./pages/CeremonyPlanningPage";
 import MarriagePlanningPage from "./pages/MarriagePlanning";
-import EnhancedHomepage from "./pages/Dashboard"; // Replaced Dashboard with EnhancedHomepage
+import EnhancedHomepage from "./pages/Dashboard";
 import Resources from "./pages/Resources";
 import FAQs from "./pages/FAQs";
 import ContactUs from "./pages/ContactUs";
@@ -28,7 +28,6 @@ import DiscountsPage from "./pages/DiscountsPage";
 import ProfileSuccessComponent from "./components/ProfileSuccessComponent";
 import PaymentConfirmationComponent from "./components/PaymentConfirmationComponent";
 import PrivacySelectionComponent from "./components/PrivacySelectionComponent";
-import RelationshipTherapy from "./pages/RelationshipTheraphy";
 import PersonalizedMatchmaking from "./pages/PersonalizedMatchmaking";
 import Features from "./pages/FeaturesPage";
 import SuccessStories from "./pages/SuccessStoriesPage";
@@ -47,6 +46,8 @@ import IjeuwaAuthFlow from './components/IjeuwaAuthFlow';
 import Policy from "./components/Policy";
 import Terms from "./components/Terms";
 import LiveChat from "./components/LiveChat";
+import RelationshipTherapy from "./pages/RelationshipTherapy";
+import Therapy from "./pages/Therapy";
 
 function App() {
   const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -102,6 +103,7 @@ function App() {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/ceremony-planning" element={<CeremonyPlanningPage />} />
+              <Route path="/relationship-therapy" element={<RelationshipTherapy />} />
               <Route path="/marriage-planning" element={<MarriagePlanningPage />} />
               <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/faqs" element={<FAQs />} />
@@ -109,15 +111,14 @@ function App() {
               <Route path="/subscriptions" element={<SubscriptionsPage />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/discounts" element={<DiscountsPage />} />
-              <Route path="/relationship-therapy" element={<RelationshipTherapy />} />
               <Route path="/personalized-matchmaking" element={<PersonalizedMatchmaking />} />
               <Route path="/match-track" element={<MatchTrack />} />
-              <Route path="/dashboard" element={<EnhancedHomepage />} /> {/* Updated to use EnhancedHomepage */}
-              <Route path="/google" element={<GoogleAuthFlow  />} />
+              <Route path="/dashboard" element={<EnhancedHomepage />} />
+              <Route path="/google" element={<GoogleAuthFlow />} />
               <Route path="/ijeuwa" element={<IjeuwaAuthFlow />} />
               <Route path="/homepage" element={<Homepage />} />
               <Route path="/live-chat" element={<LiveChat />} />
-              
+              <Route path="/therapy" element={<Therapy />} />
             </>
           )}
 

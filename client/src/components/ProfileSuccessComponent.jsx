@@ -1,154 +1,180 @@
+import { Check, ArrowRight, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
 
-import { Check, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence, useAnimation } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+function ProfessionalTransactionPage() {
+  const [processing, setProcessing] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+  const [progress, setProgress] = useState(0);
 
-function ProfileSuccessComponent() {
-  const navigate = useNavigate();
-  const controls = useAnimation();
-  const [activating, setActivating] = useState(false);
-
-  // Trigger checkmark animation on mount
+  // Calculate progress percentage
   useEffect(() => {
-    controls.start({
-      scale: [1, 1.2, 1],
-      transition: { duration: 0.5 }
-    });
-  }, [controls]);
+    setProgress(100 - (timeLeft / 600) * 100);
+  }, [timeLeft]);
 
-  // Navigate to dashboard after 5 minutes (300,000ms), matching GettingStarted
+  // Countdown timer
   useEffect(() => {
-    const timer = setTimeout(() => {
-      handleContinue();
-    }, 300000);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line
-  }, []);
+    if (!processing) return;
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 0) {
+          clearInterval(timer);
+          handleComplete();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-  const handleContinue = () => {
-    navigate("/");
-  }
+    return () => clearInterval(timer);
+  }, [processing]);
+
+  // Auto-redirect after timer finishes
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      handleComplete();
+    }
+  }, [timeLeft]);
+
+  const handleComplete = () => {
+    setProcessing(false);
+    // Short delay before redirecting
+    setTimeout(() => {
+      // Navigate to dashboard page
+      window.location.href = "/dashboard";
+    }, 1500);
+  };
+
+  // Format time as MM:SS
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-8 relative">
-      {/* Animated floating particles (from GettingStarted) */}
-      <AnimatePresence>
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              x: Math.random() * 100,
-              y: Math.random() * 100,
-              opacity: 0
-            }}
-            animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              opacity: [0, 0.3, 0],
-              scale: [1, 1.5, 1]
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            }}
-            className={`absolute rounded-full ${
-              i % 3 === 0 ? "bg-pink-300" : i % 2 === 0 ? "bg-purple-300" : "bg-blue-300"
-            } ${i % 4 === 0 ? "w-3 h-3" : "w-2 h-2"}`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`
-            }}
-          />
-        ))}
-      </AnimatePresence>
-
-      {/* Success message card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-gradient-to-r from-purple-50 to-pink-50 p-8 rounded-3xl shadow-lg mb-12 text-center border border-gray-100 relative overflow-hidden"
-      >
-        {/* Decorative background elements */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-pink-200 rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-200 rounded-full opacity-20 blur-3xl"></div>
-
-        <div className="relative z-10">
-          <motion.div
-            animate={controls}
-            className="w-24 h-24 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
-          >
-            <Check className="text-white" size={48} />
-          </motion.div>
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">Profile Complete!</h2>
-          <p className="text-gray-600 mb-6 text-xl">
-            Your profile has been created successfully.
-          </p>
-          <p className="text-gray-600 mb-2 text-lg font-medium">
-            We are now finding your perfect match!
-          </p>
-          <div className="flex justify-center">
-            <motion.div
-              animate={{
-                x: [-5, 5, -5],
-                transition: { repeat: Infinity, duration: 2 }
-              }}
-            >
-              <ChevronRight className="text-gray-400 w-8 h-8 rotate-90" />
-            </motion.div>
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-pink-50 to-white p-4">
+      <div className="w-full max-w-lg">
+        {/* Main card */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-pink-100">
+          {/* Progress bar */}
+          <div className="w-full h-1 bg-gray-100">
+            <div
+              className="h-full bg-pink-500 transition-all duration-1000"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-          {/* Continue to Dashboard Button */}
-          <button
-            onClick={handleContinue}
-            className="mt-6 px-6 py-3 bg-emerald-500 text-white rounded-full font-semibold hover:bg-emerald-600 transition disabled:opacity-60"
-            disabled={activating}
-          >
-            {activating ? "Activating..." : "Continue to Dashboard"}
-          </button>
-        </div>
-      </motion.div>
 
-      {/* Confetti animation (from GettingStarted success view) */}
-      <AnimatePresence>
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              x: Math.random() * 100 - 50,
-              y: -20,
-              rotate: Math.random() * 360,
-              opacity: 0
-            }}
-            animate={{
-              y: window.innerHeight,
-              x: Math.random() * 200 - 100,
-              rotate: Math.random() * 360,
-              opacity: [0, 1, 0]
-            }}
-            transition={{
-              duration: 2 + Math.random() * 3,
-              delay: i * 0.05,
-              ease: "linear"
-            }}
-            className={`absolute top-0 left-1/2 w-2 h-2 ${
-              i % 5 === 0
-                ? "bg-yellow-400"
-                : i % 4 === 0
-                ? "bg-pink-400"
-                : i % 3 === 0
-                ? "bg-blue-400"
-                : "bg-green-400"
-            } rounded-sm`}
-            style={{
-              left: `${50 + (Math.random() * 20 - 10)}%`
-            }}
-          />
-        ))}
-      </AnimatePresence>
+          <div className="p-8">
+            {/* Status icon */}
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                {processing ? (
+                  <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center">
+                    <div className="absolute inset-0 animate-spin">
+                      <svg className="w-full h-full" viewBox="0 0 100 100">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          stroke="#FCE7F3"
+                          strokeWidth="8"
+                          fill="none"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          stroke="#EC4899"
+                          strokeWidth="8"
+                          fill="none"
+                          strokeDasharray="251.2"
+                          strokeDashoffset="188.4"
+                        />
+                      </svg>
+                    </div>
+                    <Clock className="w-8 h-8 text-pink-500" />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
+                    <Check className="w-8 h-8 text-green-500" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Status text */}
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                {processing ? "Processing Your Transaction" : "Transaction Complete"}
+              </h2>
+              <p className="text-gray-500 text-sm mb-1">
+                {processing
+                  ? "Your payment is being securely processed. Please don't close this window."
+                  : "Your payment has been successfully processed. Redirecting you to the dashboard."}
+              </p>
+              {processing && (
+                <p className="text-gray-400 text-xs">
+                  Transaction ID: {Math.random().toString(36).substring(2, 10).toUpperCase()}
+                </p>
+              )}
+            </div>
+
+            {/* Timer */}
+            {processing && (
+              <div className="mb-6">
+                <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+                  <span>Processing</span>
+                  <span className="font-medium">{formatTime(timeLeft)}</span>
+                </div>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-pink-500 rounded-full transition-all duration-1000"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Continue button */}
+            <div className="mt-6">
+              <button
+                onClick={handleComplete}
+                className={`w-full py-3 px-4 flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 ${
+                  processing
+                    ? "bg-pink-500 hover:bg-pink-600 text-white"
+                    : "bg-green-500 hover:bg-green-600 text-white"
+                }`}
+              >
+                {processing ? (
+                  <>Continue to Dashboard <ArrowRight className="w-4 h-4" /></>
+                ) : (
+                  <>Go to Dashboard <ArrowRight className="w-4 h-4" /></>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Information card */}
+        <div className="mt-4 bg-white rounded-xl border border-pink-100 p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center">
+                <span className="text-pink-500 text-lg">ℹ️</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">
+                Your transaction is being securely processed. This typically takes less than a minute, 
+                but may occasionally take longer. Youll be automatically redirected when complete.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default ProfileSuccessComponent;
+export default ProfessionalTransactionPage;

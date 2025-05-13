@@ -42,7 +42,7 @@ const therapyPlans = [
     name: "Mindful Living",
     description: "Focus on stress and anxiety reduction",
     sessions: 5,
-    priceNGN: 250000,
+    priceNGN: 300000,
     priceUSD: 156.25,
     save: "15%",
     features: [
@@ -72,7 +72,7 @@ const therapyPlans = [
     name: "Confidence Package",
     description: "Self-esteem and personal growth",
     sessions: 5,
-    priceNGN: 300000,
+    priceNGN: 450000,
     priceUSD: 187.50,
     save: "20%",
     features: [

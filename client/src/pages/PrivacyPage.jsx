@@ -1,22 +1,47 @@
-import { useState, useEffect } from "react";
-import { ArrowRight, Shield, Eye, EyeOff, UserX, Sparkles } from "lucide-react";
+
+import { useState } from "react";
+import {  Shield, Eye, EyeOff, Sparkles, Download, Trash2 } from "lucide-react";
 import BackButton from '../components/BackButton';
 
 const PrivacyPage = () => {
   const [profileVisibility, setProfileVisibility] = useState("Public");
-  const [blockedUsers, setBlockedUsers] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setBlockedUsers(["user123", "anonymous_user"]);
-    }, 800);
-  }, []);
+  // Simulate downloading user data as JSON
+  const handleDownloadData = () => {
+    const data = {
+      profile: {
+        name: "Jane Doe",
+        email: "jane@example.com",
+        visibility: profileVisibility,
+      },
+      // Add more fields as needed
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "my_miamour_data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    setShowSuccess("Your data has been downloaded.");
+    setTimeout(() => setShowSuccess(false), 2500);
+  };
 
+  // Simulate account deletion
+  const handleDeleteAccount = () => {
+    setShowDeleteModal(false);
+    setDeleteSuccess(true);
+    setTimeout(() => setDeleteSuccess(false), 3500);
+  };
+
+  // Save privacy settings
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+    setShowSuccess("Settings saved successfully!");
+    setTimeout(() => setShowSuccess(false), 2500);
   };
 
   return (
@@ -39,81 +64,87 @@ const PrivacyPage = () => {
       </div>
 
       <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-xl mx-auto">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center">
               <Sparkles className="h-6 w-6 text-pink-500 mr-2" />
-              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-rose-600">
-                Privacy Settings
+              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-rose-600">  
+                Privacy & Security
               </h1>
               <Sparkles className="h-6 w-6 text-pink-500 ml-2" />
             </div>
-            <p className="mt-2 text-pink-500/80">Control your privacy and security</p>
+            <p className="mt-2 text-pink-500/80">Manage your privacy, data, and account security</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Profile Visibility */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-pink-100/50">
-              <div className="flex items-center mb-4">
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-pink-100/50 flex flex-col gap-4">
+              <div className="flex items-center mb-2">
                 <div className="p-2 bg-pink-100/30 rounded-lg mr-3">
-                  <Eye className="h-5 w-5 text-pink-600" />
+                  {profileVisibility === "Public" ? (
+                    <Eye className="h-5 w-5 text-pink-600" />
+                  ) : (
+                    <EyeOff className="h-5 w-5 text-pink-600" />
+                  )}
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800">Profile Visibility</h2>
               </div>
-              <div className="relative">
-                <select
-                  value={profileVisibility}
-                  onChange={(e) => setProfileVisibility(e.target.value)}
-                  className="w-full px-4 py-3 border border-pink-100 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-700 bg-white appearance-none"
-                >
-                  <option value="Public">Public - Anyone can view your profile</option>
-                  <option value="Private">Private - Only followers can view your profile</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <ArrowRight className="h-4 w-4 text-pink-500 rotate-90" />
-                </div>
+              <div className="flex items-center gap-4">
+                <span className="text-gray-600 font-medium">Private</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={profileVisibility === "Public"}
+                    onChange={() =>
+                      setProfileVisibility(profileVisibility === "Public" ? "Private" : "Public")
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-pink-100 peer-focus:outline-none rounded-full peer peer-checked:bg-pink-500 transition-all"></div>
+                  <div
+                    className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${
+                      profileVisibility === "Public" ? "translate-x-5" : ""
+                    }`}
+                  ></div>
+                </label>
+                <span className="text-gray-600 font-medium">Public</span>
               </div>
-              <p className="mt-3 text-sm text-gray-600">
-                {profileVisibility === "Public" ? 
-                  "Your profile is visible to everyone." : 
-                  "Only approved followers can see your content."}
+              <p className="mt-2 text-sm text-gray-600">
+                {profileVisibility === "Public"
+                  ? "Your profile is visible to everyone."
+                  : "Only approved followers can see your content."}
               </p>
             </div>
 
-            {/* Blocked Users */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-pink-100/50">
-              <div className="flex items-center mb-4">
+            {/* Data Management */}
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-pink-100/50 flex flex-col gap-4">
+              <div className="flex items-center mb-2">
                 <div className="p-2 bg-pink-100/30 rounded-lg mr-3">
-                  <UserX className="h-5 w-5 text-pink-600" />
+                  <Download className="h-5 w-5 text-pink-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-gray-800">Blocked Users</h2>
+                <h2 className="text-lg font-semibold text-gray-800">Your Data</h2>
               </div>
-              <div className="bg-white/50 rounded-xl border border-pink-100 p-4">
-                {blockedUsers.length > 0 ? (
-                  <ul className="space-y-3">
-                    {blockedUsers.map((user, index) => (
-                      <li 
-                        key={index} 
-                        className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-pink-100"
-                      >
-                        <span className="font-medium text-gray-700">{user}</span>
-                        <button
-                          type="button"
-                          onClick={() => setBlockedUsers(blockedUsers.filter((u) => u !== user))}
-                          className="text-xs bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 rounded-xl transition-colors"
-                        >
-                          Unblock
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <EyeOff className="h-12 w-12 text-pink-300 mb-3" />
-                    <p className="text-gray-500">No blocked users at the moment.</p>
-                  </div>
-                )}
+              <div className="flex flex-col md:flex-row gap-4">
+                <button
+                  type="button"
+                  onClick={handleDownloadData}
+                  className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold shadow hover:from-pink-600 hover:to-rose-600 transition"
+                >
+                  <Download className="w-5 h-5" />
+                  Download My Data
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                  className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-rose-200 text-rose-600 font-semibold shadow hover:bg-rose-50 transition"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  Delete My Account
+                </button>
               </div>
+              <p className="text-xs text-gray-400 mt-2">
+                Download a copy of your data or permanently delete your account.
+              </p>
             </div>
 
             {/* Save Button */}
@@ -130,11 +161,57 @@ const PrivacyPage = () => {
         </div>
       </div>
 
-      {/* Success Message */}
+      {/* Success/Feedback Message */}
       {showSuccess && (
-        <div className="fixed bottom-6 right-6 bg-white px-6 py-3 rounded-xl shadow-lg border border-green-100 flex items-center animate-fade-in">
+        <div className="fixed bottom-6 right-6 bg-white px-6 py-3 rounded-xl shadow-lg border border-green-100 flex items-center animate-fade-in z-50">
           <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-          <span className="text-sm font-medium text-green-700">Settings saved successfully!</span>
+          <span className="text-sm font-medium text-green-700">{showSuccess}</span>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-rose-600"
+              onClick={() => setShowDeleteModal(false)}
+              aria-label="Close"
+            >
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="flex items-center mb-4">
+              <Trash2 className="w-6 h-6 text-rose-500 mr-2" />
+              <h3 className="text-lg font-semibold text-rose-600">Delete Account</h3>
+            </div>
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to permanently delete your account? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 py-2 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Success Message */}
+      {deleteSuccess && (
+        <div className="fixed bottom-6 right-6 bg-white px-6 py-3 rounded-xl shadow-lg border border-rose-200 flex items-center animate-fade-in z-50">
+          <div className="w-2 h-2 bg-rose-500 rounded-full mr-3"></div>
+          <span className="text-sm font-medium text-rose-700">Your account has been deleted.</span>
         </div>
       )}
     </div>

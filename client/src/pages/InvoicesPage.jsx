@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { Download, FileText, Sparkles, CheckCircle, Clock, AlertCircle, ChevronLeft } from 'lucide-react';
+import { History, ChevronLeft, Search, Filter, RefreshCw } from 'lucide-react';
 
 // Sleek BackButton component
 const BackButton = () => (
@@ -14,89 +13,8 @@ const BackButton = () => (
   </button>
 );
 
-const InvoicesPage = () => {
-  const [invoices] = useState([
-    {
-      id: 1,
-      date: '2023-10-01',
-      amount: '$49.99',
-      status: 'Paid',
-      invoiceFile: '/invoices/invoice-2023-10.pdf',
-      dueDate: '2023-10-15'
-    },
-    {
-      id: 2,
-      date: '2023-09-01',
-      amount: '$49.99',
-      status: 'Paid',
-      invoiceFile: '/invoices/invoice-2023-09.pdf',
-      dueDate: '2023-09-15'
-    },
-    {
-      id: 3,
-      date: '2023-08-01',
-      amount: '$49.99',
-      status: 'Pending',
-      invoiceFile: '/invoices/invoice-2023-08.pdf',
-      dueDate: '2023-08-15'
-    }
-  ]);
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'Paid':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'Pending':
-        return <Clock className="h-5 w-5 text-yellow-500" />;
-      default:
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Paid':
-        return 'bg-green-100 text-green-700';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-700';
-      default:
-        return 'bg-red-100 text-red-700';
-    }
-  };
-
-  const handleDownload = async (invoiceFile) => {
-    try {
-      const response = await fetch(invoiceFile);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = invoiceFile.split('/').pop();
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      alert('Failed to download invoice. Please try again later.');
-    }
-  };
-
-  const handleDownloadAll = async () => {
-    try {
-      const response = await fetch('/invoices/all-invoices.zip');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'all-invoices.zip';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      alert('Failed to download invoices. Please try again later.');
-    }
-  };
+const TransactionHistoryPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
 
   // Parallax effect using scroll
   const parallaxRef = useRef(null);
@@ -106,96 +24,119 @@ const InvoicesPage = () => {
       parallaxRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
     }
   };
+  
   // Attach scroll event
   if (typeof window !== "undefined") {
     window.onscroll = handleScroll;
   }
 
+  const refreshTransactions = () => {
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-pink-50 via-white to-purple-50 overflow-x-hidden">
-      {/* Parallax geometric background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      {/* Enhanced Parallax geometric background */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <svg
           ref={parallaxRef}
-          width="100%" height="100%" viewBox="0 0 1440 600"
+          width="100%" height="100%" viewBox="0 0 1440 900"
           className="absolute top-0 left-0"
           style={{ transition: 'transform 0.2s linear' }}
         >
-          <circle cx="1200" cy="100" r="180" fill="#f0f4ff" opacity="0.7" />
-          <rect x="100" y="400" width="300" height="120" rx="60" fill="#ffe4f0" opacity="0.5" />
-          <ellipse cx="400" cy="120" rx="120" ry="60" fill="#f7faff" opacity="0.7" />
-          <rect x="900" y="350" width="220" height="80" rx="40" fill="#ffd6ec" opacity="0.4" />
+          <circle cx="1300" cy="150" r="280" fill="#f0f4ff" opacity="0.7" />
+          <rect x="100" y="500" width="400" height="160" rx="80" fill="#ffe4f0" opacity="0.5" />
+          <ellipse cx="500" cy="180" rx="220" ry="100" fill="#f7faff" opacity="0.7" />
+          <rect x="900" y="450" width="300" height="120" rx="60" fill="#ffd6ec" opacity="0.4" />
+          <circle cx="200" cy="250" r="120" fill="#f5eeff" opacity="0.6" />
+          <ellipse cx="1100" cy="700" rx="180" ry="100" fill="#fff0f7" opacity="0.5" />
         </svg>
-        {/* Pink splash */}
-        <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        {/* Enhanced glowing effects */}
+        <div className="absolute -top-64 -right-64 w-[40rem] h-[40rem] bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-64 -left-64 w-[40rem] h-[40rem] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/4 w-[30rem] h-[30rem] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       {/* Sleek Back Button */}
       <BackButton />
 
-      <div className="max-w-4xl mx-auto px-4 py-20 relative z-10">
+      <div className="max-w-5xl mx-auto px-4 py-20 relative z-10">
         <div className="text-center mb-12">
           <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-100 shadow">
-              <Sparkles className="h-10 w-10 text-pink-500" />
+            <span className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 shadow-lg p-4">
+              <History className="h-12 w-12 text-white" />
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            Your Invoices
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+            Transaction History
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            View and download your payment invoices. Keep track of your subscription history.
+            View and track all your financial activities in one secure place.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-pink-100 p-8">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-pink-100 p-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <h2 className="text-2xl font-bold text-gray-800">Invoice History</h2>
-            <button
-              onClick={handleDownloadAll}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Download All
-            </button>
+            <h2 className="text-2xl font-bold text-gray-800">Recent Transactions</h2>
+            
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search transactions..."
+                  className="pl-10 pr-4 py-2 rounded-xl border border-pink-100 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              </div>
+              
+              <button className="p-2 bg-purple-50 rounded-xl text-purple-600 hover:bg-purple-100 transition-colors">
+                <Filter className="h-5 w-5" />
+              </button>
+              
+              <button 
+                onClick={refreshTransactions}
+                className="p-2 bg-pink-50 rounded-xl text-pink-600 hover:bg-pink-100 transition-colors"
+              >
+                <RefreshCw className={`h-5 w-5 ${isLoading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {invoices.map((invoice) => (
-              <div
-                key={invoice.id}
-                className="bg-white border border-pink-100 rounded-xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-pink-300 transition-all duration-300"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl">
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">Invoice #{invoice.id}</p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>Issued: {invoice.date}</span>
-                      <span>•</span>
-                      <span>Due: {invoice.dueDate}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(invoice.status)}
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(invoice.status)}`}>
-                      {invoice.status}
-                    </span>
-                  </div>
-                  <span className="text-xl font-semibold text-gray-800">{invoice.amount}</span>
-                  <button
-                    onClick={() => handleDownload(invoice.invoiceFile)}
-                    className="p-2 bg-pink-50 rounded-lg text-pink-600 hover:bg-pink-100 transition-colors"
-                  >
-                    <Download className="h-5 w-5" />
-                  </button>
-                </div>
+          {/* Empty state */}
+          <div className="py-20 flex flex-col items-center justify-center text-center">
+            <div className="w-24 h-24 mb-6 rounded-full bg-pink-50 flex items-center justify-center">
+              <History className="h-12 w-12 text-pink-300" />
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-800 mb-2">No transactions yet</h3>
+            <p className="text-gray-500 max-w-md mb-8">
+              Your transaction history will appear here once you start making payments or receive funds.
+            </p>
+            <button
+              onClick={refreshTransactions}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+            >
+              <RefreshCw className={`h-5 w-5 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+        
+        {/* Help section */}
+        <div className="mt-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl shadow-xl overflow-hidden">
+          <div className="bg-white/10 backdrop-blur-sm p-8 text-white">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Need help with your transactions?</h3>
+                <p className="opacity-90">Our support team is available 24/7 to assist you.</p>
               </div>
-            ))}
+              <button className="whitespace-nowrap px-8 py-3 bg-white text-purple-600 font-medium rounded-xl shadow-lg hover:bg-opacity-90 transition-all">
+                Contact Support
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -203,4 +144,4 @@ const InvoicesPage = () => {
   );
 };
 
-export default InvoicesPage;
+export default TransactionHistoryPage;

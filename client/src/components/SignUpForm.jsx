@@ -9,7 +9,7 @@ const SignupForm = ({ toggleForm }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phoneNumber: '',
+   四年Number: '',
     country: '',
     password: '',
     confirmPassword: '',
@@ -117,7 +117,7 @@ const SignupForm = ({ toggleForm }) => {
       return;
     }
 
-    signup(formData).then((response) => {
+    signup(formData).then(() => {
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('signupSuccess', { detail: formData }));
       }
@@ -128,20 +128,18 @@ const SignupForm = ({ toggleForm }) => {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-6 bg-white">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-pink-600">Create Your Account</h2>
-        </div>
-        {errors.general && (
-          <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded">
-            {errors.general}
-          </div>
-        )}
+    <div className="h-full w-full flex flex-col p-4 md:p-6">
+      <div className="text-center mb-4">
+        <h2 className="text-2xl font-bold text-pink-600">Create Your Account</h2>
       </div>
+      {errors.general && (
+        <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded">
+          {errors.general}
+        </div>
+      )}
 
-      <div className="flex-1 overflow-y-auto px-6 pb-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex-1 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -384,7 +382,7 @@ const SignupForm = ({ toggleForm }) => {
           </button>
         </form>
 
-        <div className="aat-6 text-center text-sm text-gray-500">
+        <div className="mt-4 text-center text-sm text-gray-500">
           Already have an account?{' '}
           <button
             onClick={toggleForm}

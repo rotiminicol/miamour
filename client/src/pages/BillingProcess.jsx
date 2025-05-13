@@ -211,103 +211,124 @@ const BillingProcess = () => {
     </div>
   );
 
+ 
   // Payment Method
-  const renderPaymentMethod = () => (
-    <div className="w-full">
-      <div className="flex items-center justify-center gap-2 mb-8">
-        <Lock className="w-6 h-6 text-pink-500" />
-        <h2 className="text-3xl font-bold text-pink-500">
-          Secure Payment
-        </h2>
-        <Lock className="w-6 h-6 text-pink-500" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {['credit', 'paypal'].map((method) => (
-          <div
-            key={method}
-            className={`border-2 rounded-lg p-4 flex items-center cursor-pointer bg-white
-              ${paymentMethod === method ? 'border-pink-500 bg-pink-50' : 'border-gray-200'}`}
-            onClick={() => setPaymentMethod(method)}
-          >
-            <div className="h-5 w-5 rounded-full border-2 border-pink-500 flex items-center justify-center mr-3">
-              {paymentMethod === method && (
-                <div className="h-3 w-3 rounded-full bg-pink-500" />
-              )}
-            </div>
-            {method === 'credit' ? (
-              <>
-                <CreditCard className="h-5 w-5 text-gray-700 mr-2" />
-                <span className="font-bold text-gray-900 text-sm">Credit/Debit Card</span>
-              </>
-            ) : (
-              <span className="font-bold text-gray-900 text-sm">PayPal</span>
+const renderPaymentMethod = () => (
+  <div className="w-full">
+    <div className="flex items-center justify-center gap-2 mb-8">
+      <Lock className="w-6 h-6 text-pink-500" />
+      <h2 className="text-3xl font-bold text-pink-500">
+        Secure Payment
+      </h2>
+      <Lock className="w-6 h-6 text-pink-500" />
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      {['credit', 'bank'].map((method) => (
+        <div
+          key={method}
+          className={`border-2 rounded-lg p-4 flex items-center cursor-pointer bg-white
+            ${paymentMethod === method ? 'border-pink-500 bg-pink-50' : 'border-gray-200'}`}
+          onClick={() => setPaymentMethod(method)}
+        >
+          <div className="h-5 w-5 rounded-full border-2 border-pink-500 flex items-center justify-center mr-3">
+            {paymentMethod === method && (
+              <div className="h-3 w-3 rounded-full bg-pink-500" />
             )}
           </div>
-        ))}
-      </div>
-      {paymentMethod === 'credit' && (
-        <div className="border-2 border-pink-500 rounded-lg p-5 bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="mb-3">
-              <label htmlFor="cardName" className="block text-xs font-bold text-gray-700 mb-1">Cardholder Name</label>
+          {method === 'credit' ? (
+            <>
+              <CreditCard className="h-5 w-5 text-gray-700 mr-2" />
+              <span className="font-bold text-gray-900 text-sm">Credit/Debit Card</span>
+            </>
+          ) : (
+            <>
+              <CreditCard className="h-5 w-5 text-gray-700 mr-2" />
+              <span className="font-bold text-gray-900 text-sm">Bank Transfer</span>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+    {paymentMethod === 'credit' && (
+      <div className="border-2 border-pink-500 rounded-lg p-5 bg-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-3">
+            <label htmlFor="cardName" className="block text-xs font-bold text-gray-700 mb-1">Cardholder Name</label>
+            <input
+              type="text"
+              id="cardName"
+              className="w-full p-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
+              placeholder="Name as shown on card"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="cardNumber" className="block text-xs font-bold text-gray-700 mb-1">Card Number</label>
+            <div className="relative">
               <input
                 type="text"
-                id="cardName"
-                className="w-full p-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
-                placeholder="Name as shown on card"
+                id="cardNumber"
+                className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
+                placeholder="1234 5678 9012 3456"
               />
+              <CreditCard className="absolute right-2 top-2 h-5 w-5 text-gray-400" />
             </div>
-            <div className="mb-3">
-              <label htmlFor="cardNumber" className="block text-xs font-bold text-gray-700 mb-1">Card Number</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="cardNumber"
-                  className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
-                  placeholder="1234 5678 9012 3456"
-                />
-                <CreditCard className="absolute right-2 top-2 h-5 w-5 text-gray-400" />
-              </div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="expiry" className="block text-xs font-bold text-gray-700 mb-1">Expiry Date</label>
+            <div className="relative">
+              <input
+                type="text"
+                id="expiry"
+                className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
+                placeholder="MM/YY"
+              />
+              <Calendar className="absolute right-2 top-2 h-4 w-4 text-gray-400" />
             </div>
-            <div className="mb-3">
-              <label htmlFor="expiry" className="block text-xs font-bold text-gray-700 mb-1">Expiry Date</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="expiry"
-                  className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
-                  placeholder="MM/YY"
-                />
-                <Calendar className="absolute right-2 top-2 h-4 w-4 text-gray-400" />
-              </div>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="cvv" className="block text-xs font-bold text-gray-700 mb-1">CVV</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="cvv"
-                  className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
-                  placeholder="123"
-                />
-                <Lock className="absolute right-2 top-2 h-4 w-4 text-gray-400" />
-              </div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="cvv" className="block text-xs font-bold text-gray-700 mb-1">CVV</label>
+            <div className="relative">
+              <input
+                type="text"
+                id="cvv"
+                className="w-full pl-2 pr-10 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:border-pink-500 bg-white"
+                placeholder="123"
+              />
+              <Lock className="absolute right-2 top-2 h-4 w-4 text-gray-400" />
             </div>
           </div>
         </div>
-      )}
-      {paymentMethod === 'paypal' && (
-        <div className="border-2 border-pink-500 rounded-lg p-5 text-center bg-white">
-          <p className="text-gray-600 mb-4 text-sm">You will be redirected to PayPal to complete your payment securely.</p>
+      </div>
+    )}
+    {paymentMethod === 'bank' && (
+      <div className="border-2 border-pink-500 rounded-lg p-5 bg-white">
+        <div className="space-y-4">
+          <div className="bg-pink-50 p-4 rounded-lg">
+            <h3 className="font-bold text-gray-900 mb-2">Bank Transfer Details</h3>
+            <div className="space-y-2 text-sm">
+              <p>Bank: <span className="font-semibold">Providus Bank</span></p>
+              <p className="text-gray-800"><strong>Account Name:</strong> Arigo Energy Services Ltd</p>
+              <p className="text-gray-800"><strong>Account Number:</strong> 5400881912</p>
+            </div>
+          </div>
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <h4 className="font-bold text-yellow-800 text-sm mb-2">Important Instructions</h4>
+            <ul className="text-xs text-yellow-700 space-y-1">
+              <li>• Please include your name as reference when making payment</li>
+              <li>• Send payment confirmation to support@example.com</li>
+              <li>• Your account will be activated within 24 hours of payment confirmation</li>
+            </ul>
+          </div>
           <button
-            className="bg-blue-500 text-white py-2 px-6 rounded-md font-bold text-sm hover:bg-blue-600 transition"
+            className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2 px-6 rounded-md font-bold text-sm hover:from-pink-700 hover:to-purple-700 transition mt-4"
           >
-            Proceed to PayPal
+            I have Completed the Transfer
           </button>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 
   // Order Summary
   const renderOrderSummary = () => {
@@ -363,7 +384,7 @@ const BillingProcess = () => {
             <Heart className="h-5 w-5 text-pink-500 mr-2 mt-0.5" />
             <div>
               <p className="font-bold text-gray-900 text-sm">Our Love Guarantee</p>
-              <p className="text-xs text-gray-600">No meaningful connections in 30 days? We will extend your subscription free!</p>
+              <p className="text-xs text-gray-600"></p>
             </div>
           </div>
         </div>

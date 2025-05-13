@@ -15,16 +15,19 @@ const AuthPage = () => {
   const location = useLocation();
   const { authUser, checkingAuth } = useAuthStore();
 
-  if (checkingAuth) {
-    return null; // Don't render anything while checking auth
-  }
-
-  // Handle authentication state
   useEffect(() => {
+    if (checkingAuth) {
+      return; // Don't perform any navigation while checking auth
+    }
+
     if (authUser) {
       navigate('/homepage', { replace: true });
     }
-  }, [authUser, navigate]);
+  }, [authUser, checkingAuth, navigate]);
+
+  if (checkingAuth) {
+    return null; // Don't render anything while checking auth
+  }
 
   const toggleForm = () => {
     setActiveForm(activeForm === 'login' ? 'signup' : 'login');
@@ -64,69 +67,83 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-4xl px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg">
-          <div className="hidden md:flex items-center gap-4 p-4 border-b">
+    <div className="h-screen w-screen bg-gradient-to-br from-pink-50 to-purple-100">
+      <div className="h-full w-full bg-white shadow-2xl rounded-none">
+        <div className="h-full flex flex-col md:flex-row">
+          {/* Mobile Header */}
+          <div className="md:hidden flex items-center justify-center gap-4 p-4 bg-pink-600">
             <img
               src={logo}
               alt="miamour Logo"
-              className="w-12 h-12 object-cover rounded-full"
+              className="w-10 h-10 object-cover rounded-full"
               loading="lazy"
             />
-            <h1 className="font-serif text-2xl font-bold text-pink-600">
+            <h1 className="font-serif text-xl font-bold text-white">
               miamour
             </h1>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-6">
-              {activeForm === 'login' && (
-                <LoginForm
-                  toggleForm={toggleForm}
-                  onGoogleClick={handleGoogleAuth}
-                  onIjeuwaClick={handleIjeuwaAuth}
-                />
-              )}
-              {activeForm === 'signup' && (
-                <SignupForm
-                  toggleForm={toggleForm}
-                  onGoogleClick={handleGoogleAuth}
-                  onIjeuwaClick={handleIjeuwaAuth}
-                />
-              )}
-              {activeForm === 'google' && (
-                <GoogleAuthFlow
-                  isLogin={authMode === 'login'}
-                  onSuccess={handleAuthSuccess}
-                  onCancel={handleAuthCancel}
-                />
-              )}
-              {activeForm === 'ijeuwa' && (
-                <IjeuwaAuthFlow
-                  isLogin={authMode === 'login'}
-                  onSuccess={handleAuthSuccess}
-                  onCancel={handleAuthCancel}
-                />
-              )}
-            </div>
-            <div className="hidden md:block p-6 bg-pink-100 relative">
+
+          {/* Form Section */}
+          <div className="flex-1 h-full flex flex-col p-6 md:p-8">
+            {activeForm === 'login' && (
+              <LoginForm
+                toggleForm={toggleForm}
+                onGoogleClick={handleGoogleAuth}
+                onIjeuwaClick={handleIjeuwaAuth}
+              />
+            )}
+            {activeForm === 'signup' && (
+              <SignupForm
+                toggleForm={toggleForm}
+                onGoogleClick={handleGoogleAuth}
+                onIjeuwaClick={handleIjeuwaAuth}
+              />
+            )}
+            {activeForm === 'google' && (
+              <GoogleAuthFlow
+                isLogin={authMode === 'login'}
+                onSuccess={handleAuthSuccess}
+                onCancel={handleAuthCancel}
+              />
+            )}
+            {activeForm === 'ijeuwa' && (
+              <IjeuwaAuthFlow
+                isLogin={authMode === 'login'}
+                onSuccess={handleAuthSuccess}
+                onCancel={handleAuthCancel}
+              />
+            )}
+          </div>
+
+          {/* Banner Section */}
+          <div className="hidden md:flex flex-1 relative bg-gradient-to-br from-pink-500 to-purple-600">
+            <img
+              src={banner}
+              alt="Authentication illustration"
+              className="w-full h-full object-cover opacity-90"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-pink-500/30 to-purple-600/40"></div>
+            <div className="absolute top-8 left-8 flex items-center gap-4">
               <img
-                src={banner}
-                alt="Authentication illustration"
-                className="w-full h-full object-cover"
+                src={logo}
+                alt="miamour Logo"
+                className="w-12 h-12 object-cover rounded-full border-2 border-white"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-pink-500/20 to-purple-600/30"></div>
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <h2 className="text-2xl font-serif font-bold mb-2">
-                  {getFormTitle()}
-                </h2>
-                <p className="text-base">
-                  {activeForm === 'login'
-                    ? 'Welcome back to your journey to lasting love'
-                    : 'Join miamour and begin your journey to lasting love'}
-                </p>
-              </div>
+              <h1 className="font-serif text-2xl font-bold text-white">
+                miamour
+              </h1>
+            </div>
+            <div className="absolute bottom-8 left-8 right-8 text-white">
+              <h2 className="text-3xl font-serif font-bold mb-4">
+                {getFormTitle()}
+              </h2>
+              <p className="text-lg">
+                {activeForm === 'login'
+                  ? 'Welcome back to your journey to lasting love'
+                  : 'Join miamour and begin your journey to lasting love'}
+              </p>
             </div>
           </div>
         </div>

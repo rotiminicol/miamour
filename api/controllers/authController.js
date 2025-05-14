@@ -10,11 +10,19 @@ const signToken = (id) => {
 
 export const signup = async (req, res) => {
 	const { name, email, password, phoneNumber, country, age, gender, genderPreference } = req.body;
+	console.log('Signup attempt with data:', { name, email, phoneNumber, country, age, gender, genderPreference });
 	try {
-		if (!name || !email || !password || !age || !gender || !genderPreference) {
+		// Check for required fields
+		const requiredFields = { name, email, password, phoneNumber, country, age, gender, genderPreference };
+		const missingFields = Object.entries(requiredFields)
+			.filter(([_, value]) => !value)
+			.map(([key]) => key);
+
+		if (missingFields.length > 0) {
 			return res.status(400).json({
 				success: false,
-				message: "All fields are required",
+				message: `Missing required fields: ${missingFields.join(', ')}`,
+				missingFields
 			});
 		}
 
@@ -29,6 +37,16 @@ export const signup = async (req, res) => {
 			return res.status(400).json({
 				success: false,
 				message: "Password must be at least 8 characters",
+			});
+		}
+
+		// Check if email already exists
+		const existingUser = await User.findOne({ email });
+		if (existingUser) {
+			return res.status(400).json({
+				success: false,
+				message: 'Email already in use',
+				field: 'email'
 			});
 		}
 
@@ -58,7 +76,34 @@ export const signup = async (req, res) => {
 		});
 	} catch (error) {
 		console.log("Error in signup controller:", error);
-		res.status(500).json({ success: false, message: "Server error" });
+		
+		// Handle duplicate key error (MongoDB)
+		if (error.code === 11000) {
+			const field = Object.keys(error.keyValue)[0];
+			return res.status(400).json({
+				success: false,
+				message: `${field} already in use`,
+				field
+			});
+		}
+
+		// Handle validation errors
+		if (error.name === 'ValidationError') {
+			const errors = {};
+			Object.keys(error.errors).forEach(key => {
+				errors[key] = error.errors[key].message;
+			});
+			return res.status(400).json({
+				success: false,
+				message: 'Validation failed',
+				errors
+			});
+		}
+
+		res.status(500).json({ 
+			success: false, 
+			message: 'An unexpected error occurred. Please try again.' 
+		});
 	}
 };
 export const login = async (req, res) => {

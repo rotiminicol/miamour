@@ -36,16 +36,26 @@ export const updateProfile = async (req, res) => {
 			image 
 		} = req.body;
 
+		// Safely handle hobbies - default to empty array if not provided or invalid
+		let processedHobbies = [];
+		if (hobbies) {
+			if (Array.isArray(hobbies)) {
+				processedHobbies = hobbies;
+			} else if (typeof hobbies === 'string') {
+				processedHobbies = hobbies.split(',').map(h => h.trim()).filter(h => h);
+			}
+		}
+
 		let updatedData = {
-			name,
-			bio,
-			age,
-			gender,
-			relationshipStatus,
-			maritalHistory,
-			numberOfChildren,
-			nationality,
-			hobbies: Array.isArray(hobbies) ? hobbies : hobbies.split(',').map(h => h.trim())
+			name: name || '',
+			bio: bio || '',
+			age: age || null,
+			gender: gender || '',
+			relationshipStatus: relationshipStatus || '',
+			maritalHistory: maritalHistory || '',
+			numberOfChildren: numberOfChildren || 0,
+			nationality: nationality || '',
+			hobbies: processedHobbies
 		};
 
 		if (image) {

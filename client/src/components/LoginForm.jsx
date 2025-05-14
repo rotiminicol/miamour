@@ -32,13 +32,25 @@ const LoginForm = ({ toggleForm }) => {
       setErrors(validationErrors);
       return;
     }
+    
     try {
-      await login({ email: form.email.trim(), password: form.password });
+      await login({ 
+        email: form.email.trim(), 
+        password: form.password 
+      });
     } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        general: error?.response?.data?.message || error?.message || 'Login failed. Please try again.',
-      }));
+      console.error('Login error:', error);
+      const errorMessage = error?.response?.data?.message || 
+                         error?.message || 
+                         'Login failed. Please check your credentials and try again.';
+      
+      setErrors({
+        ...errors,
+        general: errorMessage
+      });
+      
+      // Clear the password field on error
+      setForm(prev => ({ ...prev, password: '' }));
     }
   };
 
@@ -50,8 +62,13 @@ const LoginForm = ({ toggleForm }) => {
       </div>
 
       {errors.general && (
-        <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded" role="alert">
-          {errors.general}
+        <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 border border-red-200 rounded-md" role="alert">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2z" clipRule="evenodd" />
+            </svg>
+            <span>{errors.general}</span>
+          </div>
         </div>
       )}
 

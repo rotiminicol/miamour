@@ -24,7 +24,9 @@ import { initializeSocket } from "./socket/socket.server.js";
 
 const app = express();
 const httpServer = createServer(app);
-const PORT = process.env.PORT || 5000;
+// Always use port 5000 for consistency
+const PORT = 5000;
+console.log(`Server will start on port: ${PORT}`);
 
 const __dirname = path.resolve();
 
@@ -34,12 +36,39 @@ initializeSocket(httpServer);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
-app.use(
-	cors({
-		origin: [process.env.CLIENT_URL || 'http://localhost:5173', process.env.ADMIN_PANEL_URL || 'http://localhost:5174', 'http://localhost:8080'],
-		credentials: true,
-	})
-);
+// Enhanced CORS configuration for development
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.CLIENT_URL || 'http://localhost:5173',
+      process.env.ADMIN_PANEL_URL || 'http://localhost:5174',
+      'http://localhost:8080',
+      'http://localhost:5173' // Explicitly add this for Vite dev server
+    ];
+    
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `CORS policy does not allow access from ${origin}`;
+      console.error('CORS Error:', msg);
+      return callback(new Error(msg), false);
+    }
+    
+    return callback(null, true);
+  },
+  credentials: true,
+  exposedHeaders: ['set-cookie']
+};
+
+app.use(cors(corsOptions));
+
+// Log all incoming requests for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  console.log('Headers:', req.headers);
+  next();
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -61,8 +90,16 @@ if (process.env.NODE_ENV === "production") {
 	});
 }
 
-httpServer.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
-	console.log(`API endpoints available at http://localhost:${PORT}/api`);
-	connectDB();
+// Start the server
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`API endpoints available at http://localhost:${PORT}/api`);
+  connectDB();
+}).on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Please close any other servers using this port.`);
+  } else {
+    console.error('Failed to start server:', error);
+  }
+  process.exit(1);
 });

@@ -13,6 +13,7 @@ const Homepage = () => {
   const [showPopup, setShowPopup] = useState(false);
   const { matchCard, loading, fetchMatchCard } = useMatchStore();
   const { authUser, checkAuth } = useAuthStore();
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
 
   // Parallax effect
   const parallaxRef1 = useRef(null);
@@ -33,6 +34,11 @@ const Homepage = () => {
       await checkAuth();
       await fetchMatchCard();
 
+      // Check if user has completed their profile
+      if (authUser?.hasCompletedProfile) {
+        setIsProfileComplete(true);
+      }
+
       // Watch for URL changes to refresh match card status
       const handleLocationChange = async () => {
         await fetchMatchCard();
@@ -49,7 +55,7 @@ const Homepage = () => {
 
     fetchAndWatchMatchCard();
     // eslint-disable-next-line
-  }, [fetchMatchCard, checkAuth]);
+  }, [fetchMatchCard, checkAuth, authUser]);
 
   // Handle match card activation success
   const handleMatchCardActivation = () => {
@@ -158,8 +164,8 @@ const Homepage = () => {
             <ellipse cx="400" cy="120" rx="120" ry="60" fill="#f7faff" opacity="0.7" />
             <rect x="900" y="350" width="220" height="80" rx="40" fill="#ffd6ec" opacity="0.4" />
           </svg>
-          <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-          <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+          <div className="absolute -top-32 -right-32 w-40 h-40 rounded-full bg-pink-100/30 blur-xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-40 h-40 rounded-full bg-purple-300/30 blur-xl"></div>
         </div>
 
         <main className="relative z-10">
@@ -179,7 +185,7 @@ const Homepage = () => {
                 {heroContent.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                {matchCard?.status === 'active' ? (
+                {isProfileComplete || matchCard?.status === 'active' ? (
                   <button
                     aria-label="Awaiting Match"
                     className="bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg hover:bg-pink-700 transition-all"

@@ -28,12 +28,11 @@ const ProfileForm = ({ onSubmit, initialData }) => {
   const validateStep = () => {
     const newErrors = {};
     if (step === 1) {
-      if (!formData.name.trim()) newErrors.name = "Name is required";
-      if (!formData.age || formData.age < 18) newErrors.age = "Must be 18 or older";
+      if (!formData.name.trim()) newErrors.name = "Please enter your full name";
+      if (!formData.age || formData.age < 18) newErrors.age = "You must be at least 18 years old";
       if (!formData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-        newErrors.email = "Valid email is required";
+        newErrors.email = "Please enter a valid email address";
       }
-      if (!formData.profilePic) newErrors.profilePic = "Profile picture is required";
     } else if (step === 2) {
       if (!formData.familyValues) newErrors.familyValues = "Please select an option";
       if (!formData.religion) newErrors.religion = "Please select an option";
@@ -90,11 +89,24 @@ const ProfileForm = ({ onSubmit, initialData }) => {
   };
 
   const handleNext = () => {
-    if (validateStep()) {
-      if (step < 3) {
+    // Always allow moving to next step, but validate required fields
+    if (step < 3) {
+      if (validateStep()) {
         setStep(step + 1);
-      } else {
+      }
+    } else {
+      // Only validate and submit on final step
+      if (validateStep()) {
         onSubmit(formData);
+      } else {
+        // Scroll to first error
+        const firstError = Object.keys(errors)[0];
+        if (firstError) {
+          document.querySelector(`[name="${firstError}"]`)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
       }
     }
   };
@@ -165,26 +177,52 @@ const ProfileForm = ({ onSubmit, initialData }) => {
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
-            <input
-              type="file"
-              accept="image/jpeg,image/png"
-              onChange={(e) => handleImageUpload(e, "profilePic")}
-              className="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent"
-              ref={profilePicRef}
-            />
-            {uploading && <p className="text-sm text-gray-500 mt-1">Uploading...</p>}
-            {formData.profilePic && (
-              <motion.img
-                src={formData.profilePic}
-                alt="Profile Preview"
-                className="mt-2 w-32 h-32 rounded-full object-cover"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              />
-            )}
-            {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
+                <span className="text-xs text-gray-500">Recommended</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={(e) => handleImageUpload(e, "profilePic")}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    ref={profilePicRef}
+                    id="profile-picture-upload"
+                  />
+                  <label
+                    htmlFor="profile-picture-upload"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg border border-dashed border-gray-300 hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    Choose File
+                  </label>
+                </div>
+                {formData.profilePic && (
+                  <span className="text-sm text-green-600">✓ Uploaded</span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500">JPG or PNG, max 5MB</p>
+              {uploading && <p className="text-xs text-blue-500">Uploading, please wait...</p>}
+              {errors.profilePic && (
+                <p className="text-red-500 text-xs mt-1">{errors.profilePic}</p>
+              )}
+              {formData.profilePic && (
+                <motion.div
+                  className="mt-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <img
+                    src={formData.profilePic}
+                    alt="Profile Preview"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-white shadow"
+                  />
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
       )
@@ -360,9 +398,14 @@ const ProfileForm = ({ onSubmit, initialData }) => {
             {errors.personalityTraits && <p className="text-red-500 text-sm mt-1">{errors.personalityTraits}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Photo Gallery (Upload 2-4 photos)</label>
-            <div className="mt-2 grid grid-cols-2 gap-4">
-              {[...Array(4)].map((_, index) => (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Photo Gallery</label>
+                <span className="text-xs text-gray-500">Add 2-4 photos</span>
+              </div>
+              <p className="text-xs text-gray-500 mb-2">Showcase different aspects of your life (e.g., hobbies, travel, etc.)</p>
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(4)].map((_, index) => (
                 <div key={index} className="relative">
                   <input
                     type="file"
@@ -394,9 +437,12 @@ const ProfileForm = ({ onSubmit, initialData }) => {
                   )}
                 </div>
               ))}
+              </div>
+              {uploading && <p className="text-xs text-blue-500 mt-1">Uploading, please wait...</p>}
+              {errors.gallery && (
+                <p className="text-red-500 text-xs mt-1">{errors.gallery}</p>
+              )}
             </div>
-            {uploading && <p className="text-sm text-gray-500 mt-1">Uploading...</p>}
-            {errors.gallery && <p className="text-red-500 text-sm mt-1">{errors.gallery}</p>}
           </div>
         </div>
       )

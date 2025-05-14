@@ -26,7 +26,14 @@ const AuthPage = () => {
   }, [authUser, checkingAuth, navigate]);
 
   if (checkingAuth) {
-    return null; // Don't render anything while checking auth
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading application...</p>
+        </div>
+      </div>
+    );
   }
 
   const toggleForm = () => {

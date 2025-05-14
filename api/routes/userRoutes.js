@@ -13,7 +13,7 @@ router.get('/admin/users', getAdminUsers);
 router.get('/profile', getUserProfile);
 router.put('/profile', updateUserProfile);
 
-router.put("/update", updateProfile);
+router.put("/update", protectRoute, updateProfile);
 router.get("/dashboard/stats", getDashboardStats);
 
 export default router;

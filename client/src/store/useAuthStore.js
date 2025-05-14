@@ -4,75 +4,130 @@ import toast from "react-hot-toast";
 import { disconnectSocket, initializeSocket } from "../socket/socket.client";
 
 export const useAuthStore = create((set) => ({
-	authUser: JSON.parse(localStorage.getItem("authUser")) || null,
-	checkingAuth: true,
-	loading: false,
+  authUser: JSON.parse(localStorage.getItem("authUser")) || null,
+  checkingAuth: true,
+  loading: false,
+  error: null,
 
-	signup: async (signupData) => {
-		try {
-			set({ loading: true });
-			const res = await axiosInstance.post("/auth/signup", signupData);
-			const user = res.data.user;
-			set({ authUser: user });
-			localStorage.setItem("authUser", JSON.stringify(user)); // Save user to localStorage
-			initializeSocket(user._id);
+  signup: async (signupData) => {
+    try {
+      set({ loading: true, error: null });
+      const response = await axiosInstance.post("/auth/signup", signupData);
+      
+      if (!response.data.user) {
+        throw new Error('No user data received from server');
+      }
+      
+      const user = response.data.user;
+      set({ 
+        authUser: user,
+        loading: false,
+        error: null 
+      });
+      
+      localStorage.setItem("authUser", JSON.stringify(user));
+      initializeSocket(user._id);
+      toast.success("Account created successfully!");
+      return user;
+      
+    } catch (error) {
+      console.error('Signup error:', error);
+      const errorMessage = error.response?.data?.message || 
+                         error.message || 
+                         'Registration failed. Please try again.';
+      
+      set({ 
+        loading: false,
+        error: errorMessage 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  },
 
-			toast.success("Account created successfully");
-		} catch (error) {
-			toast.error(error.response?.data?.message || "Something went wrong");
-		} finally {
-			set({ loading: false });
-		}
-	},
+  login: async (loginData) => {
+    try {
+      set({ loading: true, error: null });
+      const response = await axiosInstance.post("/auth/login", loginData);
+      
+      if (!response.data.user) {
+        throw new Error('No user data received from server');
+      }
+      
+      const user = response.data.user;
+      set({ 
+        authUser: user,
+        loading: false,
+        error: null 
+      });
+      
+      localStorage.setItem("authUser", JSON.stringify(user));
+      initializeSocket(user._id);
+      toast.success("Logged in successfully!");
+      return user;
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || 
+                         error.message || 
+                         'Login failed. Please check your credentials and try again.';
+      
+      set({ 
+        loading: false,
+        error: errorMessage 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  },
 
-	login: async (loginData) => {
-		try {
-			set({ loading: true });
-			const res = await axiosInstance.post("/auth/login", loginData);
-			const user = res.data.user;
-			set({ authUser: user });
-			localStorage.setItem("authUser", JSON.stringify(user)); // Save user to localStorage
-			initializeSocket(user._id);
+  logout: async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      disconnectSocket();
+      set({ authUser: null });
+      localStorage.removeItem("authUser");
+    }
+  },
 
-			toast.success("Logged in successfully");
-		} catch (error) {
-			toast.error(error.response?.data?.message || "Something went wrong");
-		} finally {
-			set({ loading: false });
-		}
-	},
+  checkAuth: async () => {
+    try {
+      const response = await axiosInstance.get("/auth/me");
+      const user = response.data?.user;
+      
+      if (user) {
+        set({ 
+          authUser: user,
+          checkingAuth: false,
+          error: null 
+        });
+        localStorage.setItem("authUser", JSON.stringify(user));
+        initializeSocket(user._id);
+      } else {
+        throw new Error('No user data in response');
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      set({ 
+        authUser: null, 
+        checkingAuth: false,
+        error: 'Session expired. Please log in again.'
+      });
+      localStorage.removeItem("authUser");
+    }
+  },
 
-	logout: async () => {
-		try {
-			const res = await axiosInstance.post("/auth/logout");
-			disconnectSocket();
-			if (res.status === 200) {
-				set({ authUser: null });
-				localStorage.removeItem("authUser"); // Remove user from localStorage
-			}
-		} catch (error) {
-			toast.error(error.response?.data?.message || "Something went wrong");
-		}
-	},
-
-	checkAuth: async () => {
-		try {
-			const res = await axiosInstance.get("/auth/me");
-			const user = res.data.user;
-			set({ authUser: user });
-			localStorage.setItem("authUser", JSON.stringify(user)); // Save user to localStorage
-			initializeSocket(user._id);
-		} catch (error) {
-			set({ authUser: null });
-			localStorage.removeItem("authUser"); // Remove if not authenticated
-			console.log(error);
-		} finally {
-			set({ checkingAuth: false });
-		}
-	},
-
-	setAuthUser: (user) => {
-		set({ authUser: user });
-		localStorage.setItem("authUser", JSON.stringify(user)); // Save manually if needed
-	},
+  setAuthUser: (user) => {
+    set({ authUser: user });
+    if (user) {
+      localStorage.setItem("authUser", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("authUser");
+    }
+  },
 }));

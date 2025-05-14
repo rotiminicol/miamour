@@ -1,5 +1,7 @@
 import { Check, ArrowRight, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useUserStore } from "../store/useUserStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 function ProfessionalTransactionPage() {
   const [processing, setProcessing] = useState(true);
@@ -36,13 +38,32 @@ function ProfessionalTransactionPage() {
     }
   }, [timeLeft]);
 
-  const handleComplete = () => {
+  const { updateProfile } = useUserStore();
+  const { authUser } = useAuthStore();
+
+  const handleComplete = async () => {
     setProcessing(false);
-    // Short delay before redirecting
-    setTimeout(() => {
-      // Navigate to dashboard page
-      window.location.href = "/dashboard";
-    }, 1500);
+    
+    try {
+      // Update user's profile status to indicate they've completed the flow
+      await updateProfile({
+        ...authUser,
+        hasCompletedProfile: true,
+        matchStatus: 'awaiting'
+      });
+      
+      // Short delay before redirecting
+      setTimeout(() => {
+        // Navigate to dashboard page
+        window.location.href = "/dashboard";
+      }, 1500);
+    } catch (error) {
+      console.error('Error updating profile status:', error);
+      // Still redirect even if there's an error
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
+    }
   };
 
   // Format time as MM:SS
@@ -167,7 +188,7 @@ function ProfessionalTransactionPage() {
             <div>
               <p className="text-sm text-gray-600">
                 Your transaction is being securely processed. This typically takes less than a minute, 
-                but may occasionally take longer. Youll be automatically redirected when complete.
+                but may occasionally take longer. You will be automatically redirected when complete.
               </p>
             </div>
           </div>

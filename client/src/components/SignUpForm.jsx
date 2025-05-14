@@ -9,7 +9,7 @@ const SignupForm = ({ toggleForm }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-   四年Number: '',
+    phoneNumber: '',
     country: '',
     password: '',
     confirmPassword: '',
@@ -65,13 +65,12 @@ const SignupForm = ({ toggleForm }) => {
     if (name === 'country') {
       const selectedCountryCode = countryCodes[value] || '';
       setFormData((prev) => {
-        const currentPhone = prev.phoneNumber.replace(/^\+\d+/, '').trim(); // Remove existing country code
+        const currentPhone = prev.phoneNumber.replace(/^\+\d+/, '').trim();
         const newPhoneNumber = selectedCountryCode ? `${selectedCountryCode} ${currentPhone}` : currentPhone;
         return { ...prev, country: value, phoneNumber: newPhoneNumber };
       });
     } else if (name === 'phoneNumber') {
       const selectedCountryCode = countryCodes[formData.country] || '';
-      // Prevent modifying the country code part if the user is editing the number
       if (selectedCountryCode && !value.startsWith(selectedCountryCode)) {
         setFormData((prev) => ({
           ...prev,
@@ -108,23 +107,59 @@ const SignupForm = ({ toggleForm }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
+    setErrors({});
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
-    signup(formData).then(() => {
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('signupSuccess', { detail: formData }));
+    try {
+      const response = await signup(formData);
+      console.log('Signup response:', response);
+    } catch (error) {
+      console.error('Signup error:', error);
+      
+      if (error.response?.data?.missingFields) {
+        const fieldErrors = {};
+        error.response.data.missingFields.forEach(field => {
+          fieldErrors[field] = `${field} is required`;
+        });
+        setErrors({
+          ...fieldErrors,
+          general: 'Please fill in all required fields'
+        });
+        return;
       }
-      navigate('/profile', { state: { userData: formData } });
-    }).catch((error) => {
-      setErrors({ general: error.response?.data?.message || 'Something went wrong' });
-    });
+
+      if (error.response?.data?.field) {
+        setErrors({
+          [error.response.data.field]: error.response.data.message,
+          general: error.response.data.message
+        });
+        return;
+      }
+
+      if (error.response?.data?.errors) {
+        setErrors({
+          ...error.response.data.errors,
+          general: 'Please correct the errors below'
+        });
+        return;
+      }
+
+      const errorMessage = error?.response?.data?.message ||
+                         error?.message ||
+                         'Registration failed. Please check your information and try again.';
+
+      setErrors(prev => ({
+        ...prev,
+        general: errorMessage
+      }));
+    }
   };
 
   return (
@@ -133,8 +168,13 @@ const SignupForm = ({ toggleForm }) => {
         <h2 className="text-2xl font-bold text-pink-600">Create Your Account</h2>
       </div>
       {errors.general && (
-        <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded">
-          {errors.general}
+        <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 border border-red-200 rounded-md" role="alert">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2z" clipRule="evenodd" />
+            </svg>
+            <span>{errors.general}</span>
+          </div>
         </div>
       )}
 
@@ -195,8 +235,14 @@ const SignupForm = ({ toggleForm }) => {
               }`}
               placeholder="your@email.com"
               autoComplete="email"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
             />
-            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+            {errors.email && (
+              <p id="email-error" className="mt-1 text-xs text-red-500">
+                {errors.email}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -258,20 +304,19 @@ const SignupForm = ({ toggleForm }) => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500 ${
+                  className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-2.5 text-gray-500 hover:text-pink-600"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  tabIndex={-1}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </button>
               </div>
               {errors.password && (
@@ -289,20 +334,19 @@ const SignupForm = ({ toggleForm }) => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-pink-500 ${
+                  className={`w-full px-4 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 ${
                     errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="••••••••"
+                  placeholder="Confirm your password"
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-2.5 text-gray-500 hover:text-pink-600"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  tabIndex={-1}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                 >
-                  {showConfirmPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                  {showConfirmPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </button>
               </div>
               {errors.confirmPassword && (
@@ -313,21 +357,22 @@ const SignupForm = ({ toggleForm }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Gender
+              Gender
             </label>
-            <div className="flex gap-4">
-              {['male', 'female'].map((gender) => (
+            <div className="space-y-2">
+              {['male', 'female', 'other'].map((gender) => (
                 <div key={gender} className="flex items-center">
                   <input
-                    id={gender}
+                    id={`gender-${gender}`}
                     name="gender"
                     type="radio"
+                    value={gender}
                     checked={formData.gender === gender}
-                    onChange={() => setFormData((prev) => ({ ...prev, gender }))}
+                    onChange={handleChange}
                     className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
                   />
                   <label
-                    htmlFor={gender}
+                    htmlFor={`gender-${gender}`}
                     className="ml-2 text-sm text-gray-600 capitalize"
                   >
                     {gender}
